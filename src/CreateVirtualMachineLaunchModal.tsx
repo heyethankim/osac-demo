@@ -99,6 +99,8 @@ export type DeploymentMethod = 'new' | 'template' | 'clone'
  * guest-os (2), boot-source (3), compute (4), template (5), source-clone (6), customization (7).
  */
 const WIZARD_STEP_INDEX_TEMPLATE_CUSTOMIZATION = 7
+/** 1-based Wizard `startIndex` for the clone Source step when opening “Clone” from a VM action. */
+const WIZARD_STEP_INDEX_CLONE_SOURCE = 6
 
 const TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME = 'rhel-ai-infer-01'
 
@@ -369,6 +371,7 @@ const DEPLOYMENT_OPTIONS: {
 export type CreateVirtualMachineLaunchHandle = {
   open: () => void
   openFromCatalogTemplate: (templateId: string, initialVmName: string) => void
+  openFromCloneSource: (sourceVmId: string) => void
 }
 
 export type CreateVirtualMachineLaunchButtonProps = {
@@ -570,13 +573,28 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
     [reset],
   )
 
+  const openFromCloneSource = useCallback(
+    (sourceVmId: string) => {
+      setWizardKey((k) => k + 1)
+      setWizardStartIndex(WIZARD_STEP_INDEX_CLONE_SOURCE)
+      reset()
+      setDeployment('clone')
+      const src = existingVirtualMachines.find((v) => v.id === sourceVmId)
+      setCloneSourceVmId(sourceVmId)
+      setCloneNewName(src ? `${src.name}-clone` : `${sourceVmId}-clone`)
+      setOpen(true)
+    },
+    [reset, existingVirtualMachines],
+  )
+
   useImperativeHandle(
     ref,
     () => ({
       open: handleOpen,
       openFromCatalogTemplate,
+      openFromCloneSource,
     }),
-    [handleOpen, openFromCatalogTemplate],
+    [handleOpen, openFromCatalogTemplate, openFromCloneSource],
   )
 
   const handleProvision = useCallback(

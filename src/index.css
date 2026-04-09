@@ -2302,6 +2302,49 @@ html[data-osac-theme='light']
   min-height: 0;
 }
 
+.tenant-vm-detail-overview-os {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+}
+
+.tenant-vm-detail-overview-os__icon-tile {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  background-color: var(--pf-t--global--background--color--secondary--default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tenant-vm-detail-console-card-header.pf-v6-c-card__header {
+  display: block;
+}
+
+.tenant-vm-detail-console-card-header__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+  width: 100%;
+}
+
+.tenant-vm-detail-console-card-header__row .pf-v6-c-card__title {
+  margin: 0;
+}
+
+.tenant-vm-detail-console-card-header__menu {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.tenant-vm-detail-console-launch {
+  margin-top: var(--pf-t--global--spacer--md);
+}
+
 .tenant-vm-detail-snapshot {
   width: 100%;
 }

@@ -216,6 +216,10 @@ function App() {
     [],
   )
 
+  const openCreateVirtualMachineWizardFromCloneSource = useCallback((sourceVmId: string) => {
+    createVmLaunchRef.current?.openFromCloneSource(sourceVmId)
+  }, [])
+
   const allTenantVirtualMachines = useMemo(
     () => [...vmsCreatedFromTemplate, ...TENANT_VIRTUAL_MACHINES],
     [vmsCreatedFromTemplate],
@@ -607,6 +611,7 @@ function App() {
         ) : showVirtualMachinesPage ? (
           <TenantVirtualMachinesPage
             onOpenCreateVirtualMachineModal={openCreateVirtualMachineModal}
+            onOpenCloneVirtualMachine={openCreateVirtualMachineWizardFromCloneSource}
             powerFilterIntent={vmListPowerFilterIntent}
             vmsCreatedFromTemplate={vmsCreatedFromTemplate}
             createdFilterNavigateSeq={vmListCreatedFilterNavigateSeq}

@@ -628,7 +628,10 @@ function openSampleVmConsole(vm: TenantVirtualMachine) {
   window.open(`${base}?${q.toString()}`, '_blank', 'noopener,noreferrer')
 }
 
-function vmCardActionsMenuItems() {
+function vmCardActionsMenuItems(
+  vm: TenantVirtualMachine,
+  onOpenCloneVirtualMachine: (sourceVmId: string) => void,
+) {
   return (
     <>
       <DropdownItem key="start" onClick={(e) => e.preventDefault()}>
@@ -640,6 +643,15 @@ function vmCardActionsMenuItems() {
       <DropdownItem key="restart" onClick={(e) => e.preventDefault()}>
         Restart
       </DropdownItem>
+      <DropdownItem
+        key="clone"
+        onClick={(e) => {
+          e.preventDefault()
+          onOpenCloneVirtualMachine(vm.id)
+        }}
+      >
+        Clone
+      </DropdownItem>
       <DropdownItem key="migrate" onClick={(e) => e.preventDefault()}>
         Migrate
       </DropdownItem>
@@ -650,7 +662,10 @@ function vmCardActionsMenuItems() {
   )
 }
 
-function vmDetailKebabMenuItems(vm: TenantVirtualMachine) {
+function vmDetailKebabMenuItems(
+  vm: TenantVirtualMachine,
+  onOpenCloneVirtualMachine: (sourceVmId: string) => void,
+) {
   const running = vm.status === 'running'
   const stopped = vm.status === 'stopped'
   const noop = (e: React.MouseEvent) => {
@@ -669,6 +684,15 @@ function vmDetailKebabMenuItems(vm: TenantVirtualMachine) {
       </DropdownItem>
       <DropdownItem key="restart" isDisabled={stopped} onClick={noop}>
         Restart
+      </DropdownItem>
+      <DropdownItem
+        key="clone"
+        onClick={(e) => {
+          e.preventDefault()
+          onOpenCloneVirtualMachine(vm.id)
+        }}
+      >
+        Clone
       </DropdownItem>
       <DropdownItem key="migrate" onClick={noop}>
         Migrate
@@ -713,7 +737,7 @@ function VirtualMachineDetailSnapshot({ vm }: { vm: TenantVirtualMachine }) {
       <div className="tenant-vm-detail-snapshot__frame">
         <div
           className="northstar-console-demo__terminal tenant-vm-detail-snapshot__terminal-mock"
-          aria-label={`Console snapshot for ${vm.name}`}
+          aria-label={`Console preview for ${vm.name}`}
         >
           {isWindows ? (
             <>
@@ -765,6 +789,11 @@ function VirtualMachineDetailSnapshot({ vm }: { vm: TenantVirtualMachine }) {
           )}
         </div>
       </div>
+      <div className="tenant-vm-detail-console-launch">
+        <Button variant="secondary" size="sm" onClick={() => openSampleVmConsole(vm)}>
+          Launch console
+        </Button>
+      </div>
       <Content
         component="p"
         className="tenant-vm-detail-snapshot__caption"
@@ -774,7 +803,7 @@ function VirtualMachineDetailSnapshot({ vm }: { vm: TenantVirtualMachine }) {
           color: 'var(--pf-t--global--text--color--subtle)',
         }}
       >
-        Captured view of the guest console (demo). Use Open console for an interactive session.
+        Captured view of the guest console (demo). Use Launch console for an interactive session.
       </Content>
     </div>
   )
@@ -816,6 +845,8 @@ function vmCardResourceCell(label: string, value: string) {
 export type TenantVirtualMachinesPageProps = {
   /** Opens the shared Create virtual machine wizard (modal is mounted at app shell level). */
   onOpenCreateVirtualMachineModal: () => void
+  /** Opens the create VM wizard on the clone path with this VM pre-selected as the source. */
+  onOpenCloneVirtualMachine: (sourceVmId: string) => void
   /** When opening this page from the dashboard, seed the power filter (e.g. running). */
   powerFilterIntent?: VmPowerState | null
   /** VMs created from the catalog, shown first (newest at index 0). */
@@ -839,6 +870,7 @@ function isDashboardPowerFilterIntent(
 
 export function TenantVirtualMachinesPage({
   onOpenCreateVirtualMachineModal,
+  onOpenCloneVirtualMachine,
   powerFilterIntent = null,
   vmsCreatedFromTemplate = [],
   createdFilterNavigateSeq = 0,
@@ -861,6 +893,7 @@ export function TenantVirtualMachinesPage({
   const [createdMenuOpen, setCreatedMenuOpen] = useState(false)
   const [actionsMenuOpenId, setActionsMenuOpenId] = useState<string | null>(null)
   const [detailVmActionsMenuOpen, setDetailVmActionsMenuOpen] = useState(false)
+  const [detailConsoleMenuOpen, setDetailConsoleMenuOpen] = useState(false)
   const [detailVmId, setDetailVmId] = useState<string | null>(null)
   const [detailActiveTab, setDetailActiveTab] = useState<string | number>('overview')
 
@@ -880,6 +913,7 @@ export function TenantVirtualMachinesPage({
 
   useEffect(() => {
     setDetailVmActionsMenuOpen(false)
+    setDetailConsoleMenuOpen(false)
   }, [detailVmId])
 
   useEffect(() => {
@@ -943,6 +977,9 @@ export function TenantVirtualMachinesPage({
 
   if (detailVm) {
     const conditions = demoConditionsForVm(detailVm)
+    const DetailOsIcon = detailVm.Icon
+    const detailOsIconColor = catalogIconColor(detailVm.iconAccent)
+    const detailOsIconPx = detailVm.iconAccent === 'linux' ? 24 : 20
     return (
       <div className="tenant-vm-page-root" style={pageShellStyle}>
         <div className="tenant-vm-page-sticky-heading tenant-vm-page-sticky-heading--detail">
@@ -982,7 +1019,9 @@ export function TenantVirtualMachinesPage({
                 />
               )}
             >
-              <DropdownList>{vmDetailKebabMenuItems(detailVm)}</DropdownList>
+              <DropdownList>
+                {vmDetailKebabMenuItems(detailVm, onOpenCloneVirtualMachine)}
+              </DropdownList>
             </Dropdown>
           </div>
         </div>
@@ -1006,18 +1045,42 @@ export function TenantVirtualMachinesPage({
                         <DescriptionListDescription>{detailVm.name}</DescriptionListDescription>
                       </DescriptionListGroup>
                       <DescriptionListGroup>
-                        <DescriptionListTerm>Power state</DescriptionListTerm>
-                        <DescriptionListDescription>
-                          <Label color={statusLabelColor(detailVm.status)}>
-                            {STATUS_LABEL[detailVm.status]}
-                          </Label>
-                        </DescriptionListDescription>
+                        <DescriptionListTerm>Description</DescriptionListTerm>
+                        <DescriptionListDescription>{detailVm.description}</DescriptionListDescription>
                       </DescriptionListGroup>
                       <DescriptionListGroup>
                         <DescriptionListTerm>Operating system</DescriptionListTerm>
                         <DescriptionListDescription>
-                          {OS_DISPLAY[detailVm.os]}
+                          <div className="tenant-vm-detail-overview-os">
+                            <div
+                              className="tenant-vm-detail-overview-os__icon-tile"
+                              aria-hidden
+                            >
+                              <DetailOsIcon
+                                aria-hidden
+                                style={{
+                                  width: detailOsIconPx,
+                                  height: detailOsIconPx,
+                                  flexShrink: 0,
+                                  ...(detailOsIconColor ? { color: detailOsIconColor } : {}),
+                                }}
+                              />
+                            </div>
+                            <span>{OS_DISPLAY[detailVm.os]}</span>
+                          </div>
                         </DescriptionListDescription>
+                      </DescriptionListGroup>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>CPU</DescriptionListTerm>
+                        <DescriptionListDescription>{detailVm.cpu}</DescriptionListDescription>
+                      </DescriptionListGroup>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>Memory</DescriptionListTerm>
+                        <DescriptionListDescription>{detailVm.memory}</DescriptionListDescription>
+                      </DescriptionListGroup>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>Storage</DescriptionListTerm>
+                        <DescriptionListDescription>{detailVm.storage}</DescriptionListDescription>
                       </DescriptionListGroup>
                       <DescriptionListGroup>
                         <DescriptionListTerm>Network</DescriptionListTerm>
@@ -1029,16 +1092,42 @@ export function TenantVirtualMachinesPage({
                         <DescriptionListTerm>Hub</DescriptionListTerm>
                         <DescriptionListDescription>{detailVm.hubName}</DescriptionListDescription>
                       </DescriptionListGroup>
-                      <DescriptionListGroup>
-                        <DescriptionListTerm>Description</DescriptionListTerm>
-                        <DescriptionListDescription>{detailVm.description}</DescriptionListDescription>
-                      </DescriptionListGroup>
                     </DescriptionList>
                   </CardBody>
                 </Card>
                 <Card isFullHeight className="tenant-vm-detail-overview-card">
-                  <CardHeader>
-                    <CardTitle>Console snapshot</CardTitle>
+                  <CardHeader className="tenant-vm-detail-console-card-header">
+                    <div className="tenant-vm-detail-console-card-header__row">
+                      <CardTitle>Console</CardTitle>
+                      <Label
+                        color={statusLabelColor(detailVm.status)}
+                        aria-label={`Power state: ${STATUS_LABEL[detailVm.status]}`}
+                      >
+                        {STATUS_LABEL[detailVm.status]}
+                      </Label>
+                      <div className="tenant-vm-detail-console-card-header__menu">
+                        <Dropdown
+                          isOpen={detailConsoleMenuOpen}
+                          onOpenChange={setDetailConsoleMenuOpen}
+                          onSelect={() => setDetailConsoleMenuOpen(false)}
+                          popperProps={{ placement: 'bottom-end' }}
+                          toggle={(toggleRef) => (
+                            <MenuToggle
+                              ref={toggleRef}
+                              variant="plain"
+                              isExpanded={detailConsoleMenuOpen}
+                              onClick={() => setDetailConsoleMenuOpen((o) => !o)}
+                              aria-label={`Console actions for ${detailVm.name}`}
+                              icon={<EllipsisVIcon />}
+                            />
+                          )}
+                        >
+                          <DropdownList>
+                            {vmCardActionsMenuItems(detailVm, onOpenCloneVirtualMachine)}
+                          </DropdownList>
+                        </Dropdown>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardBody>
                     <VirtualMachineDetailSnapshot vm={detailVm} />
@@ -1472,7 +1561,9 @@ export function TenantVirtualMachinesPage({
                                 />
                               )}
                             >
-                              <DropdownList>{vmCardActionsMenuItems()}</DropdownList>
+                              <DropdownList>
+                                {vmCardActionsMenuItems(vm, onOpenCloneVirtualMachine)}
+                              </DropdownList>
                             </Dropdown>
                           </div>
                         </div>
@@ -1741,7 +1832,9 @@ export function TenantVirtualMachinesPage({
                             />
                           )}
                         >
-                          <DropdownList>{vmCardActionsMenuItems()}</DropdownList>
+                          <DropdownList>
+                            {vmCardActionsMenuItems(vm, onOpenCloneVirtualMachine)}
+                          </DropdownList>
                         </Dropdown>
                       </td>
                     </tr>
