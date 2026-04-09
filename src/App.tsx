@@ -116,7 +116,7 @@ const virtualMachinesNavItemId = 'compute-vms'
 
 const dashboardPageTitle = 'Welcome Chris Morgan'
 const dashboardPageSubtitle =
-  'This workspace is for VM as a Service — create, run, and manage virtual machines for your tenant.'
+  'This workspace is for VM as a Service — create, run, and manage virtual machines.'
 
 const dashboardVmStatusStats = [
   {
