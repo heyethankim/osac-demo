@@ -332,6 +332,7 @@ function App() {
           }
           loginTransitionTimerRef.current = window.setTimeout(() => {
             loginTransitionTimerRef.current = null
+            setIsLandingPageLoading(false)
             setActiveItem('dashboard')
             setIsLoggedIn(true)
           }, 2000)
@@ -451,6 +452,7 @@ function App() {
                       onClick={() => {
                         setIsUserMenuOpen(false)
                         setGlobalSearchQuery('')
+                        setIsLandingPageLoading(false)
                         setIsLoggedIn(false)
                       }}
                     >
