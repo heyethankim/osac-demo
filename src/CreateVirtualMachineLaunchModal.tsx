@@ -94,11 +94,11 @@ import {
 export type DeploymentMethod = 'new' | 'template' | 'clone'
 
 /**
- * 1-based Wizard `startIndex` for the Customization step when deploying from a template.
+ * 1-based Wizard `startIndex` when opening from the catalog’s “Create virtual machine”.
  * Counts every `WizardStep` child in order (including hidden steps): deployment-details (1),
  * guest-os (2), boot-source (3), compute (4), template (5), source-clone (6), customization (7).
  */
-const WIZARD_STEP_INDEX_TEMPLATE_CUSTOMIZATION = 7
+const WIZARD_STEP_INDEX_TEMPLATE_FROM_CATALOG = 5
 /** 1-based Wizard `startIndex` for the clone Source step when opening “Clone” from a VM action. */
 const WIZARD_STEP_INDEX_CLONE_SOURCE = 6
 
@@ -563,7 +563,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
   const openFromCatalogTemplate = useCallback(
     (templateId: string, initialVmName: string) => {
       setWizardKey((k) => k + 1)
-      setWizardStartIndex(WIZARD_STEP_INDEX_TEMPLATE_CUSTOMIZATION)
+      setWizardStartIndex(WIZARD_STEP_INDEX_TEMPLATE_FROM_CATALOG)
       reset()
       const name = initialVmName.trim() || templateId
       setSelectedTemplateId(templateId)
