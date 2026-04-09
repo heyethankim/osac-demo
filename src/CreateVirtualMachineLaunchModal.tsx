@@ -21,6 +21,7 @@ import {
   CatalogTemplateCardBodyContent,
   CatalogTemplateCardHeaderContent,
   CATALOG_ICON_TILE_BG,
+  CATALOG_TEMPLATE_DETAIL_DEFAULTS,
   CATALOG_WORKLOAD_LABEL,
   catalogIconColor,
   listOrderedCatalogTemplates,
@@ -100,7 +101,6 @@ export type DeploymentMethod = 'new' | 'template' | 'clone'
 const WIZARD_STEP_INDEX_TEMPLATE_CUSTOMIZATION = 7
 
 const TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME = 'rhel-ai-infer-01'
-const TEMPLATE_CUSTOMIZATION_DETAILS_TEMPLATE_LABEL = 'RHEL AI inference runtime'
 
 const TEMPLATE_REVIEW_SECTIONS_INITIAL: Record<
   | 'details'
@@ -450,6 +450,11 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
           templateMatchesWizardSearch(t, templateStepSearch),
       ),
     [orderedTemplates, templateStepFilter, templateStepSearch],
+  )
+
+  const selectedCatalogTemplate = useMemo(
+    () => orderedTemplates.find((t) => t.id === selectedTemplateId),
+    [orderedTemplates, selectedTemplateId],
   )
 
   const filteredCloneWizardVms = useMemo(
@@ -1704,7 +1709,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                     mountOnEnter
                     isOverflowHorizontal
                   >
-                    <Tab eventKey="details" title={<TabTitleText>Details</TabTitleText>}>
+                    <Tab eventKey="details" title={<TabTitleText>Overview</TabTitleText>}>
                       <TabContentBody>
                         <div
                           style={{
@@ -1728,9 +1733,51 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                               fieldId="create-vm-template-detail-template-display"
                             >
                               <div id="create-vm-template-detail-template-display">
-                                <span>{TEMPLATE_CUSTOMIZATION_DETAILS_TEMPLATE_LABEL}</span>
+                                <span>{selectedCatalogTemplate?.title ?? '—'}</span>
                               </div>
                             </FormGroup>
+                            <FormGroup label="CPU" fieldId="create-vm-template-overview-cpu">
+                              <div id="create-vm-template-overview-cpu">
+                                <span>{selectedCatalogTemplate?.cpu ?? '—'}</span>
+                              </div>
+                            </FormGroup>
+                            <FormGroup label="Memory" fieldId="create-vm-template-overview-memory">
+                              <div id="create-vm-template-overview-memory">
+                                <span>{selectedCatalogTemplate?.memory ?? '—'}</span>
+                              </div>
+                            </FormGroup>
+                            <FormGroup
+                              label="Storage"
+                              fieldId="create-vm-template-overview-storage"
+                            >
+                              <div id="create-vm-template-overview-storage">
+                                <span>
+                                  {selectedCatalogTemplate?.diskSize ??
+                                    CATALOG_TEMPLATE_DETAIL_DEFAULTS.diskSize}
+                                </span>
+                              </div>
+                            </FormGroup>
+                            <FormGroup
+                              label="Network"
+                              fieldId="create-vm-template-overview-network"
+                            >
+                              <div id="create-vm-template-overview-network">
+                                <span>
+                                  {selectedCatalogTemplate?.networkType ??
+                                    CATALOG_TEMPLATE_DETAIL_DEFAULTS.networkType}
+                                </span>
+                              </div>
+                            </FormGroup>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 'var(--pf-t--global--spacer--md)',
+                              flex: '1 1 14rem',
+                              minWidth: 0,
+                            }}
+                          >
                             <FormGroup
                               label="Hostname"
                               fieldId="create-vm-template-detail-hostname-display"
@@ -1771,16 +1818,6 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                                 onChange={(_e, checked) => setTemplateGuestLogAccess(checked)}
                               />
                             </FormGroup>
-                          </div>
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: 'var(--pf-t--global--spacer--md)',
-                              flex: '1 1 14rem',
-                              minWidth: 0,
-                            }}
-                          >
                             <FormGroup
                               label="Deletion protection"
                               fieldId="create-vm-template-deletion-protection"
@@ -1955,7 +1992,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                   }}
                 >
                   <ExpandableSection
-                    toggleText="Details"
+                    toggleText="Overview"
                     isExpanded={templateReviewSectionsExpanded.details}
                     isIndented
                     onToggle={(_e, expanded) =>
@@ -1975,20 +2012,33 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                           <DescriptionListGroup>
                             <DescriptionListTerm>Template</DescriptionListTerm>
                             <DescriptionListDescription>
-                              {orderedTemplates.find((t) => t.id === selectedTemplateId)?.title ??
-                                selectedTemplateId}
+                              {selectedCatalogTemplate?.title ?? selectedTemplateId}
                             </DescriptionListDescription>
                           </DescriptionListGroup>
                           <DescriptionListGroup>
-                            <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
+                            <DescriptionListTerm>CPU</DescriptionListTerm>
                             <DescriptionListDescription>
-                              {templateVmName.trim() || '—'}
+                              {selectedCatalogTemplate?.cpu ?? '—'}
                             </DescriptionListDescription>
                           </DescriptionListGroup>
                           <DescriptionListGroup>
-                            <DescriptionListTerm>Hostname</DescriptionListTerm>
+                            <DescriptionListTerm>Memory</DescriptionListTerm>
                             <DescriptionListDescription>
-                              {TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME}
+                              {selectedCatalogTemplate?.memory ?? '—'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Storage</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {selectedCatalogTemplate?.diskSize ??
+                                CATALOG_TEMPLATE_DETAIL_DEFAULTS.diskSize}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Network</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {selectedCatalogTemplate?.networkType ??
+                                CATALOG_TEMPLATE_DETAIL_DEFAULTS.networkType}
                             </DescriptionListDescription>
                           </DescriptionListGroup>
                         </DescriptionList>
@@ -2002,6 +2052,20 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                           minWidth: 0,
                         }}
                       >
+                        <DescriptionList isCompact>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {templateVmName.trim() || '—'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Hostname</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        </DescriptionList>
                         <FormGroup label="Headless mode" fieldId="create-vm-review-headless">
                           <Switch
                             id="create-vm-review-headless"
