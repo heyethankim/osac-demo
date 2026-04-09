@@ -183,6 +183,7 @@ function readVmConsoleDemoQuery(): { vmId: string; vmName: string } | null {
 function App() {
   const [vmConsoleDemo, setVmConsoleDemo] = useState(readVmConsoleDemoQuery)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLandingPageLoading, setIsLandingPageLoading] = useState(false)
   const [activeItem, setActiveItem] = useState<string | number>('dashboard')
   const [isDarkTheme, setIsDarkTheme] = useState(true)
   const [computeNavExpanded, setComputeNavExpanded] = useState(true)
@@ -203,6 +204,7 @@ function App() {
   } | null>(null)
 
   const createVmLaunchRef = useRef<CreateVirtualMachineLaunchHandle>(null)
+  const loginTransitionTimerRef = useRef<number | null>(null)
   const openCreateVirtualMachineModal = useCallback(() => {
     createVmLaunchRef.current?.open()
   }, [])
@@ -295,6 +297,17 @@ function App() {
     setRecentActivitiesPageOpen(false)
   }, [activeItem])
 
+  useEffect(
+    () => () => {
+      if (loginTransitionTimerRef.current != null) {
+        clearTimeout(loginTransitionTimerRef.current)
+        loginTransitionTimerRef.current = null
+        setIsLandingPageLoading(false)
+      }
+    },
+    [],
+  )
+
   if (vmConsoleDemo) {
     return (
       <VmConsoleDemoPage
@@ -311,9 +324,17 @@ function App() {
   if (!isLoggedIn) {
     return (
       <NorthstarBankLoginPage
+        isLandingPageLoading={isLandingPageLoading}
         onLoginSuccess={() => {
-          setActiveItem('dashboard')
-          setIsLoggedIn(true)
+          setIsLandingPageLoading(true)
+          if (loginTransitionTimerRef.current != null) {
+            clearTimeout(loginTransitionTimerRef.current)
+          }
+          loginTransitionTimerRef.current = window.setTimeout(() => {
+            loginTransitionTimerRef.current = null
+            setActiveItem('dashboard')
+            setIsLoggedIn(true)
+          }, 2000)
         }}
       />
     )

@@ -209,6 +209,7 @@ body {
 }
 
 .northstar-login__card.pf-v6-c-card {
+  position: relative;
   width: 100%;
   max-width: 26rem;
   border: none;
@@ -217,6 +218,30 @@ body {
   box-shadow:
     0 8px 40px rgb(0 0 0 / 18%),
     0 2px 12px rgb(0 0 0 / 8%);
+}
+
+.northstar-login__landing-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  text-align: center;
+  border-radius: inherit;
+  background: rgb(255 255 255 / 94%);
+}
+
+.northstar-login__landing-overlay-text {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #3d3d3d;
 }
 
 .northstar-login__card .pf-v6-c-card__body {

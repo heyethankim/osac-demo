@@ -10,15 +10,20 @@ import {
   FormGroup,
   InputGroup,
   InputGroupItem,
+  Spinner,
   TextInput,
   Title,
 } from '@patternfly/react-core'
 
 export type NorthstarBankLoginPageProps = {
   onLoginSuccess: () => void
+  isLandingPageLoading?: boolean
 }
 
-export function NorthstarBankLoginPage({ onLoginSuccess }: NorthstarBankLoginPageProps) {
+export function NorthstarBankLoginPage({
+  onLoginSuccess,
+  isLandingPageLoading = false,
+}: NorthstarBankLoginPageProps) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [passwordHidden, setPasswordHidden] = useState(true)
@@ -35,6 +40,7 @@ export function NorthstarBankLoginPage({ onLoginSuccess }: NorthstarBankLoginPag
       autoComplete="current-password"
       validated="default"
       aria-label="Password"
+      isDisabled={isLandingPageLoading}
     />
   )
 
@@ -101,6 +107,7 @@ export function NorthstarBankLoginPage({ onLoginSuccess }: NorthstarBankLoginPag
                 className="northstar-login__form"
                 onSubmit={(e) => {
                   e.preventDefault()
+                  if (isLandingPageLoading) return
                   onLoginSuccess()
                 }}
               >
@@ -115,6 +122,7 @@ export function NorthstarBankLoginPage({ onLoginSuccess }: NorthstarBankLoginPag
                     autoComplete="username"
                     validated="default"
                     aria-label="Username"
+                    isDisabled={isLandingPageLoading}
                   />
                 </FormGroup>
                 <FormGroup fieldId="ns-password" className="northstar-login__field">
@@ -128,6 +136,7 @@ export function NorthstarBankLoginPage({ onLoginSuccess }: NorthstarBankLoginPag
                         onClick={() => setPasswordHidden((h) => !h)}
                         aria-label={passwordHidden ? 'Show password' : 'Hide password'}
                         icon={passwordHidden ? <EyeIcon /> : <EyeSlashIcon />}
+                        isDisabled={isLandingPageLoading}
                       />
                     </InputGroupItem>
                   </InputGroup>
@@ -139,6 +148,7 @@ export function NorthstarBankLoginPage({ onLoginSuccess }: NorthstarBankLoginPag
                     label="Remember me?"
                     isChecked={rememberMe}
                     onChange={(_e, checked) => setRememberMe(checked)}
+                    isDisabled={isLandingPageLoading}
                   />
                   <Button
                     variant="link"
@@ -146,6 +156,7 @@ export function NorthstarBankLoginPage({ onLoginSuccess }: NorthstarBankLoginPag
                     type="button"
                     className="northstar-login__forgot-link"
                     onClick={(e) => e.preventDefault()}
+                    isDisabled={isLandingPageLoading}
                   >
                     Forgot password
                   </Button>
@@ -156,11 +167,29 @@ export function NorthstarBankLoginPage({ onLoginSuccess }: NorthstarBankLoginPag
                   variant="primary"
                   isBlock
                   className="northstar-login__submit"
+                  isDisabled={isLandingPageLoading}
                 >
                   Login
                 </Button>
               </Form>
             </CardBody>
+            {isLandingPageLoading ? (
+              <div
+                className="northstar-login__landing-overlay"
+                role="status"
+                aria-live="polite"
+                aria-busy="true"
+              >
+                <Spinner
+                  size="lg"
+                  aria-label="Loading"
+                  aria-valuetext="Loading the landing page"
+                />
+                <p className="northstar-login__landing-overlay-text">
+                  Loading the landing page…
+                </p>
+              </div>
+            ) : null}
           </Card>
         </main>
       </div>
