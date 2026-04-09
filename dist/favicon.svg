@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Northstar Bank">
+  <defs>
+    <linearGradient id="northstar-favicon-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8f0000"/>
+      <stop offset="50%" stop-color="#eb0000"/>
+      <stop offset="100%" stop-color="#ff6b4a"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" ry="7" fill="url(#northstar-favicon-bg)"/>
+  <g transform="translate(16 16)">
+    <circle r="10" fill="none" stroke="#fff" stroke-width="1.65" opacity="0.92"/>
+    <g transform="scale(0.36) translate(-24 -24)">
+      <path
+        fill="#fff"
+        d="M24 4l4.2 12.9h13.6L32.3 25.8l4.2 12.9L24 33.7l-12.5 5 4.2-12.9L6.2 16.9h13.6L24 4z"
+      />
+    </g>
+  </g>
+</svg>

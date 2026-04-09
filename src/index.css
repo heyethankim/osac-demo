@@ -1,0 +1,2346 @@
+/* Let PatternFly base.css own typography; keep layout full-viewport */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+#root {
+  min-height: 0;
+}
+
+body {
+  margin: 0;
+}
+
+/* Northstar login — two-column: red gradient + bokeh | white card (reference layout) */
+.northstar-login {
+  position: relative;
+  margin-inline: 0;
+  max-width: none;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: linear-gradient(
+    105deg,
+    #8f0000 0%,
+    #c40000 28%,
+    #eb0000 55%,
+    #ff3b2e 88%,
+    #ff6b4a 100%
+  );
+  color: #fff;
+}
+
+.northstar-login__bokeh {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.northstar-login__bokeh-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 18%);
+}
+
+.northstar-login__bokeh-dot--a {
+  width: min(42vw, 22rem);
+  height: min(42vw, 22rem);
+  left: -8%;
+  top: 12%;
+  filter: blur(2px);
+}
+
+.northstar-login__bokeh-dot--b {
+  width: min(28vw, 14rem);
+  height: min(28vw, 14rem);
+  left: 22%;
+  bottom: 18%;
+  background: rgb(255 255 255 / 12%);
+}
+
+.northstar-login__bokeh-dot--c {
+  width: min(20vw, 10rem);
+  height: min(20vw, 10rem);
+  right: 8%;
+  top: 8%;
+  background: rgb(255 220 200 / 22%);
+}
+
+.northstar-login__bokeh-dot--d {
+  width: min(36vw, 18rem);
+  height: min(36vw, 18rem);
+  right: -5%;
+  bottom: -10%;
+  background: rgb(255 255 255 / 10%);
+  filter: blur(4px);
+}
+
+.northstar-login__bokeh-dot--e {
+  width: min(14vw, 7rem);
+  height: min(14vw, 7rem);
+  left: 45%;
+  top: 40%;
+  background: rgb(255 255 255 / 14%);
+}
+
+.northstar-login__shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 100dvh;
+}
+
+.northstar-login__brand {
+  flex: 1 1 42%;
+  max-width: 36rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 3rem);
+  box-sizing: border-box;
+}
+
+.northstar-login__brand-top {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+.northstar-login__logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  color: #fff;
+  text-shadow: 0 2px 20px rgb(0 0 0 / 15%);
+}
+
+.northstar-login__logo-line1 {
+  font-size: clamp(0.75rem, 1.4vw, 0.875rem);
+  font-weight: 300;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+
+.northstar-login__logo-line2 {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  line-height: 1;
+}
+
+.northstar-login__logo-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(3.25rem, 8vw, 4.5rem);
+  height: clamp(3.25rem, 8vw, 4.5rem);
+  border-radius: 50%;
+  border: 2px solid rgb(255 255 255 / 85%);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.northstar-login__logo-star {
+  width: 55%;
+  height: 55%;
+  display: block;
+  color: #fff;
+  fill: currentColor;
+}
+
+.northstar-login__logo-bank {
+  font-size: clamp(2.75rem, 9vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.northstar-login__tagline {
+  margin: 0;
+  max-width: 22rem;
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  font-weight: 400;
+  line-height: 1.55;
+  color: rgb(255 255 255 / 92%);
+}
+
+.northstar-login__brand-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.northstar-login__support {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: rgb(255 255 255 / 78%);
+}
+
+.northstar-login__support a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.northstar-login__support a:hover {
+  color: rgb(255 255 255 / 95%);
+}
+
+.northstar-login__copyright {
+  margin: 0;
+  font-size: 0.75rem;
+  color: rgb(255 255 255 / 55%);
+}
+
+.northstar-login__panel {
+  flex: 1 1 58%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  box-sizing: border-box;
+}
+
+.northstar-login__card.pf-v6-c-card {
+  width: 100%;
+  max-width: 26rem;
+  border: none;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow:
+    0 8px 40px rgb(0 0 0 / 18%),
+    0 2px 12px rgb(0 0 0 / 8%);
+}
+
+.northstar-login__card .pf-v6-c-card__body {
+  padding: clamp(2rem, 4vw, 2.5rem);
+}
+
+.northstar-login__card-title {
+  margin: 0 0 0.5rem !important;
+  color: #3d3d3d !important;
+  font-weight: 600 !important;
+}
+
+.northstar-login__card-subtitle {
+  margin: 0 0 1.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #8a8a8a;
+}
+
+.northstar-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+}
+
+.northstar-login__field.pf-v6-c-form__group {
+  margin: 0;
+}
+
+/* One light grey for text fields + password addon so edges match */
+.northstar-login__form .pf-v6-c-form-control {
+  --pf-v6-c-form-control--BackgroundColor: #fafafa;
+  --pf-v6-c-form-control--Color: #1a1a1a;
+  --pf-v6-c-form-control--m-placeholder--Color: #9a9a9a;
+  --pf-v6-c-form-control--before--BorderColor: #e8e8e8;
+  --pf-v6-c-form-control--hover--after--BorderColor: #e0e0e0;
+  --pf-v6-c-form-control--m-expanded--after--BorderColor: #d4d4d4;
+  border-radius: 0.5rem;
+}
+
+.northstar-login__password-group.pf-v6-c-input-group {
+  --pf-v6-c-input-group--item--BorderWidth: 0;
+  --pf-v6-c-input-group__item--BorderColor--base: #e8e8e8;
+}
+
+.northstar-login__password-toggle.pf-v6-c-button.pf-m-control {
+  --pf-v6-c-button--m-control--BackgroundColor: #fafafa;
+  --pf-v6-c-button--m-control--BorderColor: #e8e8e8;
+  --pf-v6-c-button--m-control--Color: #1a1a1a;
+  --pf-v6-c-button--m-control__icon--Color: #1a1a1a;
+  --pf-v6-c-button--m-control--hover--BackgroundColor: #f0f0f0;
+  --pf-v6-c-button--m-control--hover--BorderColor: #e8e8e8;
+  --pf-v6-c-button--m-control--hover__icon--Color: #1a1a1a;
+  --pf-v6-c-button--m-control--m-clicked--BackgroundColor: #ebebeb;
+  --pf-v6-c-button--m-control--m-clicked--BorderColor: #e8e8e8;
+  --pf-v6-c-button--m-control--m-clicked__icon--Color: #1a1a1a;
+  --pf-v6-c-button--m-control--active--BackgroundColor: #e8e8e8;
+  height: 100%;
+  min-height: 2.25rem;
+  align-self: stretch;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.northstar-login__password-toggle.pf-v6-c-button.pf-m-control .pf-v6-c-button__icon,
+.northstar-login__password-toggle.pf-v6-c-button.pf-m-control .pf-v6-c-button__icon svg {
+  color: #1a1a1a;
+  fill: currentColor;
+}
+
+.northstar-login__form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-top: -0.25rem;
+}
+
+.northstar-login__card .pf-v6-c-check__input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  flex-shrink: 0;
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 0.1875rem;
+  cursor: pointer;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.northstar-login__card .pf-v6-c-check__input:checked {
+  background-color: #eb0000;
+  border-color: #c40000;
+}
+
+.northstar-login__card .pf-v6-c-check__input:checked::after {
+  content: '';
+  position: absolute;
+  left: 0.28rem;
+  top: 0.12rem;
+  width: 0.28rem;
+  height: 0.5rem;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  box-sizing: border-box;
+}
+
+.northstar-login__card .pf-v6-c-check__input:focus-visible {
+  outline: 2px solid #eb0000;
+  outline-offset: 2px;
+}
+
+.northstar-login__card .pf-v6-c-check__label {
+  color: #3d3d3d !important;
+  font-size: 0.875rem;
+}
+
+.northstar-login__forgot-link.pf-v6-c-button.pf-m-link {
+  color: #eb0000 !important;
+  padding: 0 !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.northstar-login__forgot-link.pf-v6-c-button.pf-m-link:hover {
+  color: #c40000 !important;
+}
+
+/* Login only — Northstar red primary (tenant shell keeps default PatternFly primary) */
+.northstar-login__submit.pf-v6-c-button.pf-m-primary {
+  margin-top: 0.5rem;
+  --pf-v6-c-button--m-primary--BackgroundColor: transparent;
+  --pf-v6-c-button--m-primary--Color: #fff;
+  background: linear-gradient(90deg, #d40000 0%, #eb0000 45%, #ff3d2e 100%) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 14px rgb(180 0 0 / 35%);
+}
+
+/* Hover: same white text and shadow; mirror gradient left ↔ right */
+.northstar-login__submit.pf-v6-c-button.pf-m-primary:hover {
+  --pf-v6-c-button--m-primary--Color: #fff;
+  color: #fff !important;
+  background: linear-gradient(270deg, #d40000 0%, #eb0000 45%, #ff3d2e 100%) !important;
+  box-shadow: 0 4px 14px rgb(180 0 0 / 35%);
+  filter: none;
+}
+
+.northstar-login__submit.pf-v6-c-button.pf-m-primary:active {
+  --pf-v6-c-button--m-primary--Color: #fff;
+  color: #fff !important;
+  background: linear-gradient(90deg, #d40000 0%, #eb0000 45%, #ff3d2e 100%) !important;
+  filter: brightness(0.96);
+}
+
+/* VM console demo — same shell as login, wider card + terminal */
+.northstar-console-demo__card.pf-v6-c-card {
+  max-width: min(36rem, 100%);
+}
+
+.northstar-console-demo__id {
+  font-size: 0.875em;
+  font-weight: 500;
+  color: var(--pf-t--global--text--color--subtle);
+  background: var(--pf-t--global--background--color--secondary--default);
+  padding: 0.15em 0.4em;
+  border-radius: var(--pf-t--global--border--radius--small);
+}
+
+.northstar-console-demo__terminal {
+  margin-top: var(--pf-t--global--spacer--md);
+  border-radius: 0.625rem;
+  background: linear-gradient(165deg, #14181c 0%, #1c2228 48%, #151a1f 100%);
+  color: #b8e8c0;
+  font-family: var(--pf-t--global--font--family--mono);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  padding: 1.125rem 1.25rem;
+  min-height: 11.5rem;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 6%),
+    inset 0 -2px 16px rgb(0 0 0 / 45%);
+  border: 1px solid rgb(0 0 0 / 35%);
+}
+
+.northstar-console-demo__terminal-line {
+  margin: 0 0 0.4rem;
+}
+
+.northstar-console-demo__terminal-line:last-child {
+  margin-bottom: 0;
+}
+
+.northstar-console-demo__terminal-line--prompt {
+  margin-bottom: 0.75rem;
+}
+
+.northstar-console-demo__terminal-user {
+  color: #7dd3fc;
+  font-weight: 600;
+}
+
+.northstar-console-demo__terminal-at {
+  color: rgb(255 255 255 / 45%);
+}
+
+.northstar-console-demo__terminal-path {
+  color: #c4b5fd;
+  font-weight: 500;
+}
+
+.northstar-console-demo__terminal-dollar {
+  color: #fef08a;
+}
+
+.northstar-console-demo__cursor {
+  color: #86efac;
+  animation: northstar-console-demo-blink 1.1s step-end infinite;
+}
+
+@keyframes northstar-console-demo-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.northstar-console-demo__terminal-line--muted {
+  color: rgb(184 232 192 / 55%);
+  font-size: 0.8125rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 62rem) {
+  .northstar-login__shell {
+    flex-direction: column;
+  }
+
+  .northstar-login__brand {
+    max-width: none;
+    min-height: 0;
+    padding-bottom: 1.5rem;
+  }
+
+  .northstar-login__panel {
+    flex: 1 1 auto;
+    padding-top: 0;
+  }
+}
+
+/* App shell: slight horizontal inset so nav hover/selected backgrounds sit off the text and edges */
+/* Masthead: global search left; flexible gap; utilities on the end */
+.northstar-masthead-content.pf-v6-c-masthead__content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--md);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.northstar-masthead-content__spacer {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.northstar-masthead-search {
+  flex: 1 1 28rem;
+  width: auto;
+  max-width: min(28rem, 100%);
+  min-width: 0;
+  margin-inline-start: calc(
+    var(--pf-t--global--spacer--4xl) + var(--pf-t--global--spacer--4xl) +
+      var(--pf-t--global--spacer--3xl) + var(--pf-t--global--spacer--3xl) +
+      var(--pf-t--global--spacer--2xl)
+  );
+}
+
+/* Shrink with viewport: no wrap (extra row height); override PF input min-width */
+.northstar-masthead-search .pf-v6-c-text-input-group {
+  width: 100%;
+  min-width: 0;
+  --pf-v6-c-text-input-group__text-input--MinWidth: 0;
+}
+
+.northstar-masthead-search .pf-v6-c-text-input-group__main {
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.northstar-masthead-search .pf-v6-c-text-input-group__main.pf-m-icon {
+  min-width: 0;
+}
+
+.northstar-masthead-search .pf-v6-c-text-input-group__text {
+  min-width: 0;
+}
+
+.northstar-masthead-utilities-toolbar.pf-v6-c-toolbar {
+  flex-shrink: 0;
+  width: max-content;
+  max-width: 100%;
+}
+
+/* Masthead logo slot — star + wordmark (matches login branding) */
+.pf-v6-c-masthead__main .pf-v6-c-masthead__logo.northstar-masthead-logo {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  max-width: min(100%, 22rem);
+  max-height: var(--pf-v6-c-masthead__logo--MaxHeight);
+  height: auto;
+}
+
+.pf-v6-c-masthead__main .pf-v6-c-masthead__logo.northstar-masthead-logo .pf-v6-c-masthead__brand {
+  display: flex;
+  align-items: center;
+  align-self: auto;
+  line-height: 0;
+  padding-block-end: 0;
+}
+
+.pf-v6-c-masthead__main .pf-v6-c-masthead__logo.northstar-masthead-logo > * {
+  max-height: var(--pf-v6-c-masthead__logo--MaxHeight);
+}
+
+.northstar-masthead-brand {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  max-height: var(--pf-v6-c-masthead__logo--MaxHeight, 2.375rem);
+}
+
+.northstar-masthead-brand__mark {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.northstar-masthead-brand__ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid #eb0000;
+  box-sizing: border-box;
+  color: #eb0000;
+}
+
+.northstar-masthead-brand__star {
+  width: 55%;
+  height: 55%;
+  display: block;
+}
+
+.northstar-masthead-brand__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1;
+  gap: 0.1rem;
+}
+
+.northstar-masthead-brand__line1 {
+  font-size: 0.5625rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--pf-t--global--text--color--regular);
+  opacity: 0.92;
+}
+
+.northstar-masthead-brand__line2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.osac-app-shell-nav.pf-v6-c-nav {
+  --pf-v6-c-nav--PaddingInlineStart: var(--pf-t--global--spacer--xs);
+  --pf-v6-c-nav--PaddingInlineEnd: var(--pf-t--global--spacer--xs);
+  --pf-v6-c-nav__link--PaddingInlineStart: calc(
+    var(--pf-t--global--spacer--md) + var(--pf-t--global--spacer--xs)
+  );
+  --pf-v6-c-nav__link--PaddingInlineEnd: calc(
+    var(--pf-t--global--spacer--md) + var(--pf-t--global--spacer--xs)
+  );
+  --pf-v6-c-nav__toggle--PaddingInlineStart: calc(
+    var(--pf-t--global--spacer--sm) + var(--pf-t--global--spacer--xs)
+  );
+  --pf-v6-c-nav__toggle--PaddingInlineEnd: calc(
+    var(--pf-t--global--spacer--sm) + var(--pf-t--global--spacer--xs)
+  );
+}
+
+/* Non-catalog main: stretch to full content width */
+/* Networking · Topology (VM as a Service demo) — full-height canvas, no inner scroll */
+.osac-page-main-section--topology.pf-v6-c-page__main-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.osac-non-catalog-main--topology {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.osac-network-topology {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.osac-network-topology__intro {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.osac-network-topology__canvas {
+  border-radius: var(--pf-t--global--border--radius--medium);
+  border: 1px solid var(--pf-t--global--border--color--default);
+  background-color: color-mix(
+    in srgb,
+    var(--pf-t--global--background--color--primary--default) 92%,
+    var(--pf-t--global--background--color--secondary--default)
+  );
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Air-gapped topology diagram (reference layout) */
+.osac-topology-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--pf-t--global--spacer--sm);
+  padding: var(--pf-t--global--spacer--md);
+  max-width: 72rem;
+  margin-inline: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Alert: use PatternFly 6 inline + warning tokens only (no isPlain / custom overrides) */
+.osac-topology-diagram__banner.pf-v6-c-alert {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.osac-topology-diagram__isolation {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+  margin-block: var(--pf-t--global--spacer--xs);
+}
+
+.osac-topology-diagram__isolation-line {
+  flex: 1 1 auto;
+  height: 0;
+  border-block-start: 2px dashed var(--pf-t--global--palette--red--200);
+}
+
+.osac-topology-diagram__isolation-label.pf-v6-c-label {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.osac-topology-diagram__tier {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.osac-topology-diagram__tier--management .osac-topology-diagram__vnet-card {
+  width: min(100%, 26rem);
+}
+
+.osac-topology-diagram__tier--firewall .osac-topology-diagram__firewall-card {
+  width: min(100%, 22rem);
+}
+
+.osac-topology-diagram__connector {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 0.75rem;
+}
+
+.osac-topology-diagram__connector--tall {
+  height: 1.25rem;
+}
+
+.osac-topology-diagram__connector-line {
+  width: 2px;
+  height: 100%;
+  background-color: color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 85%,
+    var(--pf-t--global--text--color--subtle)
+  );
+}
+
+.osac-topology-diagram__fan {
+  display: block;
+  width: min(100%, 48rem);
+  height: 2rem;
+  margin-inline: auto;
+  color: color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 80%,
+    var(--pf-t--global--text--color--subtle)
+  );
+}
+
+.osac-topology-diagram__fan-stroke {
+  stroke: currentColor;
+}
+
+.osac-topology-diagram__resource-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+  align-items: stretch;
+  min-width: 0;
+}
+
+@media (max-width: 992px) {
+  .osac-topology-diagram__resource-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.osac-topology-diagram__resource-cell {
+  min-width: 0;
+}
+
+.osac-topology-diagram__vnet-card.pf-v6-c-card {
+  height: 100%;
+  border-width: 2px;
+  border-style: solid;
+  background: var(--pf-t--global--background--color--secondary--default);
+}
+
+.osac-topology-diagram__vnet-card--management {
+  border-color: var(--pf-t--global--palette--green--300);
+}
+
+.osac-topology-diagram__vnet-card--production {
+  border-color: var(--pf-t--global--palette--blue--300);
+}
+
+.osac-topology-diagram__vnet-card--development {
+  border-color: #a855f7;
+}
+
+.osac-topology-diagram__vnet-card--database {
+  border-color: #ec4899;
+}
+
+.osac-topology-diagram__vnet-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.osac-topology-diagram__vnet-title-icon {
+  flex-shrink: 0;
+  margin-block-start: 0.125rem;
+  color: var(--pf-t--global--icon--color--regular);
+}
+
+.osac-topology-diagram__vnet-name {
+  font-weight: var(--pf-t--global--font--weight--heading--bold);
+  font-size: var(--pf-t--global--font--size--body--lg);
+}
+
+.osac-topology-diagram__vnet-label.pf-v6-c-label {
+  margin-inline-start: var(--pf-t--global--spacer--xs);
+  vertical-align: middle;
+}
+
+.osac-topology-diagram__vnet-body.pf-v6-c-card__body {
+  padding-top: var(--pf-t--global--spacer--xs);
+}
+
+.osac-topology-diagram__vnet-body .pf-v6-c-data-list {
+  border-block-start: none;
+}
+
+.osac-topology-diagram__data-list-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.osac-topology-diagram__diagram-caption {
+  font-weight: var(--pf-t--global--font--weight--body--default);
+}
+
+.osac-topology-diagram__vm-unlinked {
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+}
+
+.osac-topology-diagram__firewall-card.pf-v6-c-card {
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--pf-t--global--palette--gold--400);
+  background: color-mix(
+    in srgb,
+    var(--pf-t--global--palette--gold--400) 8%,
+    var(--pf-t--global--background--color--secondary--default)
+  );
+}
+
+.osac-topology-diagram__firewall-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.osac-topology-diagram__firewall-icon {
+  color: var(--pf-t--global--palette--gold--400);
+}
+
+/* Inventory topology graph (VMs ↔ virtual networks ↔ firewall) */
+.osac-topology-graph {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 28rem;
+  box-sizing: border-box;
+  padding: var(--pf-t--global--spacer--md);
+}
+
+.osac-topology-graph__svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  pointer-events: none;
+  color: color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 70%,
+    var(--pf-t--global--palette--blue--300)
+  );
+}
+
+.osac-topology-graph__edge {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.85;
+}
+
+.osac-topology-graph__body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.osac-topology-graph__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.osac-topology-graph__vnet-host {
+  flex: 0 1 17.5rem;
+  min-width: min(100%, 15rem);
+  max-width: 20rem;
+}
+
+.osac-topology-graph__vnet-dashed {
+  border: 2px dashed color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 55%,
+    var(--pf-t--global--palette--blue--300)
+  );
+  border-radius: var(--pf-t--global--border--radius--large);
+  padding: var(--pf-t--global--spacer--sm);
+  background-color: color-mix(
+    in srgb,
+    var(--pf-t--global--background--color--primary--default) 94%,
+    var(--pf-t--global--background--color--secondary--default)
+  );
+  box-sizing: border-box;
+}
+
+.osac-topology-graph__vnet-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--xs);
+  min-width: 0;
+}
+
+.osac-topology-graph__vnet-net-icon {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--pf-t--global--palette--blue--400);
+}
+
+.osac-topology-graph__vnet-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: var(--pf-t--global--font--weight--heading--bold);
+  font-size: var(--pf-t--global--font--size--body--default);
+}
+
+.osac-topology-graph__type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--pf-t--global--border--radius--small);
+  font-size: 0.625rem;
+  font-weight: var(--pf-t--global--font--weight--heading--bold);
+  line-height: 1;
+  background-color: var(--pf-t--global--palette--blue--400);
+  color: var(--pf-t--global--text--color--inverse);
+}
+
+.osac-topology-graph__type-badge--firewall {
+  background-color: var(--pf-t--global--palette--gold--400);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.osac-topology-graph__vnet-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--xs);
+  margin-top: var(--pf-t--global--spacer--xs);
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.osac-topology-graph__vnet-cidr {
+  font-family: var(--pf-t--global--font--family--mono);
+}
+
+.osac-topology-graph__vm-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--sm);
+}
+
+.osac-topology-graph__vm-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--xs);
+  text-align: center;
+}
+
+.osac-topology-graph__vm-orbit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  border: 2px solid var(--pf-t--global--border--color--default);
+  box-sizing: border-box;
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+
+.osac-topology-graph__vm-orbit--running {
+  border-color: var(--pf-t--global--color--status--success--default);
+}
+
+.osac-topology-graph__vm-orbit--paused {
+  border-color: var(--pf-t--global--color--status--warning--default);
+}
+
+.osac-topology-graph__vm-orbit--stopped {
+  border-color: var(--pf-t--global--border--color--default);
+}
+
+.osac-topology-graph__vm-orbit-icon {
+  width: 55%;
+  height: 55%;
+}
+
+/* Tux reads larger at 55%; scale PF single-path marks up to match visual weight */
+.osac-topology-graph__vm-orbit-icon-wrap--redhat .osac-topology-graph__vm-orbit-icon,
+.osac-topology-graph__vm-orbit-icon-wrap--windows .osac-topology-graph__vm-orbit-icon {
+  width: 92%;
+  height: 92%;
+}
+
+.osac-topology-graph__vm-orbit-icon-wrap--redhat .osac-topology-graph__vm-orbit-icon {
+  color: #ee0000;
+}
+
+.osac-topology-graph__vm-orbit-icon-wrap--windows .osac-topology-graph__vm-orbit-icon {
+  color: #0078d4;
+}
+
+.osac-topology-graph__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--xs);
+  max-width: 100%;
+  padding: 0.125rem 0.25rem 0.125rem 0.125rem;
+  border-radius: 999px;
+  border: 1px solid var(--pf-t--global--border--color--default);
+  background-color: color-mix(
+    in srgb,
+    var(--pf-t--global--background--color--primary--default) 88%,
+    var(--pf-t--global--background--color--secondary--default)
+  );
+  box-sizing: border-box;
+}
+
+.osac-topology-graph__pill--fw {
+  padding-inline-end: 0.125rem;
+}
+
+.osac-topology-graph__pill-name.pf-v6-c-button.pf-m-link {
+  min-width: 0;
+  text-align: start;
+}
+
+.osac-topology-graph__ip-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pf-t--global--spacer--xs);
+  max-width: 100%;
+}
+
+.osac-topology-graph__ip-addr {
+  font-family: var(--pf-t--global--font--family--mono);
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.osac-topology-graph__vm-more {
+  margin: 0 !important;
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+  text-align: center;
+}
+
+.osac-topology-graph__firewall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  gap: var(--pf-t--global--spacer--xs);
+  max-width: 22rem;
+  text-align: center;
+}
+
+.osac-topology-graph__firewall-orbit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--pf-t--global--palette--gold--400);
+  box-sizing: border-box;
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+
+.osac-topology-graph__firewall-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--pf-t--global--palette--gold--400);
+}
+
+.osac-topology-graph__fw-title {
+  font-weight: var(--pf-t--global--font--weight--heading--bold);
+  font-size: var(--pf-t--global--font--size--body--default);
+}
+
+.osac-topology-graph__fw-rules {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  text-align: start;
+  align-self: stretch;
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+  line-height: 1.45;
+}
+
+@media (max-width: 992px) {
+  .osac-create-vm-launch-modal__option-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Create VM modal + wizard: prevent horizontal scroll; tall enough to avoid modal vertical scroll on typical viewports */
+.osac-create-vm-launch-modal.pf-v6-c-modal-box {
+  --pf-v6-c-modal-box--MaxHeight: min(92dvh, 50rem);
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+@media (max-height: 36rem) {
+  .osac-create-vm-launch-modal.pf-v6-c-modal-box {
+    overflow-y: auto;
+  }
+}
+
+.osac-create-vm-launch-modal .osac-create-vm-modal-wizard.pf-v6-c-wizard {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.osac-create-vm-launch-modal .pf-v6-c-wizard__outer-wrap {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.osac-create-vm-launch-modal .pf-v6-c-wizard__inner-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.osac-create-vm-launch-modal .pf-v6-c-wizard__main {
+  min-width: 0;
+}
+
+.osac-create-vm-launch-modal .pf-v6-c-wizard__main-body {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Templates step: filter control uses regular (body) weight for toggle + menu */
+.osac-create-vm-wizard-template-filter-toggle.pf-v6-c-menu-toggle {
+  --pf-v6-c-menu-toggle--FontWeight: var(--pf-t--global--font--weight--body--default);
+}
+
+.osac-create-vm-wizard-template-filter-menu .pf-v6-c-menu__item-text {
+  font-weight: var(--pf-t--global--font--weight--body--default);
+}
+
+.osac-create-vm-wizard-template-filter-menu
+  .pf-v6-c-menu__item.pf-m-selected
+  .pf-v6-c-menu__item-text {
+  font-weight: var(--pf-t--global--font--weight--body--default);
+}
+
+.osac-non-catalog-main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Placeholder shell routes (e.g. Storage, Settings): height follows content, not viewport */
+.osac-non-catalog-main--sparse {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  min-height: 0;
+}
+
+/* Dashboard VM stats: one row, equal columns, full content width */
+.osac-dashboard-vm-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--lg);
+  width: 100%;
+  min-width: 0;
+  align-self: stretch;
+}
+
+@media (max-width: 64rem) {
+  .osac-dashboard-vm-stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  }
+}
+
+.osac-dashboard-vm-stat-card.pf-v6-c-card {
+  min-width: 0;
+  height: 100%;
+}
+
+/* Dashboard: VM utilization line charts under stat cards */
+.osac-dashboard-utilization-section {
+  margin-top: var(--pf-t--global--spacer--lg);
+  width: 100%;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.osac-dashboard-utilization-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  gap: var(--pf-t--global--spacer--lg);
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 75rem) {
+  .osac-dashboard-utilization-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.osac-dashboard-utilization-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.osac-dashboard-utilization-charts-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.osac-dashboard-utilization-sidebar {
+  min-width: 0;
+  position: sticky;
+  top: var(--pf-t--global--spacer--lg);
+}
+
+@media (max-width: 75rem) {
+  .osac-dashboard-utilization-sidebar {
+    position: static;
+  }
+}
+
+.osac-dashboard-recent-activity-card.pf-v6-c-card {
+  min-width: 0;
+}
+
+.osac-dashboard-recent-activity-body {
+  padding-top: 0;
+}
+
+.osac-dashboard-recent-activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.osac-dashboard-recent-activity-item {
+  margin: 0;
+  padding: var(--pf-t--global--spacer--md) 0;
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.osac-dashboard-recent-activity-item:last-child {
+  border-bottom: none;
+}
+
+.osac-dashboard-recent-activity-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.osac-dashboard-recent-activity-item__status.pf-v6-c-label {
+  flex-shrink: 0;
+}
+
+.osac-dashboard-recent-activity-item__time {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+/* Full-page recent activities (masthead bell + dashboard card) */
+.recent-activities-full {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+  width: 100%;
+  max-width: 64rem;
+  min-width: 0;
+}
+
+.recent-activities-full__intro {
+  min-width: 0;
+}
+
+.recent-activities-full__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.recent-activities-full__card.pf-v6-c-card {
+  border: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.recent-activities-full__card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.recent-activities-full__relative-time {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.recent-activities-full__dl.pf-v6-c-description-list {
+  --pf-v6-c-description-list--RowGap: var(--pf-t--global--spacer--sm);
+}
+
+.recent-activities-full__resource-line {
+  display: block;
+  word-break: break-word;
+}
+
+.recent-activities-full__resource-type {
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+.recent-activities-full__resource-type::after {
+  content: ' · ';
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.recent-activities-full__resource-name {
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+}
+
+.recent-activities-full__event-id {
+  font-family: var(--pf-t--global--font--family--mono);
+  font-size: 0.875em;
+}
+
+.osac-dashboard-utilization-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 64rem) {
+  .osac-dashboard-utilization-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.osac-dashboard-utilization-period-toggle.pf-v6-c-menu-toggle {
+  min-width: 12rem;
+  --pf-v6-c-menu-toggle--BorderWidth: 0;
+  --pf-v6-c-menu-toggle--BackgroundColor: var(
+    --pf-t--global--background--color--control--read-only
+  );
+  --pf-v6-c-menu-toggle--hover--BorderWidth: 0;
+  --pf-v6-c-menu-toggle--expanded--BorderWidth: 0;
+  --pf-v6-c-menu-toggle--hover--BackgroundColor: color-mix(
+    in srgb,
+    var(--pf-t--global--background--color--control--read-only) 82%,
+    var(--pf-t--global--background--color--primary--default) 18%
+  );
+  --pf-v6-c-menu-toggle--expanded--BackgroundColor: var(
+    --pf-v6-c-menu-toggle--hover--BackgroundColor
+  );
+  border-radius: var(--pf-t--global--border--radius--medium);
+}
+
+.osac-dashboard-utilization-period-toggle.pf-v6-c-menu-toggle::before {
+  border: 0;
+  content: none;
+}
+
+.osac-dashboard-utilization-card.pf-v6-c-card {
+  min-width: 0;
+}
+
+.osac-dashboard-utilization-chart {
+  width: 100%;
+  min-height: 13.75rem;
+}
+
+/*
+ * Light theme charts: axis labels were staying white (Recharts + inherited currentColor / PF).
+ * html[data-osac-theme] is set in App useLayoutEffect together with pf-v6-theme-dark.
+ */
+html[data-osac-theme='light'] .osac-dashboard-utilization-chart {
+  color: #383838;
+}
+
+html[data-osac-theme='light'] .osac-dashboard-utilization-chart .recharts-cartesian-axis-tick-value,
+html[data-osac-theme='light'] .osac-dashboard-utilization-chart .recharts-text,
+html[data-osac-theme='light'] .osac-dashboard-utilization-chart text,
+html[data-osac-theme='light'] .osac-dashboard-utilization-chart tspan {
+  fill: #383838 !important;
+}
+
+html[data-osac-theme='light'] .osac-dashboard-utilization-chart .recharts-cartesian-axis-line {
+  stroke: #a3a3a3 !important;
+}
+
+html[data-osac-theme='light'] .osac-dashboard-utilization-chart .recharts-cartesian-grid line {
+  stroke: #d2d2d2 !important;
+}
+
+/* Quota donut: second sector = remaining quota (Cell order: used, then available). */
+html[data-osac-theme='light']
+  .osac-dashboard-quota-donut__chart
+  g.recharts-layer.recharts-pie-sector:nth-of-type(2)
+  path {
+  fill: #c7c7c7 !important;
+}
+
+/* Dashboard: VM resource quota donuts */
+.osac-dashboard-quota-section {
+  margin-top: var(--pf-t--global--spacer--xl);
+  width: 100%;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.osac-dashboard-quota-intro {
+  min-width: 0;
+}
+
+.osac-dashboard-quota-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 64rem) {
+  .osac-dashboard-quota-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 36rem) {
+  .osac-dashboard-quota-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.osac-dashboard-quota-card.pf-v6-c-card {
+  min-width: 0;
+}
+
+.osac-dashboard-quota-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: var(--pf-t--global--spacer--sm);
+}
+
+.osac-dashboard-quota-donut {
+  position: relative;
+  width: 100%;
+  max-width: 14rem;
+  aspect-ratio: 1;
+  margin-inline: auto;
+}
+
+.osac-dashboard-quota-donut__chart {
+  position: absolute;
+  inset: 0;
+}
+
+.osac-dashboard-quota-donut__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+  padding: 22%;
+}
+
+.osac-dashboard-quota-donut__fraction {
+  font-size: var(--pf-t--global--font--size--heading--xs);
+  font-weight: var(--pf-t--global--font--weight--heading--bold);
+  line-height: var(--pf-t--global--font--line-height--heading);
+  color: var(--pf-t--global--text--color--regular);
+  letter-spacing: -0.02em;
+}
+
+.osac-dashboard-quota-donut__sep {
+  font-weight: var(--pf-t--global--font--weight--body--default);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.osac-dashboard-quota-donut__used--over {
+  color: var(--pf-t--global--color--status--danger--default);
+}
+
+.osac-dashboard-quota-donut__unit {
+  margin-top: var(--pf-t--global--spacer--xs);
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+/* Main canvas: tiny extra horizontal padding for all role shells */
+.osac-page-main-section.pf-v6-c-page__main-section {
+  --pf-v6-c-page__main-section--PaddingInlineStart: calc(
+    var(--pf-t--global--spacer--lg) + var(--pf-t--global--spacer--xs)
+  );
+  --pf-v6-c-page__main-section--PaddingInlineEnd: calc(
+    var(--pf-t--global--spacer--lg) + var(--pf-t--global--spacer--xs)
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/*
+ * Sticky page chrome: PF main-body block-start padding scrolls away while sticky bars stay
+ * at top:0. Move that inset into the local heading/toolbar instead (Dashboard, Templates,
+ * Virtual machines).
+ */
+.osac-page-main-section.pf-v6-c-page__main-section:has(.osac-page-toolbar-sticky),
+.osac-page-main-section.pf-v6-c-page__main-section:has(.tenant-vm-page-root) {
+  --pf-v6-c-page__main-section--PaddingBlockStart: 0;
+}
+
+/* Create VM (scratch): edge-to-edge chrome under breadcrumb + wizard header divider */
+.osac-page-main-section--create-vm-flush.pf-v6-c-page__main-section {
+  --pf-v6-c-page__main-section--PaddingInlineStart: 0;
+  --pf-v6-c-page__main-section--PaddingInlineEnd: 0;
+}
+
+/*
+ * Create VM wizard: same content-height behavior as sparse shell pages. PF stretches
+ * .pf-v6-c-page__main-container when it :has(.main-wizard); counter that.
+ */
+.osac-page--create-vm-wizard .pf-v6-c-page__main-container {
+  align-self: start;
+  max-height: none;
+}
+
+.osac-page--create-vm-wizard .pf-v6-c-page__main-breadcrumb {
+  --pf-v6-c-page__main-breadcrumb--PaddingInlineStart: 0;
+  --pf-v6-c-page__main-breadcrumb--PaddingInlineEnd: 0;
+}
+
+.osac-page--create-vm-wizard
+  .pf-v6-c-page__main-breadcrumb
+  > .pf-v6-c-page__main-body {
+  padding-inline: var(--pf-t--global--spacer--lg);
+}
+
+/* Page-style wizard header: primary surface, obvious full-width divider under title */
+.osac-create-vm-from-scratch-wizard .pf-v6-c-wizard__header.osac-create-vm-from-scratch-wizard__header {
+  flex-shrink: 0;
+  --pf-v6-c-wizard__header--BackgroundColor: var(
+    --pf-t--global--background--color--primary--default
+  );
+  --pf-v6-c-wizard__header--PaddingInlineStart: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-wizard__header--PaddingInlineEnd: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-wizard__header--BorderBlockEndWidth: var(
+    --pf-t--global--border--width--regular
+  );
+  --pf-v6-c-wizard__header--BorderBlockEndColor: var(
+    --pf-t--global--border--color--default
+  );
+}
+
+.osac-create-vm-from-scratch-wizard .pf-v6-c-wizard__title {
+  --pf-v6-c-wizard__title--PaddingInlineEnd: 0;
+}
+
+/* Match <Title size="2xl"> used on dashboard / VM list / catalog (PF maps 2xl → heading--lg) */
+.osac-create-vm-from-scratch-wizard .pf-v6-c-wizard__title-text {
+  margin: 0;
+  font-family: var(--pf-t--global--font--family--heading);
+  font-size: var(--pf-t--global--font--size--heading--lg);
+  line-height: var(--pf-t--global--font--line-height--heading);
+  font-weight: var(--pf-t--global--font--weight--heading--default);
+}
+
+.osac-create-vm-from-scratch-wizard .pf-v6-c-wizard__description {
+  display: block;
+  margin: 0;
+}
+
+.osac-create-vm-wizard-section .osac-create-vm-from-scratch-wizard.pf-v6-c-wizard {
+  width: 100%;
+}
+
+.osac-create-vm-from-scratch-wizard
+  .pf-v6-c-wizard__footer.osac-create-vm-from-scratch-wizard__footer {
+  align-self: stretch;
+  width: 100%;
+  box-sizing: border-box;
+  --pf-v6-c-wizard__footer--BorderBlockStartWidth: var(
+    --pf-t--global--border--width--regular
+  );
+  --pf-v6-c-wizard__footer--BorderBlockStartColor: var(
+    --pf-t--global--border--color--default
+  );
+}
+
+/* Full-width divider; Back / Next / Cancel line up with main (desktop nav rail) */
+@media screen and (min-width: 62rem) {
+  .osac-create-vm-from-scratch-wizard
+    .pf-v6-c-wizard__footer.osac-create-vm-from-scratch-wizard__footer {
+    margin-inline-start: calc(
+      -1 * var(--pf-v6-c-wizard__outer-wrap--lg--PaddingInlineStart)
+    );
+    width: calc(
+      100% + var(--pf-v6-c-wizard__outer-wrap--lg--PaddingInlineStart)
+    );
+    --pf-v6-c-wizard__footer--PaddingInlineStart: calc(
+      var(--pf-v6-c-wizard__outer-wrap--lg--PaddingInlineStart) +
+        var(--pf-t--global--spacer--lg)
+    );
+  }
+}
+
+/* Single left-aligned row: Back, Next, then Cancel (not split to the far right) */
+.osac-create-vm-from-scratch-wizard__footer .pf-v6-c-action-list {
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.osac-create-vm-from-scratch-wizard__footer
+  .pf-v6-c-action-list__group
+  + .pf-v6-c-action-list__group {
+  margin-inline-start: var(--pf-t--global--spacer--md);
+}
+
+/* Softer page dividers: blend borders toward surfaces so chrome is less loud */
+.pf-v6-c-page {
+  --pf-v6-c-page__sidebar--BorderInlineEndWidth: var(
+    --pf-t--global--border--width--regular
+  );
+  --pf-v6-c-page__sidebar--BorderInlineEndColor: color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 42%,
+    var(--pf-t--global--background--color--secondary--default)
+  );
+  --pf-v6-c-page__sidebar--BoxShadow: none;
+  --pf-v6-c-page__main-container--BorderColor: color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 38%,
+    var(--pf-t--global--background--color--primary--default)
+  );
+}
+
+.pf-v6-c-sidebar {
+  --pf-v6-c-sidebar--BorderColor--base: color-mix(
+    in srgb,
+    var(--pf-t--global--border--color--default) 42%,
+    var(--pf-t--global--background--color--primary--default)
+  );
+}
+
+/* Virtual machines page: filters + grid/table toggle (toggle stays end-aligned). */
+.tenant-vm-page-filters__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+  width: 100%;
+}
+
+.tenant-vm-page-filters__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-page-filters__dropdown {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.tenant-vm-page-filters__search-wrap {
+  flex: 1 1 11rem;
+  min-width: 0;
+  max-width: 21rem;
+}
+
+.tenant-vm-page-filters__view-toggle {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
+
+.tenant-vm-page-filters__toggle-group.pf-v6-c-toggle-group {
+  flex-shrink: 0;
+}
+
+.tenant-vm-page-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Table view: one line per row; PF truncate + tableText ellipsis on long values. */
+.tenant-vm-page-table-wrap .pf-v6-c-table.pf-m-truncate tbody > tr > td {
+  overflow-wrap: normal;
+  word-break: normal;
+  vertical-align: middle;
+}
+
+/* Name: balanced width; ellipsis for long hostnames (single line). */
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__th--name,
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--name {
+  --pf-v6-c-table--cell--MinWidth: min(8rem, 18vw);
+  --pf-v6-c-table--cell--MaxWidth: min(12.5rem, 24vw);
+  --pf-v6-c-table--cell--Width: 1%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+/* Status: compact label column */
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__th--status,
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--status {
+  --pf-v6-c-table--cell--MinWidth: 5.25rem;
+  --pf-v6-c-table--cell--MaxWidth: 7rem;
+  --pf-v6-c-table--cell--Width: 1%;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--status .pf-v6-c-label {
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/*
+ * OS: capped width so “Red Hat Enterprise Linux” ellipsizes — frees space for workspace / metrics.
+ * (Was width:auto + 28rem max, which let this column absorb most of the table.)
+ */
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__th--os,
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--os {
+  --pf-v6-c-table--cell--MinWidth: 8.5rem;
+  --pf-v6-c-table--cell--MaxWidth: 13.5rem;
+  --pf-v6-c-table--cell--Width: 1%;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--os .tenant-vm-table__os-cell {
+  min-width: 0;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__th--workspace,
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--workspace {
+  --pf-v6-c-table--cell--MinWidth: 8.5rem;
+  --pf-v6-c-table--cell--MaxWidth: 14rem;
+  --pf-v6-c-table--cell--Width: 1%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__th--metric,
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--metric {
+  --pf-v6-c-table--cell--MinWidth: 4.5rem;
+  --pf-v6-c-table--cell--MaxWidth: 7.75rem;
+  --pf-v6-c-table--cell--Width: 1%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__th--storage,
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--storage {
+  --pf-v6-c-table--cell--MinWidth: 5.25rem;
+  --pf-v6-c-table--cell--MaxWidth: 9.5rem;
+  --pf-v6-c-table--cell--Width: 1%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__th--created,
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--created {
+  --pf-v6-c-table--cell--MinWidth: 8.25rem;
+  --pf-v6-c-table--cell--MaxWidth: 11.5rem;
+  --pf-v6-c-table--cell--Width: 1%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table__name-link.pf-v6-c-button.pf-m-link {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: start;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table__os-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--xs);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tenant-vm-page-table-wrap .tenant-vm-table__os-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1200px) {
+  .tenant-vm-page-filters__controls {
+    flex: 1 1 100%;
+  }
+
+  .tenant-vm-page-filters__search-wrap {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .tenant-vm-page-filters__view-toggle {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-inline-start: 0;
+  }
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-page-filters__search.pf-v6-c-text-input-group {
+  --pf-v6-c-text-input-group--BorderWidth: 0;
+  --pf-v6-c-text-input-group--m-hover--BorderWidth: 0;
+  --pf-v6-c-text-input-group--BackgroundColor: var(
+    --pf-t--global--background--color--control--read-only
+  );
+  --pf-v6-c-text-input-group__text-input--PaddingBlockStart: var(
+    --pf-t--global--spacer--control--vertical--default
+  );
+  --pf-v6-c-text-input-group__text-input--PaddingBlockEnd: var(
+    --pf-t--global--spacer--control--vertical--default
+  );
+  --pf-v6-c-text-input-group__text-input--PaddingInlineStart: var(
+    --pf-t--global--spacer--control--horizontal--default
+  );
+  --pf-v6-c-text-input-group__text-input--PaddingInlineEnd: var(
+    --pf-t--global--spacer--control--horizontal--default
+  );
+  --pf-v6-c-text-input-group__FontSize: var(--pf-t--global--font--size--body--default);
+  --pf-v6-c-text-input-group__LineHeight: var(--pf-t--global--font--line-height--body);
+  border-radius: var(--pf-t--global--border--radius--medium);
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-page-filters__search.pf-v6-c-text-input-group::before {
+  border: 0;
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-page-filters__search .pf-v6-c-text-input-group__icon {
+  --pf-v6-c-text-input-group__icon--FontSize: var(
+    --pf-t--global--icon--size--font--body--default
+  );
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-filter-dropdown.pf-v6-c-menu-toggle {
+  --pf-v6-c-menu-toggle--BorderWidth: 0;
+  --pf-v6-c-menu-toggle--BackgroundColor: var(
+    --pf-t--global--background--color--control--read-only
+  );
+  --pf-v6-c-menu-toggle--hover--BorderWidth: 0;
+  --pf-v6-c-menu-toggle--expanded--BorderWidth: 0;
+  --pf-v6-c-menu-toggle--hover--BackgroundColor: color-mix(
+    in srgb,
+    var(--pf-t--global--background--color--control--read-only) 82%,
+    var(--pf-t--global--background--color--primary--default) 18%
+  );
+  --pf-v6-c-menu-toggle--expanded--BackgroundColor: var(
+    --pf-v6-c-menu-toggle--hover--BackgroundColor
+  );
+  --pf-v6-c-menu-toggle--FontSize: var(--pf-t--global--font--size--body--default);
+  --pf-v6-c-menu-toggle--LineHeight: var(--pf-t--global--font--line-height--body);
+  --pf-v6-c-menu-toggle--PaddingBlockStart: var(
+    --pf-t--global--spacer--control--vertical--default
+  );
+  --pf-v6-c-menu-toggle--PaddingBlockEnd: var(
+    --pf-t--global--spacer--control--vertical--default
+  );
+  --pf-v6-c-menu-toggle--PaddingInlineStart: var(
+    --pf-t--global--spacer--control--horizontal--default
+  );
+  --pf-v6-c-menu-toggle--PaddingInlineEnd: var(
+    --pf-t--global--spacer--control--horizontal--default
+  );
+  border-radius: var(--pf-t--global--border--radius--medium);
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-filter-dropdown--power.pf-v6-c-menu-toggle {
+  width: 9rem;
+  min-width: 9rem;
+  max-width: 10.25rem;
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-filter-dropdown--os.pf-v6-c-menu-toggle {
+  width: 12.25rem;
+  min-width: 12.25rem;
+  max-width: 14rem;
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-filter-dropdown--created.pf-v6-c-menu-toggle {
+  width: 10.5rem;
+  min-width: 10.5rem;
+  max-width: 11.75rem;
+}
+
+.tenant-vm-page-filters__toolbar .tenant-vm-filter-dropdown.pf-v6-c-menu-toggle::before {
+  border: 0;
+  content: none;
+}
+
+/* Power filter: persist read-only toggle “hover” fill when filter was set from dashboard (Running / Paused / Stopped cards). */
+.tenant-vm-page-filters__toolbar
+  .tenant-vm-filter-dropdown--power.tenant-vm-power-filter--dashboard-hint.pf-v6-c-menu-toggle {
+  --pf-v6-c-menu-toggle--BackgroundColor: color-mix(
+    in srgb,
+    var(--pf-t--global--background--color--control--read-only) 82%,
+    var(--pf-t--global--background--color--primary--default) 18%
+  );
+}
+
+/* VM templates catalog: right drawer detail over catalog + sidebar gallery */
+.tenant-vm-templates-catalog-root {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.tenant-vm-templates-drawer-host {
+  position: relative;
+  /* Size to catalog content so scroll stays on the Page main body (Dashboard-style sticky title). */
+  flex: 0 0 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Drawer detail panel above catalog content */
+.tenant-vm-templates-drawer.pf-v6-c-drawer {
+  flex: 0 0 auto;
+  min-width: 0;
+  --pf-v6-c-drawer__panel--ZIndex: 200;
+}
+
+/*
+ * PatternFly Drawer uses overflow:auto on __content and overflow:hidden on __main, which
+ * traps scroll inside the catalog pane. The page title lives outside __content, so it scrolls
+ * away and the sidebar shows a false “gap”. Use the same scrollport as the rest of the page.
+ */
+.tenant-vm-templates-drawer.pf-v6-c-drawer > .pf-v6-c-drawer__main {
+  overflow: visible;
+}
+
+.tenant-vm-templates-drawer.pf-v6-c-drawer > .pf-v6-c-drawer__main > .pf-v6-c-drawer__content {
+  overflow: visible;
+}
+
+.tenant-vm-templates-drawer__main {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.tenant-vm-templates-drawer__main .catalog-vm-templates-sidebar.pf-v6-c-sidebar {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/*
+ * Template drawer: ~48rem fits seven tab labels without PF scroll arrows on typical
+ * desktop; narrower than full 56rem to trim empty space past the single-column body.
+ */
+.tenant-vm-template-drawer-panel.pf-v6-c-drawer__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(100dvh, 100vh);
+  min-height: 0;
+  max-width: min(48rem, 100%);
+  /* Rounded “window” on the edge toward the page (inline start when panel is position end) */
+  border-start-start-radius: var(--pf-t--global--border--radius--large);
+  border-end-start-radius: var(--pf-t--global--border--radius--large);
+  overflow: hidden;
+  --pf-v6-c-drawer__panel--RowGap: 0;
+  --pf-v6-c-drawer__panel--PaddingBlockEnd: 0;
+}
+
+/* PF default flex: 1 1 stretches the body to fill the panel — leaves empty band under actions */
+.tenant-vm-template-drawer-panel.pf-v6-c-drawer__panel > .tenant-vm-template-drawer-body.pf-v6-c-drawer__body:last-child {
+  flex: 0 1 auto;
+}
+
+.tenant-vm-template-drawer-head.pf-v6-c-drawer__head {
+  --pf-v6-c-drawer__head--PaddingBlockStart: var(--pf-t--global--spacer--lg);
+  --pf-v6-c-drawer__head--PaddingBlockEnd: var(--pf-t--global--spacer--md);
+  --pf-v6-c-drawer__head--PaddingInlineStart: var(--pf-t--global--spacer--xl);
+  --pf-v6-c-drawer__head--PaddingInlineEnd: var(--pf-t--global--spacer--xl);
+}
+
+/* Primary + Cancel sit on row 2 of the drawer head grid (below icon + title) */
+.tenant-vm-template-drawer-head .tenant-vm-template-drawer-head-create {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--md);
+}
+
+.tenant-vm-template-drawer-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: min(100dvh - 4rem, 56rem);
+  overflow-x: visible;
+  overflow-y: hidden;
+  gap: 0;
+  justify-content: flex-start;
+  align-items: stretch;
+  --pf-v6-c-drawer__panel__body--PaddingBlockStart: var(--pf-t--global--spacer--md);
+  --pf-v6-c-drawer__panel__body--PaddingBlockEnd: 0;
+  --pf-v6-c-drawer__panel__body--PaddingInlineStart: var(--pf-t--global--spacer--xl);
+  --pf-v6-c-drawer__panel__body--PaddingInlineEnd: var(--pf-t--global--spacer--xl);
+}
+
+/* Do not flex-grow: avoids a tall empty band between spec content and actions */
+.tenant-vm-template-drawer-scroll {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: min(65dvh, calc(100dvh - 14rem));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block-end: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: stretch;
+}
+
+.tenant-vm-template-drawer-scroll > :last-child {
+  margin-block-end: 0;
+}
+
+.tenant-vm-template-drawer-tabs.pf-v6-c-tabs {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+/*
+ * Tab panels render as siblings after the tab list (not inside .pf-v6-c-tabs).
+ * Space between the tab row and the active panel content.
+ */
+.tenant-vm-template-drawer-scroll
+  .tenant-vm-template-drawer-tabs.pf-v6-c-tabs
+  ~ .pf-v6-c-tab-content {
+  margin-block-start: var(--pf-t--global--spacer--lg);
+}
+
+/* Template drawer Overview tab: one column — spec list, then switches under Hostname */
+.tenant-vm-template-detail-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+  max-width: min(28rem, 100%);
+  min-width: 0;
+}
+
+.tenant-vm-template-detail-stack .pf-v6-c-description-list {
+  word-break: break-word;
+}
+
+.tenant-vm-template-detail-stack__switches {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  min-width: 0;
+}
+
+.tenant-vm-catalog-template-card-wrap {
+  height: 100%;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  cursor: pointer;
+  outline: none;
+}
+
+.tenant-vm-catalog-template-card-wrap:focus-visible {
+  outline: 2px solid var(--pf-t--global--border--color--clicked);
+  outline-offset: 2px;
+}
+
+.tenant-vm-catalog-template-card-wrap:hover .pf-v6-c-card {
+  box-shadow: var(--pf-t--global--box-shadow--md);
+}
+
+.tenant-vm-catalog-template-card-wrap .pf-v6-c-card {
+  height: 100%;
+}
+
+/* VM list cards: open detail on click; kebab / footer stay independent */
+.tenant-vm-instance-card {
+  outline: none;
+  cursor: pointer;
+}
+
+.tenant-vm-instance-card:focus-visible {
+  outline: 2px solid var(--pf-t--global--border--color--clicked);
+  outline-offset: 2px;
+}
+
+.tenant-vm-instance-card:hover {
+  box-shadow: var(--pf-t--global--box-shadow--md);
+}
+
+/* Sticky page headings: keep title + Create VM control visible while scrolling */
+.osac-page-toolbar-sticky {
+  position: sticky;
+  top: 0;
+  /* Above PF drawer content + sidebar chrome (both use z-index--xs / 100); same z-index + later DOM wins without this. */
+  z-index: var(--pf-t--global--z-index--sm);
+  flex-shrink: 0;
+  align-self: stretch;
+  /* Match former main-section block padding so it survives scroll (see :has rule above). */
+  padding-block: var(--pf-t--global--spacer--md);
+  padding-inline: 0;
+  margin-bottom: var(--pf-t--global--spacer--md);
+  background: var(--pf-t--global--background--color--primary--default);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+/* Title + subtitle column: don’t let flex shrink the block when the row wraps */
+.osac-page-toolbar-sticky__lead {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--xs);
+}
+
+.tenant-vm-page-sticky-heading {
+  position: sticky;
+  top: 0;
+  z-index: var(--pf-t--global--z-index--sm);
+  flex-shrink: 0;
+  align-self: stretch;
+  padding-block: var(--pf-t--global--spacer--md);
+  padding-inline: 0;
+  margin-bottom: var(--pf-t--global--spacer--md);
+  background: var(--pf-t--global--background--color--primary--default);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.tenant-vm-page-sticky-heading--detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.tenant-vm-detail-overview-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem);
+  gap: var(--pf-t--global--spacer--xl);
+  align-items: start;
+}
+
+@media (max-width: 62rem) {
+  .tenant-vm-detail-overview-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tenant-vm-detail-overview-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tenant-vm-detail-overview-card .pf-v6-c-card__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tenant-vm-detail-snapshot {
+  width: 100%;
+}
+
+.tenant-vm-detail-snapshot__frame {
+  container-type: size;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  border: 1px solid var(--pf-t--global--border--color--default);
+  overflow: hidden;
+  box-shadow: var(--pf-t--global--box-shadow--sm);
+  background: #14181c;
+}
+
+/* Compact terminal inside overview card — same look as full console demo */
+.tenant-vm-detail-snapshot__terminal-mock {
+  margin: 0;
+  min-height: 0;
+  height: 100%;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  font-size: clamp(0.625rem, 2.1cqw, 0.75rem);
+  line-height: 1.45;
+  padding: clamp(0.375rem, 2cqw, 0.625rem) clamp(0.5rem, 2.5cqw, 0.75rem);
+  box-sizing: border-box;
+}
+
+.tenant-vm-detail-snapshot__terminal-mock .northstar-console-demo__terminal-line {
+  margin: 0 0 0.28em;
+}
+
+.tenant-vm-detail-snapshot__terminal-mock .northstar-console-demo__terminal-line:last-child {
+  margin-bottom: 0;
+}
+
+.tenant-vm-detail-snapshot__terminal-mock .northstar-console-demo__terminal-line--prompt {
+  margin-bottom: 0.45em;
+}
+
+.tenant-vm-detail-snapshot__terminal-mock .northstar-console-demo__terminal-line--muted {
+  margin-top: 0.15em;
+  font-size: inherit;
+}
+
+.tenant-vm-detail-snapshot__ps-path {
+  color: #7dd3fc;
+  font-weight: 600;
+}
+
+.tenant-vm-detail-snapshot__terminal-em {
+  color: #b8e8c0;
+  font-weight: 600;
+}
+
+.tenant-vm-detail-snapshot__caption {
+  max-width: none;
+}
+
+/* VM templates: categories column slightly under primary nav width */
+@media (min-width: 48rem) {
+  .catalog-vm-templates-sidebar.pf-v6-c-sidebar {
+    --pf-v6-c-sidebar__panel--md--FlexBasis: calc(
+      var(--pf-v6-c-page__sidebar--Width, 18.125rem) - 3.25rem
+    );
+  }
+}
