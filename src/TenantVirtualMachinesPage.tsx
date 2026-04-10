@@ -61,6 +61,30 @@ type CatalogIconAccent = 'redhat' | 'windows' | 'linux'
 export type TenantOs = 'rhel' | 'windows' | 'linux'
 export type VmPowerState = 'running' | 'stopped' | 'paused'
 
+type VmPowerPendingState = { vmId: string; action: 'start' | 'restart' | 'stop' }
+
+function vmPowerPendingLabel(action: VmPowerPendingState['action']): string {
+  switch (action) {
+    case 'restart':
+      return 'Restarting…'
+    case 'stop':
+      return 'Stopping…'
+    default:
+      return 'Starting…'
+  }
+}
+
+function vmPowerPendingAriaLabel(action: VmPowerPendingState['action']): string {
+  switch (action) {
+    case 'restart':
+      return 'Restarting virtual machine'
+    case 'stop':
+      return 'Stopping virtual machine'
+    default:
+      return 'Starting virtual machine'
+  }
+}
+
 const CATALOG_ICON_TILE_BG =
   'var(--pf-t--global--background--color--secondary--default)'
 
@@ -637,11 +661,17 @@ function openSampleVmConsole(vm: TenantVirtualMachine) {
 function vmCardActionsMenuItems(
   vm: TenantVirtualMachine,
   effectiveStatus: VmPowerState,
-  isGlobalStartPending: boolean,
+  isGlobalPowerPending: boolean,
   onOpenCloneVirtualMachine: (sourceVmId: string) => void,
   onRequestStartVm: (vmId: string) => void,
+  onRequestStopVm: (vmId: string) => void,
+  onRequestRestartVm: (vmId: string) => void,
 ) {
-  const canStart = effectiveStatus === 'stopped' && !isGlobalStartPending
+  const canStart = effectiveStatus === 'stopped' && !isGlobalPowerPending
+  const canStopOrRestart =
+    (effectiveStatus === 'running' || effectiveStatus === 'paused') && !isGlobalPowerPending
+  const canRestart = canStopOrRestart
+  const canStop = canStopOrRestart
   return (
     <>
       <DropdownItem
@@ -654,10 +684,24 @@ function vmCardActionsMenuItems(
       >
         Start
       </DropdownItem>
-      <DropdownItem key="stop" onClick={(e) => e.preventDefault()}>
+      <DropdownItem
+        key="stop"
+        isDisabled={!canStop}
+        onClick={(e) => {
+          e.preventDefault()
+          if (canStop) onRequestStopVm(vm.id)
+        }}
+      >
         Stop
       </DropdownItem>
-      <DropdownItem key="restart" onClick={(e) => e.preventDefault()}>
+      <DropdownItem
+        key="restart"
+        isDisabled={!canRestart}
+        onClick={(e) => {
+          e.preventDefault()
+          if (canRestart) onRequestRestartVm(vm.id)
+        }}
+      >
         Restart
       </DropdownItem>
       <DropdownItem
@@ -818,8 +862,8 @@ export function TenantVirtualMachinesPage({
   const [powerStateOverrides, setPowerStateOverrides] = useState<
     Partial<Record<string, VmPowerState>>
   >({})
-  const [vmStartPendingId, setVmStartPendingId] = useState<string | null>(null)
-  const startVmTimerRef = useRef<number | null>(null)
+  const [vmPowerPending, setVmPowerPending] = useState<VmPowerPendingState | null>(null)
+  const powerTransitionTimerRef = useRef<number | null>(null)
 
   const allVirtualMachines = useMemo(
     () => [...vmsCreatedFromTemplate, ...TENANT_VIRTUAL_MACHINES],
@@ -862,32 +906,66 @@ export function TenantVirtualMachinesPage({
 
   useEffect(
     () => () => {
-      if (startVmTimerRef.current) {
-        window.clearTimeout(startVmTimerRef.current)
-        startVmTimerRef.current = null
+      if (powerTransitionTimerRef.current) {
+        window.clearTimeout(powerTransitionTimerRef.current)
+        powerTransitionTimerRef.current = null
       }
     },
     [],
   )
 
+  const schedulePowerTransition = useCallback((vmId: string, target: VmPowerState) => {
+    if (powerTransitionTimerRef.current) window.clearTimeout(powerTransitionTimerRef.current)
+    powerTransitionTimerRef.current = window.setTimeout(() => {
+      powerTransitionTimerRef.current = null
+      setPowerStateOverrides((prev) => ({ ...prev, [vmId]: target }))
+      setVmPowerPending(null)
+    }, 1800)
+  }, [])
+
   const handleRequestStartVm = useCallback(
     (vmId: string) => {
-      if (vmStartPendingId !== null) return
+      if (vmPowerPending !== null) return
       const vm = allVirtualMachines.find((v) => v.id === vmId)
       if (!vm) return
       const display = powerStateOverrides[vmId] ?? vm.status
       if (display !== 'stopped') return
       setActionsMenuOpenId(null)
       setDetailConsoleMenuOpen(false)
-      setVmStartPendingId(vmId)
-      if (startVmTimerRef.current) window.clearTimeout(startVmTimerRef.current)
-      startVmTimerRef.current = window.setTimeout(() => {
-        startVmTimerRef.current = null
-        setPowerStateOverrides((prev) => ({ ...prev, [vmId]: 'running' }))
-        setVmStartPendingId(null)
-      }, 1800)
+      setVmPowerPending({ vmId, action: 'start' })
+      schedulePowerTransition(vmId, 'running')
     },
-    [allVirtualMachines, powerStateOverrides, vmStartPendingId],
+    [allVirtualMachines, powerStateOverrides, vmPowerPending, schedulePowerTransition],
+  )
+
+  const handleRequestStopVm = useCallback(
+    (vmId: string) => {
+      if (vmPowerPending !== null) return
+      const vm = allVirtualMachines.find((v) => v.id === vmId)
+      if (!vm) return
+      const display = powerStateOverrides[vmId] ?? vm.status
+      if (display !== 'running' && display !== 'paused') return
+      setActionsMenuOpenId(null)
+      setDetailConsoleMenuOpen(false)
+      setVmPowerPending({ vmId, action: 'stop' })
+      schedulePowerTransition(vmId, 'stopped')
+    },
+    [allVirtualMachines, powerStateOverrides, vmPowerPending, schedulePowerTransition],
+  )
+
+  const handleRequestRestartVm = useCallback(
+    (vmId: string) => {
+      if (vmPowerPending !== null) return
+      const vm = allVirtualMachines.find((v) => v.id === vmId)
+      if (!vm) return
+      const display = powerStateOverrides[vmId] ?? vm.status
+      if (display !== 'running' && display !== 'paused') return
+      setActionsMenuOpenId(null)
+      setDetailConsoleMenuOpen(false)
+      setVmPowerPending({ vmId, action: 'restart' })
+      schedulePowerTransition(vmId, 'running')
+    },
+    [allVirtualMachines, powerStateOverrides, vmPowerPending, schedulePowerTransition],
   )
 
   useEffect(() => {
@@ -916,8 +994,13 @@ export function TenantVirtualMachinesPage({
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     const base = allVirtualMachines.filter((vm) => {
-      const display = powerStateOverrides[vm.id] ?? vm.status
-      if (!vmMatchesPowerDisplay(display, powerFilter) || !vmMatchesOsFilter(vm, osFilter)) {
+      const baseDisplay = powerStateOverrides[vm.id] ?? vm.status
+      const displayForFilter =
+        vmPowerPending?.vmId === vm.id &&
+        (vmPowerPending.action === 'restart' || vmPowerPending.action === 'stop')
+          ? 'running'
+          : baseDisplay
+      if (!vmMatchesPowerDisplay(displayForFilter, powerFilter) || !vmMatchesOsFilter(vm, osFilter)) {
         return false
       }
       if (!q) return true
@@ -925,7 +1008,15 @@ export function TenantVirtualMachinesPage({
     })
     if (createdFilter === 'all') return base
     return filterToNewestCreated(base)
-  }, [allVirtualMachines, powerFilter, osFilter, createdFilter, search, powerStateOverrides])
+  }, [
+    allVirtualMachines,
+    powerFilter,
+    osFilter,
+    createdFilter,
+    search,
+    powerStateOverrides,
+    vmPowerPending,
+  ])
 
   const pageShellStyle = {
     display: 'flex',
@@ -1030,7 +1121,7 @@ export function TenantVirtualMachinesPage({
                   <CardHeader className="tenant-vm-detail-console-card-header">
                     <div className="tenant-vm-detail-console-card-header__row">
                       <CardTitle>Console</CardTitle>
-                      {vmStartPendingId === detailVm.id ? (
+                      {vmPowerPending?.vmId === detailVm.id ? (
                         <div
                           style={{
                             display: 'inline-flex',
@@ -1038,14 +1129,17 @@ export function TenantVirtualMachinesPage({
                             gap: 'var(--pf-t--global--spacer--xs)',
                           }}
                         >
-                          <Spinner size="sm" aria-label="Starting virtual machine" />
+                          <Spinner
+                            size="sm"
+                            aria-label={vmPowerPendingAriaLabel(vmPowerPending.action)}
+                          />
                           <span
                             style={{
                               fontSize: 'var(--pf-t--global--font--size--body--sm)',
                               color: 'var(--pf-t--global--text--color--subtle)',
                             }}
                           >
-                            Starting…
+                            {vmPowerPendingLabel(vmPowerPending.action)}
                           </span>
                         </div>
                       ) : (
@@ -1077,9 +1171,11 @@ export function TenantVirtualMachinesPage({
                             {vmCardActionsMenuItems(
                               detailVm,
                               detailDisplay,
-                              vmStartPendingId !== null,
+                              vmPowerPending !== null,
                               onOpenCloneVirtualMachine,
                               handleRequestStartVm,
+                              handleRequestStopVm,
+                              handleRequestRestartVm,
                             )}
                           </DropdownList>
                         </Dropdown>
@@ -1412,7 +1508,8 @@ export function TenantVirtualMachinesPage({
             const isLinuxTux = vm.iconAccent === 'linux'
             const iconPx = isLinuxTux ? 28 : 24
             const displayStatus = powerStateOverrides[vm.id] ?? vm.status
-            const isThisVmStarting = vmStartPendingId === vm.id
+            const powerPendingForVm =
+              vmPowerPending?.vmId === vm.id ? vmPowerPending.action : null
             return (
               <GalleryItem key={vm.id}>
                 <Card
@@ -1500,7 +1597,7 @@ export function TenantVirtualMachinesPage({
                               }
                             }}
                           >
-                            {isThisVmStarting ? (
+                            {powerPendingForVm ? (
                               <div
                                 style={{
                                   display: 'inline-flex',
@@ -1508,14 +1605,17 @@ export function TenantVirtualMachinesPage({
                                   gap: 'var(--pf-t--global--spacer--xs)',
                                 }}
                               >
-                                <Spinner size="sm" aria-label="Starting virtual machine" />
+                                <Spinner
+                                  size="sm"
+                                  aria-label={vmPowerPendingAriaLabel(powerPendingForVm)}
+                                />
                                 <span
                                   style={{
                                     fontSize: 'var(--pf-t--global--font--size--body--sm)',
                                     color: 'var(--pf-t--global--text--color--subtle)',
                                   }}
                                 >
-                                  Starting…
+                                  {vmPowerPendingLabel(powerPendingForVm)}
                                 </span>
                               </div>
                             ) : (
@@ -1555,9 +1655,11 @@ export function TenantVirtualMachinesPage({
                                 {vmCardActionsMenuItems(
                                   vm,
                                   displayStatus,
-                                  vmStartPendingId !== null,
+                                  vmPowerPending !== null,
                                   onOpenCloneVirtualMachine,
                                   handleRequestStartVm,
+                                  handleRequestStopVm,
+                                  handleRequestRestartVm,
                                 )}
                               </DropdownList>
                             </Dropdown>
@@ -1689,7 +1791,8 @@ export function TenantVirtualMachinesPage({
                   const isLinuxTux = vm.iconAccent === 'linux'
                   const iconPx = isLinuxTux ? 20 : 18
                   const displayStatus = powerStateOverrides[vm.id] ?? vm.status
-                  const isThisVmStarting = vmStartPendingId === vm.id
+                  const powerPendingForVm =
+                    vmPowerPending?.vmId === vm.id ? vmPowerPending.action : null
                   return (
                     <tr
                       key={vm.id}
@@ -1731,7 +1834,7 @@ export function TenantVirtualMachinesPage({
                           }
                         }}
                       >
-                        {isThisVmStarting ? (
+                        {powerPendingForVm ? (
                           <div
                             style={{
                               display: 'inline-flex',
@@ -1739,14 +1842,17 @@ export function TenantVirtualMachinesPage({
                               gap: 'var(--pf-t--global--spacer--xs)',
                             }}
                           >
-                            <Spinner size="sm" aria-label="Starting virtual machine" />
+                            <Spinner
+                              size="sm"
+                              aria-label={vmPowerPendingAriaLabel(powerPendingForVm)}
+                            />
                             <span
                               style={{
                                 fontSize: 'var(--pf-t--global--font--size--body--sm)',
                                 color: 'var(--pf-t--global--text--color--subtle)',
                               }}
                             >
-                              Starting…
+                              {vmPowerPendingLabel(powerPendingForVm)}
                             </span>
                           </div>
                         ) : (
@@ -1860,9 +1966,11 @@ export function TenantVirtualMachinesPage({
                             {vmCardActionsMenuItems(
                               vm,
                               displayStatus,
-                              vmStartPendingId !== null,
+                              vmPowerPending !== null,
                               onOpenCloneVirtualMachine,
                               handleRequestStartVm,
+                              handleRequestStopVm,
+                              handleRequestRestartVm,
                             )}
                           </DropdownList>
                         </Dropdown>
