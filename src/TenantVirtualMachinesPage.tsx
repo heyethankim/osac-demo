@@ -20,6 +20,8 @@ import {
 } from './northstarVmDemoCounts'
 import { VmGuestDesktopSnapshot } from './VmGuestDesktopSnapshot'
 import {
+  Alert,
+  AlertVariant,
   Breadcrumb,
   BreadcrumbItem,
   Button,
@@ -99,6 +101,17 @@ function catalogIconColor(accent: CatalogIconAccent): string | undefined {
   }
 }
 
+/** Why the guest is off — shown on the VM detail Console card when stopped. */
+export type VmConsoleStopReasonKind = 'user' | 'problem'
+
+export type VmConsoleStopReason = {
+  kind: VmConsoleStopReasonKind
+  /** Short heading (e.g. user shutdown vs. failure). */
+  summary: string
+  /** Supporting detail for operators. */
+  detail?: string
+}
+
 export type TenantVirtualMachine = {
   id: string
   name: string
@@ -123,6 +136,11 @@ export type TenantVirtualMachine = {
   networkSummary: string
   /** Interconnect or management hub (demo). */
   hubName: string
+  /**
+   * When status is stopped, why the VM is off (demo seed / API-shaped).
+   * User-driven Stop from this UI overwrites via `consoleStopReasonOverrides`.
+   */
+  consoleStopReason?: VmConsoleStopReason
 }
 
 /** Payload when completing the “Create new virtual machine” path in the create VM modal wizard. */
@@ -521,6 +539,52 @@ function buildSyntheticVm(index: number, status: VmPowerState): TenantVirtualMac
   }
 }
 
+const DEMO_CONSOLE_STOP_REASONS: VmConsoleStopReason[] = [
+  {
+    kind: 'user',
+    summary: 'Stopped by user request',
+    detail: 'Power off was initiated from the cloud console.',
+  },
+  {
+    kind: 'user',
+    summary: 'Guest completed a normal shutdown',
+    detail: 'The operating system shut down cleanly; the instance is not consuming compute.',
+  },
+  {
+    kind: 'problem',
+    summary: 'Guest agent stopped responding',
+    detail: 'The hypervisor marked the VM non-responsive after repeated QEMU guest agent timeouts.',
+  },
+  {
+    kind: 'problem',
+    summary: 'Evacuated during host maintenance',
+    detail: 'The worker node was drained; this instance did not live-migrate and was powered off.',
+  },
+  {
+    kind: 'user',
+    summary: 'Scaled down by automation',
+    detail: 'A scheduled policy powered off idle capacity outside the allowed window.',
+  },
+]
+
+/** Applied when the user chooses Stop in this demo (overrides seed reason after transition). */
+const USER_CONSOLE_STOP_REASON: VmConsoleStopReason = {
+  kind: 'user',
+  summary: 'Stopped from console',
+  detail: 'Stop was requested from Virtual machines actions. Start the VM again to open a console session.',
+}
+
+function demoConsoleStopReasonForVmId(vmId: string): VmConsoleStopReason {
+  let h = 0
+  for (let i = 0; i < vmId.length; i++) h = (h * 31 + vmId.charCodeAt(i)) >>> 0
+  return DEMO_CONSOLE_STOP_REASONS[h % DEMO_CONSOLE_STOP_REASONS.length]
+}
+
+function withConsoleStopReasonWhenStopped(vm: TenantVirtualMachine): TenantVirtualMachine {
+  if (vm.status !== 'stopped') return vm
+  return { ...vm, consoleStopReason: demoConsoleStopReasonForVmId(vm.id) }
+}
+
 /** Demo: build a list VM row from a catalog template (provisioned immediately from template detail). */
 export function buildTenantVirtualMachineFromCatalogTemplate(
   template: TenantVmTemplate,
@@ -574,7 +638,7 @@ export const TENANT_VIRTUAL_MACHINES: TenantVirtualMachine[] = (() => {
   for (let i = TENANT_VM_SEEDS.length; i < NORTHSTAR_DEMO_VM_TOTAL; i++) {
     synthetic.push(buildSyntheticVm(i, SHUFFLED_DEMO_VM_STATUSES[i]))
   }
-  return [...fromSeeds, ...synthetic]
+  return [...fromSeeds, ...synthetic].map(withConsoleStopReasonWhenStopped)
 })()
 
 type PowerFilterValue = 'all' | VmPowerState
@@ -740,14 +804,86 @@ function specRow(label: string, value: string) {
   )
 }
 
-function VirtualMachineDetailSnapshot({ vm }: { vm: TenantVirtualMachine }) {
+function effectiveConsoleStopReasonForDetail(
+  vm: TenantVirtualMachine,
+  display: VmPowerState,
+  override: VmConsoleStopReason | undefined,
+): VmConsoleStopReason | null {
+  if (display !== 'stopped') return null
+  return (
+    override ??
+    vm.consoleStopReason ?? {
+      kind: 'user',
+      summary: 'Virtual machine is powered off',
+      detail: 'Start the virtual machine to use the interactive console.',
+    }
+  )
+}
+
+function VirtualMachineDetailSnapshot({
+  vm,
+  powerDisplay,
+  stopReason,
+}: {
+  vm: TenantVirtualMachine
+  powerDisplay: VmPowerState
+  stopReason: VmConsoleStopReason | null
+}) {
+  const isStopped = powerDisplay === 'stopped'
+  const isPaused = powerDisplay === 'paused'
+  const launchDisabled = isStopped || isPaused
+  const alertVariant =
+    stopReason?.kind === 'problem' ? AlertVariant.warning : AlertVariant.info
+
   return (
     <div className="tenant-vm-detail-snapshot">
-      <div className="tenant-vm-detail-snapshot__frame tenant-vm-detail-snapshot__frame--guest-desktop">
-        <VmGuestDesktopSnapshot guestOs={vm.os} vmName={vm.name} vmId={vm.id} />
+      {isStopped && stopReason ? (
+        <Alert
+          isPlain
+          isInline
+          variant={alertVariant}
+          title={stopReason.summary}
+          className="tenant-vm-detail-console-stop-alert"
+        >
+          {stopReason.detail}
+        </Alert>
+      ) : null}
+      {isPaused ? (
+        <Alert
+          isPlain
+          isInline
+          variant={AlertVariant.info}
+          title="Virtual machine is paused"
+          className="tenant-vm-detail-console-stop-alert"
+        >
+          The guest is frozen in memory, so the interactive console is unavailable until the VM is running
+          again. Use <strong>Restart</strong> in the actions menu to leave the paused state, then launch
+          the console.
+        </Alert>
+      ) : null}
+      <div
+        className={`tenant-vm-detail-snapshot__frame tenant-vm-detail-snapshot__frame--guest-desktop${
+          isStopped ? ' tenant-vm-detail-snapshot__frame--console-stopped' : ''
+        }${isPaused ? ' tenant-vm-detail-snapshot__frame--console-paused' : ''}`}
+      >
+        {isStopped ? (
+          <div className="tenant-vm-detail-console-stopped-preview" aria-hidden>
+            <span className="tenant-vm-detail-console-stopped-preview__title">Console unavailable</span>
+            <span className="tenant-vm-detail-console-stopped-preview__hint">
+              The guest is powered off. Start the virtual machine to preview the desktop and launch a session.
+            </span>
+          </div>
+        ) : (
+          <VmGuestDesktopSnapshot guestOs={vm.os} vmName={vm.name} vmId={vm.id} />
+        )}
       </div>
       <div className="tenant-vm-detail-console-launch">
-        <Button variant="secondary" size="sm" onClick={() => openSampleVmConsole(vm)}>
+        <Button
+          variant="secondary"
+          size="sm"
+          isDisabled={launchDisabled}
+          onClick={() => openSampleVmConsole(vm)}
+        >
           Launch console
         </Button>
       </div>
@@ -760,7 +896,11 @@ function VirtualMachineDetailSnapshot({ vm }: { vm: TenantVirtualMachine }) {
           color: 'var(--pf-t--global--text--color--subtle)',
         }}
       >
-        Preview of the guest desktop (demo). Launch console opens the full interactive session.
+        {isStopped
+          ? 'Launch console is disabled until the virtual machine is running.'
+          : isPaused
+            ? 'Launch console is disabled while the VM is paused. Restart to run the guest, then open a session.'
+            : 'Preview of the guest desktop (demo). Launch console opens the full interactive session.'}
       </Content>
     </div>
   )
@@ -862,6 +1002,10 @@ export function TenantVirtualMachinesPage({
   const [powerStateOverrides, setPowerStateOverrides] = useState<
     Partial<Record<string, VmPowerState>>
   >({})
+  /** After user Stop, overrides seed `consoleStopReason` until the VM is started again. */
+  const [consoleStopReasonOverrides, setConsoleStopReasonOverrides] = useState<
+    Partial<Record<string, VmConsoleStopReason>>
+  >({})
   const [vmPowerPending, setVmPowerPending] = useState<VmPowerPendingState | null>(null)
   const powerTransitionTimerRef = useRef<number | null>(null)
 
@@ -914,14 +1058,32 @@ export function TenantVirtualMachinesPage({
     [],
   )
 
-  const schedulePowerTransition = useCallback((vmId: string, target: VmPowerState) => {
-    if (powerTransitionTimerRef.current) window.clearTimeout(powerTransitionTimerRef.current)
-    powerTransitionTimerRef.current = window.setTimeout(() => {
-      powerTransitionTimerRef.current = null
-      setPowerStateOverrides((prev) => ({ ...prev, [vmId]: target }))
-      setVmPowerPending(null)
-    }, 1800)
-  }, [])
+  const schedulePowerTransition = useCallback(
+    (
+      vmId: string,
+      target: VmPowerState,
+      opts?: { consoleStopReason?: VmConsoleStopReason },
+    ) => {
+      if (powerTransitionTimerRef.current) window.clearTimeout(powerTransitionTimerRef.current)
+      powerTransitionTimerRef.current = window.setTimeout(() => {
+        powerTransitionTimerRef.current = null
+        setPowerStateOverrides((prev) => ({ ...prev, [vmId]: target }))
+        setConsoleStopReasonOverrides((prev) => {
+          if (target === 'running') {
+            const next = { ...prev }
+            delete next[vmId]
+            return next
+          }
+          if (opts?.consoleStopReason) {
+            return { ...prev, [vmId]: opts.consoleStopReason }
+          }
+          return prev
+        })
+        setVmPowerPending(null)
+      }, 1800)
+    },
+    [],
+  )
 
   const handleRequestStartVm = useCallback(
     (vmId: string) => {
@@ -948,7 +1110,7 @@ export function TenantVirtualMachinesPage({
       setActionsMenuOpenId(null)
       setDetailConsoleMenuOpen(false)
       setVmPowerPending({ vmId, action: 'stop' })
-      schedulePowerTransition(vmId, 'stopped')
+      schedulePowerTransition(vmId, 'stopped', { consoleStopReason: USER_CONSOLE_STOP_REASON })
     },
     [allVirtualMachines, powerStateOverrides, vmPowerPending, schedulePowerTransition],
   )
@@ -1028,6 +1190,11 @@ export function TenantVirtualMachinesPage({
 
   if (detailVm) {
     const detailDisplay = powerStateOverrides[detailVm.id] ?? detailVm.status
+    const detailConsoleStopReason = effectiveConsoleStopReasonForDetail(
+      detailVm,
+      detailDisplay,
+      consoleStopReasonOverrides[detailVm.id],
+    )
     const conditions = demoConditionsForVm(detailVm, detailDisplay)
     const DetailOsIcon = detailVm.Icon
     const detailOsIconColor = catalogIconColor(detailVm.iconAccent)
@@ -1057,9 +1224,6 @@ export function TenantVirtualMachinesPage({
             <TabContentBody>
               <div className="tenant-vm-detail-overview-layout">
                 <Card isFullHeight className="tenant-vm-detail-overview-card">
-                  <CardHeader>
-                    <CardTitle>Details</CardTitle>
-                  </CardHeader>
                   <CardBody>
                     <DescriptionList>
                       <DescriptionListGroup>
@@ -1183,7 +1347,11 @@ export function TenantVirtualMachinesPage({
                     </div>
                   </CardHeader>
                   <CardBody>
-                    <VirtualMachineDetailSnapshot vm={detailVm} />
+                    <VirtualMachineDetailSnapshot
+                      vm={detailVm}
+                      powerDisplay={detailDisplay}
+                      stopReason={detailConsoleStopReason}
+                    />
                   </CardBody>
                 </Card>
               </div>

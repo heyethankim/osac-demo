@@ -3230,6 +3230,47 @@ html[data-osac-theme='light']
   background: transparent;
 }
 
+.tenant-vm-detail-snapshot__frame--console-stopped {
+  background: var(--pf-t--global--background--color--secondary--default);
+  border-style: dashed;
+}
+
+.tenant-vm-detail-snapshot__frame--console-paused {
+  border-color: var(--pf-t--global--border--color--status--warning--default);
+  box-shadow:
+    var(--pf-t--global--box-shadow--sm),
+    inset 0 0 0 1px rgb(240 171 0 / 22%);
+}
+
+.tenant-vm-detail-console-stop-alert.pf-v6-c-alert {
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.tenant-vm-detail-console-stopped-preview {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--pf-t--global--spacer--sm);
+  padding: var(--pf-t--global--spacer--lg) var(--pf-t--global--spacer--md);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.tenant-vm-detail-console-stopped-preview__title {
+  font-size: var(--pf-t--global--font--size--body--default);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.tenant-vm-detail-console-stopped-preview__hint {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  line-height: var(--pf-t--global--font--line-height--body--sm);
+  max-width: 28rem;
+}
+
 /* Mini guest desktop preview — matches Launch console (RHEL / Linux / Windows) */
 .tenant-vm-snapshot-desktop {
   height: 100%;
