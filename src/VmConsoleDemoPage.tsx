@@ -6,6 +6,7 @@ import {
   GnomeStatusIcons,
   WindowsDesktopIconColumn,
 } from './VmGuestDesktopContent'
+import { useWin11TaskbarClock, Windows11Taskbar } from './Windows11Taskbar'
 
 function useGuestDesktopClock() {
   const format = () =>
@@ -103,7 +104,7 @@ function WindowsGuestDesktop({
   vmId: string
   onClose: () => void
 }) {
-  const clockLabel = useGuestDesktopClock()
+  const { time, date } = useWin11TaskbarClock(30_000)
 
   return (
     <div className="guest-console-desktop guest-console-desktop--windows">
@@ -112,25 +113,7 @@ function WindowsGuestDesktop({
         <DesktopWatermark vmName={vmName} vmId={vmId} />
       </div>
 
-      <footer className="guest-console-desktop__taskbar">
-        <button type="button" className="guest-console-desktop__taskbar-start" aria-label="Start (simulated)">
-          <svg width="18" height="18" viewBox="0 0 48 48" fill="currentColor" aria-hidden>
-            <path d="M6 10h17v17H6V10zm19 0h17v17H25V10zM6 29h17v17H6V29zm19 0h17v17H25V29z" />
-          </svg>
-        </button>
-        <div className="guest-console-desktop__taskbar-pins" aria-hidden>
-          <span className="guest-console-desktop__taskbar-pin" />
-          <span className="guest-console-desktop__taskbar-pin" />
-          <span className="guest-console-desktop__taskbar-pin" />
-        </div>
-        <div className="guest-console-desktop__taskbar-right">
-          <GnomeStatusIcons />
-          <span className="guest-console-desktop__taskbar-clock">{clockLabel}</span>
-          <button type="button" className="guest-console-desktop__leave--windows" onClick={onClose}>
-            Leave console
-          </button>
-        </div>
-      </footer>
+      <Windows11Taskbar timeLabel={time} dateLabel={date} onLeaveConsole={onClose} />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import {
   GnomeStatusIcons,
   WindowsDesktopIconColumn,
 } from './VmGuestDesktopContent'
+import { useWin11TaskbarClock, Windows11Taskbar } from './Windows11Taskbar'
 
 function useSnapshotClock() {
   const format = () =>
@@ -55,24 +56,14 @@ function GnomeSnapshotTopBar() {
 }
 
 function WindowsSnapshotTaskbar() {
-  const clockLabel = useSnapshotClock()
+  const { time, date } = useWin11TaskbarClock(60_000)
   return (
-    <footer className="guest-console-desktop__taskbar tenant-vm-snapshot-desktop__win-taskbar">
-      <div className="guest-console-desktop__taskbar-start" aria-hidden>
-        <svg width="18" height="18" viewBox="0 0 48 48" fill="currentColor" aria-hidden>
-          <path d="M6 10h17v17H6V10zm19 0h17v17H25V10zM6 29h17v17H6V29zm19 0h17v17H25V29z" />
-        </svg>
-      </div>
-      <div className="guest-console-desktop__taskbar-pins" aria-hidden>
-        <span className="guest-console-desktop__taskbar-pin" />
-        <span className="guest-console-desktop__taskbar-pin" />
-        <span className="guest-console-desktop__taskbar-pin" />
-      </div>
-      <div className="guest-console-desktop__taskbar-right">
-        <GnomeStatusIcons />
-        <span className="guest-console-desktop__taskbar-clock">{clockLabel}</span>
-      </div>
-    </footer>
+    <Windows11Taskbar
+      compact
+      className="tenant-vm-snapshot-desktop__win-taskbar"
+      timeLabel={time}
+      dateLabel={date}
+    />
   )
 }
 

@@ -510,11 +510,23 @@ body {
 }
 
 .guest-console-desktop--windows {
-  flex-direction: column;
-  background:
-    radial-gradient(ellipse 100% 80% at 50% 20%, rgb(0 120 212 / 42%) 0%, transparent 58%),
-    radial-gradient(ellipse 60% 45% at 80% 70%, rgb(0 188 242 / 22%) 0%, transparent 50%),
-    linear-gradient(168deg, #041a2f 0%, #0c2d52 38%, #020814 100%);
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  background-color: #0067c0;
+  background-image:
+    radial-gradient(ellipse 130% 85% at 6% 10%, rgb(0 150 255 / 72%) 0%, transparent 52%),
+    radial-gradient(ellipse 90% 65% at 95% 6%, rgb(120 220 255 / 38%) 0%, transparent 46%),
+    radial-gradient(ellipse 70% 55% at 82% 88%, rgb(0 180 255 / 22%) 0%, transparent 40%),
+    radial-gradient(ellipse 100% 45% at 48% 100%, rgb(0 120 200 / 28%) 0%, transparent 50%),
+    linear-gradient(165deg, #004c87 0%, #0078d4 22%, #2aa4f4 48%, #5fc9ff 78%, #9bdcff 100%);
+}
+
+.guest-console-desktop--windows .guest-console-desktop__desk-icon-label--windows {
+  font-family: inherit;
+  font-weight: 500;
+  color: #fff;
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 90%),
+    0 0 6px rgb(0 40 80 / 45%);
 }
 
 .guest-console-desktop__topbar {
@@ -1038,6 +1050,297 @@ body {
 .guest-console-desktop__leave--windows:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
+}
+
+/* Windows 11–style taskbar (guest console + VM snapshot) */
+.win11-taskbar {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.2rem;
+  min-height: 3rem;
+  padding: 0 0.1rem 0 0.25rem;
+  background: rgb(28 28 28 / 78%);
+  border-top: 1px solid rgb(255 255 255 / 10%);
+  backdrop-filter: blur(32px) saturate(140%);
+  -webkit-backdrop-filter: blur(32px) saturate(140%);
+  box-shadow: 0 -1px 0 rgb(0 0 0 / 35%);
+  font-size: 0.8125rem;
+  color: rgb(255 255 255 / 88%);
+}
+
+.win11-taskbar__left {
+  display: flex;
+  align-items: center;
+  gap: 0.08rem;
+  flex-shrink: 0;
+}
+
+.win11-taskbar__start {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.65rem;
+  height: 2.65rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: #fff;
+  cursor: default;
+}
+
+.win11-taskbar__start:hover {
+  background: rgb(255 255 255 / 8%);
+}
+
+.win11-taskbar__search {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 2.15rem;
+  padding: 0 0.85rem 0 0.55rem;
+  margin: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 9%);
+  color: rgb(255 255 255 / 88%);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: default;
+}
+
+.win11-taskbar__search:hover {
+  background: rgb(255 255 255 / 12%);
+}
+
+.win11-taskbar__search-label {
+  letter-spacing: 0.01em;
+}
+
+.win11-taskbar__taskview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: rgb(255 255 255 / 82%);
+  cursor: default;
+}
+
+.win11-taskbar__taskview:hover {
+  background: rgb(255 255 255 / 8%);
+}
+
+.win11-taskbar__center-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+  padding: 0 0.25rem;
+}
+
+.win11-taskbar__center {
+  display: flex;
+  align-items: center;
+  gap: 0.12rem;
+}
+
+.win11-taskbar__pin {
+  display: flex;
+}
+
+.win11-taskbar__pin-inner {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.2rem;
+  box-shadow:
+    0 1px 4px rgb(0 0 0 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 14%);
+}
+
+.win11-taskbar__pin-inner--edge {
+  background: linear-gradient(145deg, #00bcf2 0%, #0078d4 50%, #2b579a 100%);
+}
+
+.win11-taskbar__pin-inner--folder {
+  background: linear-gradient(155deg, #f5c452 0%, #e8a317 100%);
+}
+
+.win11-taskbar__pin-inner--store {
+  background: linear-gradient(145deg, #00a4ef 0%, #0078d4 100%);
+}
+
+.win11-taskbar__pin-inner--mail {
+  background: linear-gradient(155deg, #76bcff 0%, #0078d4 100%);
+}
+
+.win11-taskbar__pin-inner--teams {
+  background: linear-gradient(145deg, #5b5fc7 0%, #3d3780 100%);
+}
+
+.win11-taskbar__right {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  padding-right: 0.1rem;
+}
+
+.win11-taskbar__leave {
+  margin-left: 0;
+  margin-right: 0.15rem;
+  white-space: nowrap;
+}
+
+.win11-taskbar__tray-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.75rem;
+  color: rgb(255 255 255 / 72%);
+}
+
+.win11-taskbar__tray-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: 1.75rem;
+  color: rgb(255 255 255 / 86%);
+}
+
+.win11-taskbar__clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0 0.6rem 0 0.35rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.12;
+}
+
+.win11-taskbar__clock-time {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgb(255 255 255 / 90%);
+}
+
+.win11-taskbar__clock-date {
+  font-size: 0.65rem;
+  color: rgb(255 255 255 / 72%);
+  margin-top: 0.05rem;
+}
+
+.win11-taskbar__show-desktop {
+  width: 0.35rem;
+  align-self: stretch;
+  margin-left: 0.15rem;
+  border-left: 1px solid rgb(255 255 255 / 14%);
+  cursor: default;
+}
+
+.win11-taskbar__show-desktop:hover {
+  background: rgb(255 255 255 / 6%);
+}
+
+.win11-taskbar__start:focus-visible,
+.win11-taskbar__search:focus-visible,
+.win11-taskbar__taskview:focus-visible {
+  outline: 2px solid rgb(255 255 255 / 65%);
+  outline-offset: 1px;
+}
+
+.win11-taskbar--compact {
+  min-height: clamp(1.2rem, 7.2cqh, 1.65rem);
+  padding: 0 clamp(0.08rem, 0.8cqw, 0.15rem) 0 clamp(0.12rem, 1cqw, 0.22rem);
+  gap: clamp(0.04rem, 0.5cqw, 0.12rem);
+  font-size: clamp(0.42rem, 2.9cqw, 0.55rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__search-label {
+  display: none;
+}
+
+.win11-taskbar--compact .win11-taskbar__start {
+  width: clamp(1.05rem, 6.5cqh, 1.42rem);
+  height: clamp(1.05rem, 6.5cqh, 1.42rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__start svg {
+  width: clamp(9px, 3.2cqw, 13px);
+  height: clamp(9px, 3.2cqw, 13px);
+}
+
+.win11-taskbar--compact .win11-taskbar__search {
+  height: clamp(0.9rem, 5.8cqh, 1.2rem);
+  padding: 0 clamp(0.25rem, 2cqw, 0.4rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__search svg {
+  width: clamp(8px, 2.6cqw, 11px);
+  height: clamp(8px, 2.6cqw, 11px);
+}
+
+.win11-taskbar--compact .win11-taskbar__taskview {
+  width: clamp(0.95rem, 5.8cqh, 1.28rem);
+  height: clamp(0.95rem, 5.8cqh, 1.28rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__taskview svg {
+  width: clamp(9px, 3cqw, 12px);
+  height: clamp(9px, 3cqw, 12px);
+}
+
+.win11-taskbar--compact .win11-taskbar__pin-inner {
+  width: clamp(0.68rem, 4.6cqh, 1rem);
+  height: clamp(0.68rem, 4.6cqh, 1rem);
+  border-radius: clamp(0.06rem, 0.7cqw, 0.16rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__center {
+  gap: clamp(0.04rem, 0.4cqw, 0.1rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__tray-chevron,
+.win11-taskbar--compact .win11-taskbar__tray-icon {
+  width: clamp(0.72rem, 4.5cqh, 1rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__tray-chevron svg {
+  width: clamp(7px, 2.2cqw, 10px);
+  height: clamp(5px, 1.6cqw, 7px);
+}
+
+.win11-taskbar--compact .win11-taskbar__tray-icon svg {
+  width: clamp(8px, 2.5cqw, 11px);
+  height: clamp(8px, 2.5cqw, 11px);
+}
+
+.win11-taskbar--compact .win11-taskbar__clock {
+  min-height: 0;
+  padding: 0 clamp(0.28rem, 2.2cqw, 0.45rem) 0 clamp(0.15rem, 1.2cqw, 0.25rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__clock-time {
+  font-size: clamp(0.38rem, 2.8cqw, 0.52rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__clock-date {
+  font-size: clamp(0.32rem, 2.4cqw, 0.44rem);
+}
+
+.win11-taskbar--compact .win11-taskbar__show-desktop {
+  width: clamp(0.12rem, 1cqw, 0.22rem);
+  margin-left: clamp(0.04rem, 0.4cqw, 0.1rem);
 }
 
 @media (max-width: 62rem) {
@@ -2954,10 +3257,14 @@ html[data-osac-theme='light']
 }
 
 .tenant-vm-snapshot-desktop--windows {
-  background:
-    radial-gradient(ellipse 100% 80% at 50% 20%, rgb(0 120 212 / 42%) 0%, transparent 58%),
-    radial-gradient(ellipse 60% 45% at 80% 70%, rgb(0 188 242 / 22%) 0%, transparent 50%),
-    linear-gradient(168deg, #041a2f 0%, #0c2d52 38%, #020814 100%);
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  background-color: #0067c0;
+  background-image:
+    radial-gradient(ellipse 130% 85% at 6% 10%, rgb(0 150 255 / 72%) 0%, transparent 52%),
+    radial-gradient(ellipse 90% 65% at 95% 6%, rgb(120 220 255 / 38%) 0%, transparent 46%),
+    radial-gradient(ellipse 70% 55% at 82% 88%, rgb(0 180 255 / 22%) 0%, transparent 40%),
+    radial-gradient(ellipse 100% 45% at 48% 100%, rgb(0 120 200 / 28%) 0%, transparent 50%),
+    linear-gradient(165deg, #004c87 0%, #0078d4 22%, #2aa4f4 48%, #5fc9ff 78%, #9bdcff 100%);
 }
 
 .tenant-vm-snapshot-desktop__column {
@@ -2993,36 +3300,8 @@ html[data-osac-theme='light']
   height: clamp(9px, 3cqw, 12px);
 }
 
-.tenant-vm-snapshot-desktop__win-taskbar.guest-console-desktop__taskbar {
+.tenant-vm-snapshot-desktop__win-taskbar.win11-taskbar {
   flex-shrink: 0;
-  min-height: clamp(1.1rem, 7cqh, 1.5rem);
-  padding: 0 clamp(0.2rem, 1.8cqw, 0.4rem);
-  font-size: clamp(0.42rem, 3cqw, 0.55rem);
-}
-
-.tenant-vm-snapshot-desktop__win-taskbar .guest-console-desktop__taskbar-start {
-  width: clamp(1rem, 6cqh, 1.35rem);
-  height: clamp(1rem, 6cqh, 1.35rem);
-}
-
-.tenant-vm-snapshot-desktop__win-taskbar .guest-console-desktop__taskbar-start svg {
-  width: clamp(9px, 3cqw, 12px);
-  height: clamp(9px, 3cqw, 12px);
-}
-
-.tenant-vm-snapshot-desktop__win-taskbar .guest-console-desktop__taskbar-pin {
-  width: clamp(0.65rem, 4.5cqh, 0.95rem);
-  height: clamp(0.65rem, 4.5cqh, 0.95rem);
-}
-
-.tenant-vm-snapshot-desktop__win-taskbar .guest-console-desktop__taskbar-clock {
-  font-size: clamp(0.38rem, 2.8cqw, 0.52rem);
-  min-width: 0;
-}
-
-.tenant-vm-snapshot-desktop__win-taskbar .guest-console-desktop__icon svg {
-  width: clamp(9px, 3cqw, 12px);
-  height: clamp(9px, 3cqw, 12px);
 }
 
 .tenant-vm-snapshot-desktop .guest-console-desktop__workspace--icons {
