@@ -662,57 +662,6 @@ function vmCardActionsMenuItems(
   )
 }
 
-function vmDetailKebabMenuItems(
-  vm: TenantVirtualMachine,
-  onOpenCloneVirtualMachine: (sourceVmId: string) => void,
-) {
-  const running = vm.status === 'running'
-  const stopped = vm.status === 'stopped'
-  const noop = (e: React.MouseEvent) => {
-    e.preventDefault()
-  }
-  return (
-    <>
-      <DropdownItem key="start" isDisabled={running} onClick={noop}>
-        Start
-      </DropdownItem>
-      <DropdownItem key="pause" isDisabled={!running} onClick={noop}>
-        Pause
-      </DropdownItem>
-      <DropdownItem key="stop" isDisabled={stopped} onClick={noop}>
-        Stop
-      </DropdownItem>
-      <DropdownItem key="restart" isDisabled={stopped} onClick={noop}>
-        Restart
-      </DropdownItem>
-      <DropdownItem
-        key="clone"
-        onClick={(e) => {
-          e.preventDefault()
-          onOpenCloneVirtualMachine(vm.id)
-        }}
-      >
-        Clone
-      </DropdownItem>
-      <DropdownItem key="migrate" onClick={noop}>
-        Migrate
-      </DropdownItem>
-      <DropdownItem
-        key="console"
-        onClick={(e) => {
-          e.preventDefault()
-          openSampleVmConsole(vm)
-        }}
-      >
-        Open console
-      </DropdownItem>
-      <DropdownItem key="delete" onClick={noop}>
-        Delete
-      </DropdownItem>
-    </>
-  )
-}
-
 function specRow(label: string, value: string) {
   return (
     <div
@@ -847,6 +796,11 @@ export type TenantVirtualMachinesPageProps = {
   onOpenCreateVirtualMachineModal: () => void
   /** Opens the create VM wizard on the clone path with this VM pre-selected as the source. */
   onOpenCloneVirtualMachine: (sourceVmId: string) => void
+  /**
+   * Incremented in the app shell when the user chooses Virtual machines in the sidebar while
+   * that section is already active (e.g. return from VM detail to the card/table list).
+   */
+  navReselectSeq?: number
   /** When opening this page from the dashboard, seed the power filter (e.g. running). */
   powerFilterIntent?: VmPowerState | null
   /** VMs created from the catalog, shown first (newest at index 0). */
@@ -871,6 +825,7 @@ function isDashboardPowerFilterIntent(
 export function TenantVirtualMachinesPage({
   onOpenCreateVirtualMachineModal,
   onOpenCloneVirtualMachine,
+  navReselectSeq = 0,
   powerFilterIntent = null,
   vmsCreatedFromTemplate = [],
   createdFilterNavigateSeq = 0,
@@ -892,7 +847,6 @@ export function TenantVirtualMachinesPage({
   const [osMenuOpen, setOsMenuOpen] = useState(false)
   const [createdMenuOpen, setCreatedMenuOpen] = useState(false)
   const [actionsMenuOpenId, setActionsMenuOpenId] = useState<string | null>(null)
-  const [detailVmActionsMenuOpen, setDetailVmActionsMenuOpen] = useState(false)
   const [detailConsoleMenuOpen, setDetailConsoleMenuOpen] = useState(false)
   const [detailVmId, setDetailVmId] = useState<string | null>(null)
   const [detailActiveTab, setDetailActiveTab] = useState<string | number>('overview')
@@ -912,7 +866,6 @@ export function TenantVirtualMachinesPage({
   }, [detailVmId])
 
   useEffect(() => {
-    setDetailVmActionsMenuOpen(false)
     setDetailConsoleMenuOpen(false)
   }, [detailVmId])
 
@@ -930,6 +883,12 @@ export function TenantVirtualMachinesPage({
       onDetailOpenRequestConsumed?.()
     }
   }, [detailOpenRequest, allVirtualMachines, onDetailOpenRequestConsumed])
+
+  useEffect(() => {
+    if (navReselectSeq === 0) return
+    setDetailVmId(null)
+    setActionsMenuOpenId(null)
+  }, [navReselectSeq])
 
   useEffect(() => {
     if (isDashboardPowerFilterIntent(powerFilterIntent)) {
@@ -991,39 +950,9 @@ export function TenantVirtualMachinesPage({
             </BreadcrumbItem>
             <BreadcrumbItem isActive>{detailVm.name}</BreadcrumbItem>
           </Breadcrumb>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              gap: 'var(--pf-t--global--spacer--md)',
-            }}
-          >
-            <Title headingLevel="h1" size="2xl" style={{ margin: 0, minWidth: 0, flex: '1 1 auto' }}>
-              {detailVm.name}
-            </Title>
-            <Dropdown
-              isOpen={detailVmActionsMenuOpen}
-              onOpenChange={setDetailVmActionsMenuOpen}
-              onSelect={() => setDetailVmActionsMenuOpen(false)}
-              popperProps={{ placement: 'bottom-end' }}
-              toggle={(toggleRef) => (
-                <MenuToggle
-                  ref={toggleRef}
-                  variant="plain"
-                  isExpanded={detailVmActionsMenuOpen}
-                  onClick={() => setDetailVmActionsMenuOpen((o) => !o)}
-                  aria-label={`Actions for ${detailVm.name}`}
-                  icon={<EllipsisVIcon />}
-                />
-              )}
-            >
-              <DropdownList>
-                {vmDetailKebabMenuItems(detailVm, onOpenCloneVirtualMachine)}
-              </DropdownList>
-            </Dropdown>
-          </div>
+          <Title headingLevel="h1" size="2xl" style={{ margin: 0, minWidth: 0 }}>
+            {detailVm.name}
+          </Title>
         </div>
         <Tabs
           activeKey={detailActiveTab}

@@ -196,6 +196,10 @@ function App() {
     TenantVirtualMachine[]
   >([])
   const [vmListCreatedFilterNavigateSeq, setVmListCreatedFilterNavigateSeq] = useState(0)
+  /** Bumps when user re-selects Virtual machines while already on that nav (return to list from detail). */
+  const [vmListNavReselectSeq, setVmListNavReselectSeq] = useState(0)
+  /** Bumps when user re-selects Templates while already on that nav (close drawer, show grid). */
+  const [catalogNavReselectSeq, setCatalogNavReselectSeq] = useState(0)
   const [recentActivitiesPageOpen, setRecentActivitiesPageOpen] = useState(false)
   const [globalSearchQuery, setGlobalSearchQuery] = useState('')
   const [topologyVmDetailOpenRequest, setTopologyVmDetailOpenRequest] = useState<{
@@ -486,7 +490,17 @@ function App() {
           <Nav
             className="osac-app-shell-nav"
             aria-label="Primary"
-            onSelect={(_e, item) => setActiveItem(item.itemId)}
+            onSelect={(_e, item) => {
+              setRecentActivitiesPageOpen(false)
+              const id = String(item.itemId)
+              if (id === virtualMachinesNavItemId && String(activeItem) === virtualMachinesNavItemId) {
+                setVmListNavReselectSeq((s) => s + 1)
+              }
+              if (id === catalogNavItemId && String(activeItem) === catalogNavItemId) {
+                setCatalogNavReselectSeq((s) => s + 1)
+              }
+              setActiveItem(item.itemId)
+            }}
           >
             <NavList>
               {shellNavRows.map((row) =>
@@ -597,6 +611,7 @@ function App() {
           </div>
         ) : showCatalogPage ? (
           <TenantVmTemplatesCatalog
+            navReselectSeq={catalogNavReselectSeq}
             onOpenCreateVirtualMachineWizardFromTemplate={
               openCreateVirtualMachineWizardFromCatalogTemplate
             }
@@ -612,6 +627,7 @@ function App() {
           <TenantVirtualMachinesPage
             onOpenCreateVirtualMachineModal={openCreateVirtualMachineModal}
             onOpenCloneVirtualMachine={openCreateVirtualMachineWizardFromCloneSource}
+            navReselectSeq={vmListNavReselectSeq}
             powerFilterIntent={vmListPowerFilterIntent}
             vmsCreatedFromTemplate={vmsCreatedFromTemplate}
             createdFilterNavigateSeq={vmListCreatedFilterNavigateSeq}

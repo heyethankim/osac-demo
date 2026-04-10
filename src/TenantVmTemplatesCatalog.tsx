@@ -522,10 +522,16 @@ export type TenantVmTemplatesCatalogProps = {
     templateId: string,
     initialVmName: string,
   ) => void
+  /**
+   * Incremented in the app shell when the user chooses Templates in the sidebar while that
+   * section is already active (e.g. close the detail drawer and show the catalog grid).
+   */
+  navReselectSeq?: number
 }
 
 export function TenantVmTemplatesCatalog({
   onOpenCreateVirtualMachineWizardFromTemplate,
+  navReselectSeq = 0,
 }: TenantVmTemplatesCatalogProps) {
   const [os, setOs] = useState<OsFilters>(initialOs)
   const [wl, setWl] = useState<WorkloadFilters>(initialWl)
@@ -547,6 +553,11 @@ export function TenantVmTemplatesCatalog({
   useEffect(() => {
     setTemplateDetailTab('overview')
   }, [selectedTemplateId])
+
+  useEffect(() => {
+    if (navReselectSeq === 0) return
+    setSelectedTemplateId(null)
+  }, [navReselectSeq])
 
   const openCreateVirtualMachineWizard = () => {
     if (!selectedTemplate) return
