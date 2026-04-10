@@ -1490,29 +1490,40 @@ export function TenantVirtualMachinesPage({
                           >
                             Console
                           </Button>
-                          {isThisVmStarting ? (
-                            <div
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 'var(--pf-t--global--spacer--xs)',
-                              }}
-                            >
-                              <Spinner size="sm" aria-label="Starting virtual machine" />
-                              <span
+                          <div
+                            role="presentation"
+                            className="tenant-vm-card__state"
+                            onClick={(e) => e.stopPropagation()}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.stopPropagation()
+                              }
+                            }}
+                          >
+                            {isThisVmStarting ? (
+                              <div
                                 style={{
-                                  fontSize: 'var(--pf-t--global--font--size--body--sm)',
-                                  color: 'var(--pf-t--global--text--color--subtle)',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 'var(--pf-t--global--spacer--xs)',
                                 }}
                               >
-                                Starting…
-                              </span>
-                            </div>
-                          ) : (
-                            <Label color={statusLabelColor(displayStatus)}>
-                              {STATUS_LABEL[displayStatus]}
-                            </Label>
-                          )}
+                                <Spinner size="sm" aria-label="Starting virtual machine" />
+                                <span
+                                  style={{
+                                    fontSize: 'var(--pf-t--global--font--size--body--sm)',
+                                    color: 'var(--pf-t--global--text--color--subtle)',
+                                  }}
+                                >
+                                  Starting…
+                                </span>
+                              </div>
+                            ) : (
+                              <Label color={statusLabelColor(displayStatus)}>
+                                {STATUS_LABEL[displayStatus]}
+                              </Label>
+                            )}
+                          </div>
                           <div
                             role="presentation"
                             onClick={(e) => e.stopPropagation()}
@@ -1711,8 +1722,14 @@ export function TenantVirtualMachinesPage({
                         </span>
                       </td>
                       <td
-                        className={`${tableStyles.tableTd} tenant-vm-table__td--status`}
+                        className={`${tableStyles.tableTd} tenant-vm-table__td--status tenant-vm-table__td--no-row-nav`}
                         data-label="Status"
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation()
+                          }
+                        }}
                       >
                         {isThisVmStarting ? (
                           <div

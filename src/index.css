@@ -2397,6 +2397,10 @@ html[data-osac-theme='light']
   max-width: 100%;
 }
 
+.tenant-vm-page-table-wrap .tenant-vm-table .tenant-vm-table__td--no-row-nav {
+  cursor: default;
+}
+
 /*
  * OS: capped width so “Red Hat Enterprise Linux” ellipsizes — frees space for workspace / metrics.
  * (Was width:auto + 28rem max, which let this column absorb most of the table.)
@@ -2770,7 +2774,7 @@ html[data-osac-theme='light']
   height: 100%;
 }
 
-/* VM list cards: open detail on click; kebab / footer stay independent */
+/* VM list cards: open detail on click; console, kebab, state label, footer stay independent */
 .tenant-vm-instance-card {
   outline: none;
   cursor: pointer;
@@ -2783,6 +2787,10 @@ html[data-osac-theme='light']
 
 .tenant-vm-instance-card:hover {
   box-shadow: var(--pf-t--global--box-shadow--md);
+}
+
+.tenant-vm-instance-card .tenant-vm-card__state {
+  cursor: default;
 }
 
 /* Sticky page headings: keep title + Create VM control visible while scrolling */
