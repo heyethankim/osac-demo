@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon'
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon'
 import { ListIcon } from '@patternfly/react-icons/dist/esm/icons/list-icon'
@@ -40,6 +40,7 @@ import {
   Label,
   MenuToggle,
   SearchInput,
+  Spinner,
   Tab,
   TabContentBody,
   Tabs,
@@ -172,11 +173,14 @@ type VmCondition = {
   message: string
 }
 
-function demoConditionsForVm(vm: TenantVirtualMachine): VmCondition[] {
+function demoConditionsForVm(
+  vm: TenantVirtualMachine,
+  powerDisplay: VmPowerState = vm.status,
+): VmCondition[] {
   const ready =
-    vm.status === 'running'
+    powerDisplay === 'running'
       ? ('True' as const)
-      : vm.status === 'paused'
+      : powerDisplay === 'paused'
         ? ('Unknown' as const)
         : ('False' as const)
   return [
@@ -199,10 +203,10 @@ function demoConditionsForVm(vm: TenantVirtualMachine): VmCondition[] {
     },
     {
       type: 'GuestAgentConnected',
-      status: vm.status === 'running' ? 'True' : 'False',
-      reason: vm.status === 'running' ? 'QemuGuestAgentResponding' : 'AgentUnreachable',
+      status: powerDisplay === 'running' ? 'True' : 'False',
+      reason: powerDisplay === 'running' ? 'QemuGuestAgentResponding' : 'AgentUnreachable',
       message:
-        vm.status === 'running'
+        powerDisplay === 'running'
           ? 'QEMU guest agent is responding to status queries.'
           : 'Guest agent is not connected.',
     },
@@ -586,9 +590,9 @@ function createdFilterLabel(value: CreatedFilterValue): string {
   return CREATED_FILTER_OPTIONS.find((o) => o.value === value)?.label ?? ''
 }
 
-function vmMatchesPower(vm: TenantVirtualMachine, filter: PowerFilterValue): boolean {
+function vmMatchesPowerDisplay(displayStatus: VmPowerState, filter: PowerFilterValue): boolean {
   if (filter === 'all') return true
-  return vm.status === filter
+  return displayStatus === filter
 }
 
 function vmMatchesOsFilter(vm: TenantVirtualMachine, filter: OsFilterValue): boolean {
@@ -630,11 +634,22 @@ function openSampleVmConsole(vm: TenantVirtualMachine) {
 
 function vmCardActionsMenuItems(
   vm: TenantVirtualMachine,
+  effectiveStatus: VmPowerState,
+  isGlobalStartPending: boolean,
   onOpenCloneVirtualMachine: (sourceVmId: string) => void,
+  onRequestStartVm: (vmId: string) => void,
 ) {
+  const canStart = effectiveStatus === 'stopped' && !isGlobalStartPending
   return (
     <>
-      <DropdownItem key="start" onClick={(e) => e.preventDefault()}>
+      <DropdownItem
+        key="start"
+        isDisabled={!canStart}
+        onClick={(e) => {
+          e.preventDefault()
+          if (canStart) onRequestStartVm(vm.id)
+        }}
+      >
         Start
       </DropdownItem>
       <DropdownItem key="stop" onClick={(e) => e.preventDefault()}>
@@ -850,6 +865,12 @@ export function TenantVirtualMachinesPage({
   const [detailConsoleMenuOpen, setDetailConsoleMenuOpen] = useState(false)
   const [detailVmId, setDetailVmId] = useState<string | null>(null)
   const [detailActiveTab, setDetailActiveTab] = useState<string | number>('overview')
+  /** Demo-only: user-triggered power transitions (seed data stays immutable). */
+  const [powerStateOverrides, setPowerStateOverrides] = useState<
+    Partial<Record<string, VmPowerState>>
+  >({})
+  const [vmStartPendingId, setVmStartPendingId] = useState<string | null>(null)
+  const startVmTimerRef = useRef<number | null>(null)
 
   const allVirtualMachines = useMemo(
     () => [...vmsCreatedFromTemplate, ...TENANT_VIRTUAL_MACHINES],
@@ -890,6 +911,36 @@ export function TenantVirtualMachinesPage({
     setActionsMenuOpenId(null)
   }, [navReselectSeq])
 
+  useEffect(
+    () => () => {
+      if (startVmTimerRef.current) {
+        window.clearTimeout(startVmTimerRef.current)
+        startVmTimerRef.current = null
+      }
+    },
+    [],
+  )
+
+  const handleRequestStartVm = useCallback(
+    (vmId: string) => {
+      if (vmStartPendingId !== null) return
+      const vm = allVirtualMachines.find((v) => v.id === vmId)
+      if (!vm) return
+      const display = powerStateOverrides[vmId] ?? vm.status
+      if (display !== 'stopped') return
+      setActionsMenuOpenId(null)
+      setDetailConsoleMenuOpen(false)
+      setVmStartPendingId(vmId)
+      if (startVmTimerRef.current) window.clearTimeout(startVmTimerRef.current)
+      startVmTimerRef.current = window.setTimeout(() => {
+        startVmTimerRef.current = null
+        setPowerStateOverrides((prev) => ({ ...prev, [vmId]: 'running' }))
+        setVmStartPendingId(null)
+      }, 1800)
+    },
+    [allVirtualMachines, powerStateOverrides, vmStartPendingId],
+  )
+
   useEffect(() => {
     if (isDashboardPowerFilterIntent(powerFilterIntent)) {
       setPowerFilter(powerFilterIntent)
@@ -916,7 +967,8 @@ export function TenantVirtualMachinesPage({
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     const base = allVirtualMachines.filter((vm) => {
-      if (!vmMatchesPower(vm, powerFilter) || !vmMatchesOsFilter(vm, osFilter)) {
+      const display = powerStateOverrides[vm.id] ?? vm.status
+      if (!vmMatchesPowerDisplay(display, powerFilter) || !vmMatchesOsFilter(vm, osFilter)) {
         return false
       }
       if (!q) return true
@@ -924,7 +976,7 @@ export function TenantVirtualMachinesPage({
     })
     if (createdFilter === 'all') return base
     return filterToNewestCreated(base)
-  }, [allVirtualMachines, powerFilter, osFilter, createdFilter, search])
+  }, [allVirtualMachines, powerFilter, osFilter, createdFilter, search, powerStateOverrides])
 
   const pageShellStyle = {
     display: 'flex',
@@ -935,7 +987,8 @@ export function TenantVirtualMachinesPage({
   }
 
   if (detailVm) {
-    const conditions = demoConditionsForVm(detailVm)
+    const detailDisplay = powerStateOverrides[detailVm.id] ?? detailVm.status
+    const conditions = demoConditionsForVm(detailVm, detailDisplay)
     const DetailOsIcon = detailVm.Icon
     const detailOsIconColor = catalogIconColor(detailVm.iconAccent)
     const detailOsIconPx = detailVm.iconAccent === 'linux' ? 24 : 20
@@ -1028,12 +1081,32 @@ export function TenantVirtualMachinesPage({
                   <CardHeader className="tenant-vm-detail-console-card-header">
                     <div className="tenant-vm-detail-console-card-header__row">
                       <CardTitle>Console</CardTitle>
-                      <Label
-                        color={statusLabelColor(detailVm.status)}
-                        aria-label={`Power state: ${STATUS_LABEL[detailVm.status]}`}
-                      >
-                        {STATUS_LABEL[detailVm.status]}
-                      </Label>
+                      {vmStartPendingId === detailVm.id ? (
+                        <div
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 'var(--pf-t--global--spacer--xs)',
+                          }}
+                        >
+                          <Spinner size="sm" aria-label="Starting virtual machine" />
+                          <span
+                            style={{
+                              fontSize: 'var(--pf-t--global--font--size--body--sm)',
+                              color: 'var(--pf-t--global--text--color--subtle)',
+                            }}
+                          >
+                            Starting…
+                          </span>
+                        </div>
+                      ) : (
+                        <Label
+                          color={statusLabelColor(detailDisplay)}
+                          aria-label={`Power state: ${STATUS_LABEL[detailDisplay]}`}
+                        >
+                          {STATUS_LABEL[detailDisplay]}
+                        </Label>
+                      )}
                       <div className="tenant-vm-detail-console-card-header__menu">
                         <Dropdown
                           isOpen={detailConsoleMenuOpen}
@@ -1052,7 +1125,13 @@ export function TenantVirtualMachinesPage({
                           )}
                         >
                           <DropdownList>
-                            {vmCardActionsMenuItems(detailVm, onOpenCloneVirtualMachine)}
+                            {vmCardActionsMenuItems(
+                              detailVm,
+                              detailDisplay,
+                              vmStartPendingId !== null,
+                              onOpenCloneVirtualMachine,
+                              handleRequestStartVm,
+                            )}
                           </DropdownList>
                         </Dropdown>
                       </div>
@@ -1383,6 +1462,8 @@ export function TenantVirtualMachinesPage({
             const iconColor = catalogIconColor(vm.iconAccent)
             const isLinuxTux = vm.iconAccent === 'linux'
             const iconPx = isLinuxTux ? 28 : 24
+            const displayStatus = powerStateOverrides[vm.id] ?? vm.status
+            const isThisVmStarting = vmStartPendingId === vm.id
             return (
               <GalleryItem key={vm.id}>
                 <Card
@@ -1460,9 +1541,29 @@ export function TenantVirtualMachinesPage({
                           >
                             Console
                           </Button>
-                          <Label color={statusLabelColor(vm.status)}>
-                            {STATUS_LABEL[vm.status]}
-                          </Label>
+                          {isThisVmStarting ? (
+                            <div
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 'var(--pf-t--global--spacer--xs)',
+                              }}
+                            >
+                              <Spinner size="sm" aria-label="Starting virtual machine" />
+                              <span
+                                style={{
+                                  fontSize: 'var(--pf-t--global--font--size--body--sm)',
+                                  color: 'var(--pf-t--global--text--color--subtle)',
+                                }}
+                              >
+                                Starting…
+                              </span>
+                            </div>
+                          ) : (
+                            <Label color={statusLabelColor(displayStatus)}>
+                              {STATUS_LABEL[displayStatus]}
+                            </Label>
+                          )}
                           <div
                             role="presentation"
                             onClick={(e) => e.stopPropagation()}
@@ -1491,7 +1592,13 @@ export function TenantVirtualMachinesPage({
                               )}
                             >
                               <DropdownList>
-                                {vmCardActionsMenuItems(vm, onOpenCloneVirtualMachine)}
+                                {vmCardActionsMenuItems(
+                                  vm,
+                                  displayStatus,
+                                  vmStartPendingId !== null,
+                                  onOpenCloneVirtualMachine,
+                                  handleRequestStartVm,
+                                )}
                               </DropdownList>
                             </Dropdown>
                           </div>
@@ -1621,6 +1728,8 @@ export function TenantVirtualMachinesPage({
                   const iconColor = catalogIconColor(vm.iconAccent)
                   const isLinuxTux = vm.iconAccent === 'linux'
                   const iconPx = isLinuxTux ? 20 : 18
+                  const displayStatus = powerStateOverrides[vm.id] ?? vm.status
+                  const isThisVmStarting = vmStartPendingId === vm.id
                   return (
                     <tr
                       key={vm.id}
@@ -1656,9 +1765,29 @@ export function TenantVirtualMachinesPage({
                         className={`${tableStyles.tableTd} tenant-vm-table__td--status`}
                         data-label="Status"
                       >
-                        <Label color={statusLabelColor(vm.status)} isCompact>
-                          {STATUS_LABEL[vm.status]}
-                        </Label>
+                        {isThisVmStarting ? (
+                          <div
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 'var(--pf-t--global--spacer--xs)',
+                            }}
+                          >
+                            <Spinner size="sm" aria-label="Starting virtual machine" />
+                            <span
+                              style={{
+                                fontSize: 'var(--pf-t--global--font--size--body--sm)',
+                                color: 'var(--pf-t--global--text--color--subtle)',
+                              }}
+                            >
+                              Starting…
+                            </span>
+                          </div>
+                        ) : (
+                          <Label color={statusLabelColor(displayStatus)} isCompact>
+                            {STATUS_LABEL[displayStatus]}
+                          </Label>
+                        )}
                       </td>
                       <td
                         className={`${tableStyles.tableTd} ${tableStyles.modifiers.fitContent}`}
@@ -1762,7 +1891,13 @@ export function TenantVirtualMachinesPage({
                           )}
                         >
                           <DropdownList>
-                            {vmCardActionsMenuItems(vm, onOpenCloneVirtualMachine)}
+                            {vmCardActionsMenuItems(
+                              vm,
+                              displayStatus,
+                              vmStartPendingId !== null,
+                              onOpenCloneVirtualMachine,
+                              handleRequestStartVm,
+                            )}
                           </DropdownList>
                         </Dropdown>
                       </td>
