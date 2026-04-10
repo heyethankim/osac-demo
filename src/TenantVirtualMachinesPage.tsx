@@ -18,6 +18,7 @@ import {
   NORTHSTAR_DEMO_VM_COUNTS,
   NORTHSTAR_DEMO_VM_TOTAL,
 } from './northstarVmDemoCounts'
+import { VmGuestDesktopSnapshot } from './VmGuestDesktopSnapshot'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -57,7 +58,7 @@ type CatalogCardIconProps = Pick<
 >
 type CatalogCardIcon = React.ComponentType<CatalogCardIconProps>
 type CatalogIconAccent = 'redhat' | 'windows' | 'linux'
-type TenantOs = 'rhel' | 'windows' | 'linux'
+export type TenantOs = 'rhel' | 'windows' | 'linux'
 export type VmPowerState = 'running' | 'stopped' | 'paused'
 
 const CATALOG_ICON_TILE_BG =
@@ -628,6 +629,7 @@ function openSampleVmConsole(vm: TenantVirtualMachine) {
     demo: 'vm-console',
     vm: vm.id,
     name: vm.name,
+    os: vm.os,
   })
   window.open(`${base}?${q.toString()}`, '_blank', 'noopener,noreferrer')
 }
@@ -695,63 +697,10 @@ function specRow(label: string, value: string) {
 }
 
 function VirtualMachineDetailSnapshot({ vm }: { vm: TenantVirtualMachine }) {
-  const isWindows = vm.os === 'windows'
   return (
     <div className="tenant-vm-detail-snapshot">
-      <div className="tenant-vm-detail-snapshot__frame">
-        <div
-          className="northstar-console-demo__terminal tenant-vm-detail-snapshot__terminal-mock"
-          aria-label={`Console preview for ${vm.name}`}
-        >
-          {isWindows ? (
-            <>
-              <p className="northstar-console-demo__terminal-line northstar-console-demo__terminal-line--prompt">
-                <span className="tenant-vm-detail-snapshot__ps-path">PS C:\Users\tenant&gt;</span>{' '}
-                <span className="northstar-console-demo__cursor" aria-hidden>
-                  ▋
-                </span>
-              </p>
-              <p className="northstar-console-demo__terminal-line">
-                Northstar Cloud — VM console (demo)
-              </p>
-              <p className="northstar-console-demo__terminal-line">
-                <span className="tenant-vm-detail-snapshot__terminal-em">{vm.name}</span>
-                <span className="northstar-console-demo__terminal-line--muted">
-                  {' '}
-                  · Guest agent: simulated
-                </span>
-              </p>
-              <p className="northstar-console-demo__terminal-line northstar-console-demo__terminal-line--muted">
-                Still snapshot — open console for a live session.
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="northstar-console-demo__terminal-line northstar-console-demo__terminal-line--prompt">
-                <span className="northstar-console-demo__terminal-user">tenant@northstar</span>
-                <span className="northstar-console-demo__terminal-at">:</span>
-                <span className="northstar-console-demo__terminal-path">~</span>
-                <span className="northstar-console-demo__terminal-dollar"> $ </span>
-                <span className="northstar-console-demo__cursor" aria-hidden>
-                  ▋
-                </span>
-              </p>
-              <p className="northstar-console-demo__terminal-line">
-                Northstar Cloud — VM console (demo)
-              </p>
-              <p className="northstar-console-demo__terminal-line">
-                <span className="tenant-vm-detail-snapshot__terminal-em">{vm.name}</span>
-                <span className="northstar-console-demo__terminal-line--muted">
-                  {' '}
-                  · Guest agent: simulated · TLS
-                </span>
-              </p>
-              <p className="northstar-console-demo__terminal-line northstar-console-demo__terminal-line--muted">
-                Still snapshot — open console for a live session.
-              </p>
-            </>
-          )}
-        </div>
+      <div className="tenant-vm-detail-snapshot__frame tenant-vm-detail-snapshot__frame--guest-desktop">
+        <VmGuestDesktopSnapshot guestOs={vm.os} vmName={vm.name} vmId={vm.id} />
       </div>
       <div className="tenant-vm-detail-console-launch">
         <Button variant="secondary" size="sm" onClick={() => openSampleVmConsole(vm)}>
@@ -767,7 +716,7 @@ function VirtualMachineDetailSnapshot({ vm }: { vm: TenantVirtualMachine }) {
           color: 'var(--pf-t--global--text--color--subtle)',
         }}
       >
-        Captured view of the guest console (demo). Use Launch console for an interactive session.
+        Preview of the guest desktop (demo). Launch console opens the full interactive session.
       </Content>
     </div>
   )

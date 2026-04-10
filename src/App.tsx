@@ -20,6 +20,7 @@ import {
   buildTenantVirtualMachineFromCatalogTemplate,
   buildTenantVmFromModalNewPayload,
   type ProvisionNewVmFromModalPayload,
+  type TenantOs,
   type TenantVirtualMachine,
   type VmPowerState,
 } from './TenantVirtualMachinesPage'
@@ -164,7 +165,16 @@ function navLabelForItemId(
   return 'Workspace'
 }
 
-function readVmConsoleDemoQuery(): { vmId: string; vmName: string } | null {
+function parseGuestOsQueryParam(raw: string | null): TenantOs {
+  if (raw === 'rhel' || raw === 'windows' || raw === 'linux') return raw
+  return 'linux'
+}
+
+function readVmConsoleDemoQuery(): {
+  vmId: string
+  vmName: string
+  guestOs: TenantOs
+} | null {
   if (typeof window === 'undefined') return null
   const p = new URLSearchParams(window.location.search)
   if (p.get('demo') !== 'vm-console') return null
@@ -177,7 +187,11 @@ function readVmConsoleDemoQuery(): { vmId: string; vmName: string } | null {
       vmName = rawName
     }
   }
-  return { vmId: p.get('vm') ?? '', vmName }
+  return {
+    vmId: p.get('vm') ?? '',
+    vmName,
+    guestOs: parseGuestOsQueryParam(p.get('os')),
+  }
 }
 
 function App() {
@@ -321,6 +335,7 @@ function App() {
       <VmConsoleDemoPage
         vmId={vmConsoleDemo.vmId}
         vmName={vmConsoleDemo.vmName}
+        guestOs={vmConsoleDemo.guestOs}
         onClose={() => {
           setVmConsoleDemo(null)
           window.history.replaceState({}, '', window.location.pathname)
