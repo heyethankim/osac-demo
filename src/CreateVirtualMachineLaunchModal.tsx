@@ -450,9 +450,26 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
     [orderedTemplates, templateStepFilter, templateStepSearch],
   )
 
+  /** Put the current selection first so it stays in view (e.g. catalog → Create VM). */
+  const wizardTemplateGalleryOrder = useMemo(() => {
+    const list = filteredWizardTemplates
+    const sel = selectedTemplateId
+    if (!sel) return list
+    const i = list.findIndex((t) => t.id === sel)
+    if (i <= 0) return list
+    const rest = [...list]
+    const [picked] = rest.splice(i, 1)
+    return [picked, ...rest]
+  }, [filteredWizardTemplates, selectedTemplateId])
+
   const selectedCatalogTemplate = useMemo(
     () => orderedTemplates.find((t) => t.id === selectedTemplateId),
     [orderedTemplates, selectedTemplateId],
+  )
+
+  const cloneSourceVmForReview = useMemo(
+    () => existingVirtualMachines.find((v) => v.id === cloneSourceVmId) ?? null,
+    [existingVirtualMachines, cloneSourceVmId],
   )
 
   const filteredCloneWizardVms = useMemo(
@@ -470,6 +487,18 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
       cloneStepOsFilter,
     ],
   )
+
+  /** Put the selected clone source first so it stays in view (e.g. open Clone from a VM). */
+  const cloneWizardGalleryOrder = useMemo(() => {
+    const list = filteredCloneWizardVms
+    const sel = cloneSourceVmId
+    if (!sel) return list
+    const i = list.findIndex((v) => v.id === sel)
+    if (i <= 0) return list
+    const rest = [...list]
+    const [picked] = rest.splice(i, 1)
+    return [picked, ...rest]
+  }, [filteredCloneWizardVms, cloneSourceVmId])
 
   const selectCloneSourceVm = useCallback((vm: TenantVirtualMachine) => {
     setCloneSourceVmId(vm.id)
@@ -1273,7 +1302,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                   hasGutter
                   minWidths={{ default: '260px', md: '280px', lg: '300px' }}
                 >
-                  {filteredWizardTemplates.map((item) => (
+                  {wizardTemplateGalleryOrder.map((item) => (
                     <GalleryItem key={item.id}>
                       <Card
                         id={`create-vm-wizard-tpl-${item.id}`}
@@ -1467,7 +1496,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                       hasGutter
                       minWidths={{ default: '260px', md: '280px', lg: '300px' }}
                     >
-                      {filteredCloneWizardVms.map((vm) => {
+                      {cloneWizardGalleryOrder.map((vm) => {
                         const VmIcon = vm.Icon
                         const iconColor = catalogIconColor(vm.iconAccent)
                         const isLinuxTux = vm.iconAccent === 'linux'
@@ -2228,26 +2257,239 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                   </ExpandableSection>
                 </div>
               )}
-              {deployment === 'clone' && (
-                <DescriptionList isCompact>
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>Deployment</DescriptionListTerm>
-                    <DescriptionListDescription>Clone</DescriptionListDescription>
-                  </DescriptionListGroup>
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>Source</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      {existingVirtualMachines.find((v) => v.id === cloneSourceVmId)?.name ??
-                        '—'}
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                  <DescriptionListGroup>
-                    <DescriptionListTerm>New name</DescriptionListTerm>
-                    <DescriptionListDescription>
-                      {cloneNewName.trim() || '—'}
-                    </DescriptionListDescription>
-                  </DescriptionListGroup>
-                </DescriptionList>
+              {deployment === 'clone' && cloneSourceVmId && (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--pf-t--global--spacer--sm)',
+                  }}
+                >
+                  <ExpandableSection
+                    toggleText="Overview"
+                    isExpanded={templateReviewSectionsExpanded.details}
+                    isIndented
+                    onToggle={(_e, expanded) =>
+                      setTemplateReviewSectionsExpanded((s) => ({ ...s, details: expanded }))
+                    }
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'flex-start',
+                        gap: 'var(--pf-t--global--spacer--lg)',
+                      }}
+                    >
+                      <div style={{ flex: '1 1 14rem', minWidth: 0 }}>
+                        <DescriptionList isCompact>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Deployment</DescriptionListTerm>
+                            <DescriptionListDescription>Clone</DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Source virtual machine</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {cloneSourceVmForReview?.name ?? '—'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>CPU</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {cloneSourceVmForReview?.cpu ?? '—'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Memory</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {cloneSourceVmForReview?.memory ?? '—'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Storage</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {cloneSourceVmForReview?.storage ?? '—'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Network</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {cloneSourceVmForReview?.networkSummary ?? '—'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        </DescriptionList>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 'var(--pf-t--global--spacer--md)',
+                          flex: '1 1 14rem',
+                          minWidth: 0,
+                        }}
+                      >
+                        <DescriptionList isCompact>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {cloneNewName.trim() || '—'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>Hostname</DescriptionListTerm>
+                            <DescriptionListDescription>
+                              Inherited from source configuration
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        </DescriptionList>
+                        <FormGroup label="Headless mode" fieldId="create-vm-clone-review-headless">
+                          <Switch
+                            id="create-vm-clone-review-headless"
+                            aria-label="Headless mode"
+                            isChecked={TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.headlessMode}
+                            isDisabled
+                          />
+                        </FormGroup>
+                        <FormGroup
+                          label="Guest system log access"
+                          fieldId="create-vm-clone-review-guest-log"
+                        >
+                          <Switch
+                            id="create-vm-clone-review-guest-log"
+                            aria-label="Guest system log access"
+                            isChecked={TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.guestLogAccess}
+                            isDisabled
+                          />
+                        </FormGroup>
+                        <FormGroup
+                          label="Deletion protection"
+                          fieldId="create-vm-clone-review-deletion-protection"
+                        >
+                          <Switch
+                            id="create-vm-clone-review-deletion-protection"
+                            aria-label="Deletion protection"
+                            isChecked={TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.deletionProtection}
+                            isDisabled
+                          />
+                        </FormGroup>
+                      </div>
+                    </div>
+                  </ExpandableSection>
+                  <ExpandableSection
+                    toggleText="Storage"
+                    isExpanded={templateReviewSectionsExpanded.storage}
+                    isIndented
+                    onToggle={(_e, expanded) =>
+                      setTemplateReviewSectionsExpanded((s) => ({ ...s, storage: expanded }))
+                    }
+                  >
+                    <Content
+                      component="p"
+                      style={{
+                        margin: 0,
+                        color: 'var(--pf-t--global--text--color--subtle)',
+                      }}
+                    >
+                      {TEMPLATE_REVIEW_STORAGE_CAPTION}
+                    </Content>
+                  </ExpandableSection>
+                  <ExpandableSection
+                    toggleText="Network"
+                    isExpanded={templateReviewSectionsExpanded.network}
+                    isIndented
+                    onToggle={(_e, expanded) =>
+                      setTemplateReviewSectionsExpanded((s) => ({ ...s, network: expanded }))
+                    }
+                  >
+                    <Content
+                      component="p"
+                      style={{
+                        margin: 0,
+                        color: 'var(--pf-t--global--text--color--subtle)',
+                      }}
+                    >
+                      {TEMPLATE_REVIEW_NETWORK_CAPTION}
+                    </Content>
+                  </ExpandableSection>
+                  <ExpandableSection
+                    toggleText="SSH"
+                    isExpanded={templateReviewSectionsExpanded.ssh}
+                    isIndented
+                    onToggle={(_e, expanded) =>
+                      setTemplateReviewSectionsExpanded((s) => ({ ...s, ssh: expanded }))
+                    }
+                  >
+                    <Content
+                      component="p"
+                      style={{
+                        margin: 0,
+                        color: 'var(--pf-t--global--text--color--subtle)',
+                      }}
+                    >
+                      {TEMPLATE_REVIEW_SSH_CAPTION}
+                    </Content>
+                  </ExpandableSection>
+                  <ExpandableSection
+                    toggleText="Scheduling"
+                    isExpanded={templateReviewSectionsExpanded.scheduling}
+                    isIndented
+                    onToggle={(_e, expanded) =>
+                      setTemplateReviewSectionsExpanded((s) => ({
+                        ...s,
+                        scheduling: expanded,
+                      }))
+                    }
+                  >
+                    <Content
+                      component="p"
+                      style={{
+                        margin: 0,
+                        color: 'var(--pf-t--global--text--color--subtle)',
+                      }}
+                    >
+                      {TEMPLATE_REVIEW_SCHEDULING_CAPTION}
+                    </Content>
+                  </ExpandableSection>
+                  <ExpandableSection
+                    toggleText="Initial run"
+                    isExpanded={templateReviewSectionsExpanded.initialRun}
+                    isIndented
+                    onToggle={(_e, expanded) =>
+                      setTemplateReviewSectionsExpanded((s) => ({
+                        ...s,
+                        initialRun: expanded,
+                      }))
+                    }
+                  >
+                    <Content
+                      component="p"
+                      style={{
+                        margin: 0,
+                        color: 'var(--pf-t--global--text--color--subtle)',
+                      }}
+                    >
+                      {TEMPLATE_REVIEW_INITIAL_RUN_CAPTION}
+                    </Content>
+                  </ExpandableSection>
+                  <ExpandableSection
+                    toggleText="Metadata"
+                    isExpanded={templateReviewSectionsExpanded.metadata}
+                    isIndented
+                    onToggle={(_e, expanded) =>
+                      setTemplateReviewSectionsExpanded((s) => ({ ...s, metadata: expanded }))
+                    }
+                  >
+                    <Content
+                      component="p"
+                      style={{
+                        margin: 0,
+                        color: 'var(--pf-t--global--text--color--subtle)',
+                      }}
+                    >
+                      {TEMPLATE_REVIEW_METADATA_CAPTION}
+                    </Content>
+                  </ExpandableSection>
+                </div>
               )}
             </div>
           </WizardStep>
