@@ -57,13 +57,11 @@ type CatalogCardIconProps = Pick<
 type CatalogCardIcon = React.ComponentType<CatalogCardIconProps>
 
 type TenantOs = 'rhel' | 'windows' | 'linux'
-export type TenantWorkloadKey = 'desktop' | 'high-performance' | 'server'
+export type TenantWorkloadKey = 'machine-learning' | 'data-processing' | 'high-performance'
 
 /** Sidebar workload checkboxes; templates list every tag they match. */
 export type TenantWorkloadFilterTag =
-  | 'desktop'
   | 'high-performance'
-  | 'server'
   | 'machine-learning'
   | 'data-processing'
   | 'analytics'
@@ -87,6 +85,11 @@ export type TenantVmTemplate = {
   diskSize?: string
   /** Primary NIC model shown in template detail (demo). */
   networkType?: string
+  /**
+   * Demo: randomized per page load for gallery cards only so Analytics, Data processing,
+   * High performance, and Machine learning all appear in the grid. Drawer uses `workload`.
+   */
+  cardWorkloadDisplay?: string
 }
 
 export const CATALOG_TEMPLATE_DETAIL_DEFAULTS = {
@@ -110,10 +113,18 @@ export function catalogIconColor(accent: CatalogIconAccent): string | undefined 
 }
 
 export const CATALOG_WORKLOAD_LABEL: Record<TenantWorkloadKey, string> = {
-  desktop: 'Desktop',
+  'machine-learning': 'Machine learning',
+  'data-processing': 'Data processing',
   'high-performance': 'High performance',
-  server: 'Server',
 }
+
+/** Workload line shown on template cards after random assignment (matches sidebar filter labels). */
+export const CARD_CATALOG_WORKLOAD_DISPLAY_LABELS = [
+  'Analytics',
+  'Data processing',
+  'High performance',
+  'Machine learning',
+] as const
 
 const CATALOG_OS_LABEL: Record<TenantOs, string> = {
   rhel: 'Red Hat Enterprise Linux',
@@ -131,8 +142,8 @@ const TENANT_VM_TEMPLATES_SOURCE: TenantVmTemplate[] = [
       'Enterprise-supported image for serving open models in regulated environments',
     workspace: 'tenant-prod',
     bootSourcePvc: 'rhel9-ai-runtime',
-    workload: 'server',
-    workloadFilterTags: ['server', 'machine-learning'],
+    workload: 'machine-learning',
+    workloadFilterTags: ['machine-learning'],
     cpu: '16 vCPU',
     memory: '64 GiB',
     os: ['rhel'],
@@ -146,8 +157,8 @@ const TENANT_VM_TEMPLATES_SOURCE: TenantVmTemplate[] = [
       'OpenAI-compatible API server for served checkpoints and LoRA adapters',
     workspace: 'model-serving',
     bootSourcePvc: 'cuda-vllm-base',
-    workload: 'server',
-    workloadFilterTags: ['server', 'machine-learning'],
+    workload: 'machine-learning',
+    workloadFilterTags: ['machine-learning'],
     cpu: '8 vCPU',
     memory: '64 GiB',
     os: ['linux'],
@@ -161,8 +172,8 @@ const TENANT_VM_TEMPLATES_SOURCE: TenantVmTemplate[] = [
       'Notebooks with scikit-learn, pandas, and optional GPU-backed kernels',
     workspace: 'data-science',
     bootSourcePvc: 'jupyter-ml-cpu-gpu',
-    workload: 'desktop',
-    workloadFilterTags: ['desktop', 'machine-learning', 'analytics'],
+    workload: 'machine-learning',
+    workloadFilterTags: ['machine-learning', 'analytics'],
     cpu: '8 vCPU',
     memory: '32 GiB',
     os: ['linux'],
@@ -175,8 +186,8 @@ const TENANT_VM_TEMPLATES_SOURCE: TenantVmTemplate[] = [
     subtitle: 'Standard enterprise Linux VM with registration helpers',
     workspace: 'tenant-prod',
     bootSourcePvc: 'rhel9-boot-qcow2',
-    workload: 'server',
-    workloadFilterTags: ['server'],
+    workload: 'data-processing',
+    workloadFilterTags: ['data-processing'],
     cpu: '4 vCPU',
     memory: '16 GiB',
     os: ['rhel'],
@@ -203,8 +214,8 @@ const TENANT_VM_TEMPLATES_SOURCE: TenantVmTemplate[] = [
     subtitle: 'GPU-ready desktop pool image with domain join hooks',
     workspace: 'vdi-pool-a',
     bootSourcePvc: 'win11-golden-v1',
-    workload: 'desktop',
-    workloadFilterTags: ['desktop'],
+    workload: 'data-processing',
+    workloadFilterTags: ['data-processing'],
     cpu: '2 vCPU',
     memory: '8 GiB',
     os: ['windows'],
@@ -217,8 +228,8 @@ const TENANT_VM_TEMPLATES_SOURCE: TenantVmTemplate[] = [
     subtitle: 'General-purpose server roles and high-availability pairs',
     workspace: 'tenant-prod',
     bootSourcePvc: 'ws2022-boot',
-    workload: 'server',
-    workloadFilterTags: ['server'],
+    workload: 'data-processing',
+    workloadFilterTags: ['data-processing'],
     cpu: '8 vCPU',
     memory: '32 GiB',
     os: ['windows'],
@@ -231,8 +242,8 @@ const TENANT_VM_TEMPLATES_SOURCE: TenantVmTemplate[] = [
     subtitle: 'Developer workstation with cloud-init and user-data examples',
     workspace: 'dev-sandbox',
     bootSourcePvc: 'ubuntu2404-desktop',
-    workload: 'desktop',
-    workloadFilterTags: ['desktop', 'analytics'],
+    workload: 'data-processing',
+    workloadFilterTags: ['data-processing', 'analytics'],
     cpu: '4 vCPU',
     memory: '16 GiB',
     os: ['linux'],
@@ -249,7 +260,35 @@ function shuffleCatalogTemplates(templates: TenantVmTemplate[]): TenantVmTemplat
   return out
 }
 
-const TENANT_VM_TEMPLATES = shuffleCatalogTemplates(TENANT_VM_TEMPLATES_SOURCE)
+/**
+ * Assign each card a workload line label so all four demo categories appear in the grid when
+ * there are at least four templates; extra cards get random picks. Order is shuffled each load.
+ */
+function assignRandomCardWorkloadLabels(templates: TenantVmTemplate[]): TenantVmTemplate[] {
+  const n = templates.length
+  const four = [...CARD_CATALOG_WORKLOAD_DISPLAY_LABELS]
+  let picks: string[]
+  if (n >= four.length) {
+    picks = [...four]
+    for (let i = picks.length; i < n; i++) {
+      picks.push(four[Math.floor(Math.random() * four.length)])
+    }
+  } else {
+    picks = []
+    for (let i = 0; i < n; i++) {
+      picks.push(four[Math.floor(Math.random() * four.length)])
+    }
+  }
+  for (let i = picks.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[picks[i], picks[j]] = [picks[j], picks[i]]
+  }
+  return templates.map((t, i) => ({ ...t, cardWorkloadDisplay: picks[i] }))
+}
+
+const TENANT_VM_TEMPLATES = assignRandomCardWorkloadLabels(
+  shuffleCatalogTemplates(TENANT_VM_TEMPLATES_SOURCE),
+)
 
 export function getTenantVmTemplateById(id: string): TenantVmTemplate | undefined {
   return TENANT_VM_TEMPLATES_SOURCE.find((t) => t.id === id)
@@ -257,9 +296,7 @@ export function getTenantVmTemplateById(id: string): TenantVmTemplate | undefine
 
 type OsFilters = { rhel: boolean; windows: boolean; linux: boolean }
 type WorkloadFilters = {
-  desktop: boolean
   highPerformance: boolean
-  server: boolean
   machineLearning: boolean
   dataProcessing: boolean
   analytics: boolean
@@ -267,9 +304,7 @@ type WorkloadFilters = {
 
 const initialOs: OsFilters = { rhel: false, windows: false, linux: false }
 const initialWl: WorkloadFilters = {
-  desktop: false,
   highPerformance: false,
-  server: false,
   machineLearning: false,
   dataProcessing: false,
   analytics: false,
@@ -280,14 +315,7 @@ function osGroupActive(f: OsFilters): boolean {
 }
 
 function workloadGroupActive(f: WorkloadFilters): boolean {
-  return (
-    f.desktop ||
-    f.highPerformance ||
-    f.server ||
-    f.machineLearning ||
-    f.dataProcessing ||
-    f.analytics
-  )
+  return f.highPerformance || f.machineLearning || f.dataProcessing || f.analytics
 }
 
 function templateMatchesOs(t: TenantVmTemplate, f: OsFilters): boolean {
@@ -299,9 +327,7 @@ function templateMatchesWorkload(t: TenantVmTemplate, f: WorkloadFilters): boole
   if (!workloadGroupActive(f)) return true
   const tags = t.workloadFilterTags
   return (
-    (f.desktop && tags.includes('desktop')) ||
     (f.highPerformance && tags.includes('high-performance')) ||
-    (f.server && tags.includes('server')) ||
     (f.machineLearning && tags.includes('machine-learning')) ||
     (f.dataProcessing && tags.includes('data-processing')) ||
     (f.analytics && tags.includes('analytics'))
@@ -482,7 +508,10 @@ export function CatalogTemplateCardBodyContent({
           gap: 'var(--pf-t--global--spacer--sm)',
         }}
       >
-        {specRow('Workload', CATALOG_WORKLOAD_LABEL[template.workload])}
+        {specRow(
+          'Workload',
+          template.cardWorkloadDisplay ?? CATALOG_WORKLOAD_LABEL[template.workload],
+        )}
       </div>
     </>
   )
@@ -581,6 +610,7 @@ export function TenantVmTemplatesCatalog({
         item.title,
         item.subtitle,
         item.bootSourcePvc,
+        item.cardWorkloadDisplay ?? CATALOG_WORKLOAD_LABEL[item.workload],
         CATALOG_WORKLOAD_LABEL[item.workload],
         item.cpu,
         item.memory,
@@ -995,12 +1025,6 @@ export function TenantVmTemplatesCatalog({
                   }
                 />
                 <Checkbox
-                  id="tenant-cat-wl-desktop"
-                  label="Desktop"
-                  isChecked={wl.desktop}
-                  onChange={(_e, checked) => setWl((s) => ({ ...s, desktop: checked }))}
-                />
-                <Checkbox
                   id="tenant-cat-wl-hpc"
                   label="High performance"
                   isChecked={wl.highPerformance}
@@ -1015,12 +1039,6 @@ export function TenantVmTemplatesCatalog({
                   onChange={(_e, checked) =>
                     setWl((s) => ({ ...s, machineLearning: checked }))
                   }
-                />
-                <Checkbox
-                  id="tenant-cat-wl-server"
-                  label="Server"
-                  isChecked={wl.server}
-                  onChange={(_e, checked) => setWl((s) => ({ ...s, server: checked }))}
                 />
               </div>
             </ExpandableSection>

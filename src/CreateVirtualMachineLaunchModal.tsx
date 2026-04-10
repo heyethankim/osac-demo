@@ -232,9 +232,7 @@ type TemplateWizardFilterValue =
   | 'os-rhel'
   | 'os-windows'
   | 'os-linux'
-  | 'wl-desktop'
   | 'wl-high-performance'
-  | 'wl-server'
   | 'wl-machine-learning'
   | 'wl-data-processing'
   | 'wl-analytics'
@@ -247,9 +245,7 @@ const TEMPLATE_WIZARD_FILTER_OPTIONS: {
   { value: 'os-rhel', label: 'Operating system: RHEL' },
   { value: 'os-windows', label: 'Operating system: Windows' },
   { value: 'os-linux', label: 'Operating system: Linux' },
-  { value: 'wl-desktop', label: 'Workload: Desktop' },
   { value: 'wl-high-performance', label: 'Workload: High performance' },
-  { value: 'wl-server', label: 'Workload: Server' },
   { value: 'wl-machine-learning', label: 'Workload: Machine learning' },
   { value: 'wl-data-processing', label: 'Workload: Data processing' },
   { value: 'wl-analytics', label: 'Workload: Analytics' },
@@ -269,9 +265,7 @@ function templateWizardFilterAriaLabel(value: TemplateWizardFilterValue): string
 const TEMPLATE_WIZARD_WL_TAG: Partial<
   Record<TemplateWizardFilterValue, TenantWorkloadFilterTag>
 > = {
-  'wl-desktop': 'desktop',
   'wl-high-performance': 'high-performance',
-  'wl-server': 'server',
   'wl-machine-learning': 'machine-learning',
   'wl-data-processing': 'data-processing',
   'wl-analytics': 'analytics',
@@ -296,6 +290,7 @@ function templateMatchesWizardSearch(t: TenantVmTemplate, q: string): boolean {
     t.title,
     t.subtitle,
     t.bootSourcePvc,
+    t.cardWorkloadDisplay ?? CATALOG_WORKLOAD_LABEL[t.workload],
     CATALOG_WORKLOAD_LABEL[t.workload],
     t.cpu,
     t.memory,
