@@ -437,6 +437,10 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
   const [cloneStepOsFilter, setCloneStepOsFilter] = useState<CloneWizardOsFilter>('all')
   const [clonePowerMenuOpen, setClonePowerMenuOpen] = useState(false)
   const [cloneOsMenuOpen, setCloneOsMenuOpen] = useState(false)
+  /** True only after VM templates page → Create VM; keeps selection first until user picks another template. */
+  const [pinSelectedTemplateFirst, setPinSelectedTemplateFirst] = useState(false)
+  /** True only after Virtual machines → Clone; keeps source first until user picks another VM. */
+  const [pinSelectedCloneFirst, setPinSelectedCloneFirst] = useState(false)
 
   const orderedTemplates = useMemo(() => listOrderedCatalogTemplates(), [])
 
@@ -450,9 +454,10 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
     [orderedTemplates, templateStepFilter, templateStepSearch],
   )
 
-  /** Put the current selection first so it stays in view (e.g. catalog → Create VM). */
+  /** Catalog entry only; dashboard / in-wizard picks keep catalog order (see pinSelectedTemplateFirst). */
   const wizardTemplateGalleryOrder = useMemo(() => {
     const list = filteredWizardTemplates
+    if (!pinSelectedTemplateFirst) return list
     const sel = selectedTemplateId
     if (!sel) return list
     const i = list.findIndex((t) => t.id === sel)
@@ -460,7 +465,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
     const rest = [...list]
     const [picked] = rest.splice(i, 1)
     return [picked, ...rest]
-  }, [filteredWizardTemplates, selectedTemplateId])
+  }, [filteredWizardTemplates, selectedTemplateId, pinSelectedTemplateFirst])
 
   const selectedCatalogTemplate = useMemo(
     () => orderedTemplates.find((t) => t.id === selectedTemplateId),
@@ -488,9 +493,10 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
     ],
   )
 
-  /** Put the selected clone source first so it stays in view (e.g. open Clone from a VM). */
+  /** Clone-from-VM entry only; otherwise keep VM list order (see pinSelectedCloneFirst). */
   const cloneWizardGalleryOrder = useMemo(() => {
     const list = filteredCloneWizardVms
+    if (!pinSelectedCloneFirst) return list
     const sel = cloneSourceVmId
     if (!sel) return list
     const i = list.findIndex((v) => v.id === sel)
@@ -498,10 +504,15 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
     const rest = [...list]
     const [picked] = rest.splice(i, 1)
     return [picked, ...rest]
-  }, [filteredCloneWizardVms, cloneSourceVmId])
+  }, [filteredCloneWizardVms, cloneSourceVmId, pinSelectedCloneFirst])
 
   const selectCloneSourceVm = useCallback((vm: TenantVirtualMachine) => {
-    setCloneSourceVmId(vm.id)
+    setCloneSourceVmId((prev) => {
+      if (prev !== '' && prev !== vm.id) {
+        setPinSelectedCloneFirst(false)
+      }
+      return vm.id
+    })
     setCloneNewName(`${vm.name}-clone`)
   }, [])
 
@@ -526,7 +537,12 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
   }, [filteredWizardTemplates, selectedTemplateId])
 
   const selectWizardTemplate = useCallback((t: TenantVmTemplate) => {
-    setSelectedTemplateId(t.id)
+    setSelectedTemplateId((prev) => {
+      if (prev !== '' && prev !== t.id) {
+        setPinSelectedTemplateFirst(false)
+      }
+      return t.id
+    })
     setTemplateVmName((n) => n.trim() || t.title.toLowerCase().replace(/\s+/g, '-'))
   }, [])
 
@@ -556,6 +572,8 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
     setCloneStepOsFilter('all')
     setClonePowerMenuOpen(false)
     setCloneOsMenuOpen(false)
+    setPinSelectedTemplateFirst(false)
+    setPinSelectedCloneFirst(false)
   }, [])
 
   const setDeploymentMethod = useCallback(
@@ -590,6 +608,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
       setWizardStartIndex(WIZARD_STEP_INDEX_TEMPLATE_FROM_CATALOG)
       reset()
       const name = initialVmName.trim() || templateId
+      setPinSelectedTemplateFirst(true)
       setSelectedTemplateId(templateId)
       setTemplateVmName(name)
       setOpen(true)
@@ -603,6 +622,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
       setWizardStartIndex(WIZARD_STEP_INDEX_CLONE_SOURCE)
       reset()
       setDeployment('clone')
+      setPinSelectedCloneFirst(true)
       const src = existingVirtualMachines.find((v) => v.id === sourceVmId)
       setCloneSourceVmId(sourceVmId)
       setCloneNewName(src ? `${src.name}-clone` : `${sourceVmId}-clone`)

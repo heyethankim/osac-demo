@@ -1134,6 +1134,9 @@ export function TenantVirtualMachinesPage({
     if (isDashboardPowerFilterIntent(powerFilterIntent)) {
       setPowerFilter(powerFilterIntent)
       setDashboardPowerFilterHint(powerFilterIntent)
+    } else {
+      setPowerFilter('all')
+      setDashboardPowerFilterHint(null)
     }
   }, [powerFilterIntent])
 

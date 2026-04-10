@@ -508,6 +508,9 @@ function App() {
             onSelect={(_e, item) => {
               setRecentActivitiesPageOpen(false)
               const id = String(item.itemId)
+              if (id === virtualMachinesNavItemId) {
+                setVmListPowerFilterIntent(null)
+              }
               if (id === virtualMachinesNavItemId && String(activeItem) === virtualMachinesNavItemId) {
                 setVmListNavReselectSeq((s) => s + 1)
               }
