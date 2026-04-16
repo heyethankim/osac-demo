@@ -15,9 +15,11 @@ import {
   type TenantVmTemplate,
 } from './TenantVmTemplatesCatalog'
 import {
-  NORTHSTAR_DEMO_VM_COUNTS,
-  NORTHSTAR_DEMO_VM_TOTAL,
-} from './northstarVmDemoCounts'
+  type DemoTenantId,
+  DEMO_TENANT_DISPLAY_USER,
+  DEMO_VM_POWER_COUNTS,
+  demoVmPowerTotal,
+} from './demoTenant'
 import { VmGuestDesktopSnapshot } from './VmGuestDesktopSnapshot'
 import {
   Alert,
@@ -156,6 +158,7 @@ export type ProvisionNewVmFromModalPayload = {
 
 export function buildTenantVmFromModalNewPayload(
   payload: ProvisionNewVmFromModalPayload,
+  tenantId: DemoTenantId,
 ): TenantVirtualMachine {
   const os: TenantOs =
     payload.guestOsFamily === 'rhel'
@@ -188,7 +191,7 @@ export function buildTenantVmFromModalNewPayload(
       year: 'numeric',
     }),
     createdAtMs: now,
-    owner: 'Chris Morgan',
+    owner: DEMO_TENANT_DISPLAY_USER[tenantId],
     cpu: payload.cpu,
     memory: payload.memory,
     storage: '80 GiB',
@@ -271,7 +274,7 @@ function conditionStatusColor(
 
 type VmSeed = Omit<TenantVirtualMachine, 'status'>
 
-const TENANT_VM_SEEDS: VmSeed[] = [
+const NORTHSTAR_TENANT_VM_SEEDS: VmSeed[] = [
   {
     id: 'vm-web-tier-01',
     name: 'web-tier-01',
@@ -494,44 +497,287 @@ const GEN_NAME_PREFIXES = [
   'svc',
 ] as const
 
-function shuffleVmPowerStates(): VmPowerState[] {
-  const { running, paused, stopped } = NORTHSTAR_DEMO_VM_COUNTS
+const EVERGREEN_TENANT_VM_SEEDS: VmSeed[] = [
+  {
+    id: 'efg-ledger-gateway',
+    name: 'ledger-gateway-east',
+    description: 'Core posting API tier behind the omnichannel banking mesh',
+    workspace: 'transaction-core',
+    os: 'linux',
+    Icon: LinuxTuxIcon,
+    iconAccent: 'linux',
+    created: 'Dec 18, 2025',
+    owner: DEMO_TENANT_DISPLAY_USER.evergreen,
+    cpu: '6 vCPU',
+    memory: '24 GiB',
+    storage: '160 GiB',
+    networkSummary: 'PCI-scoped VLAN · dual NIC · 10.77.3.21',
+    hubName: 'Bluestone core interconnect · ord-02',
+    createdAtMs: Date.UTC(2025, 11, 18),
+  },
+  {
+    id: 'efg-fraud-ensemble',
+    name: 'fraud-ensemble-gpu',
+    description: 'Real-time inference for wire and ACH anomaly scoring',
+    workspace: 'risk-analytics',
+    os: 'linux',
+    Icon: LinuxTuxIcon,
+    iconAccent: 'linux',
+    created: 'Jan 9, 2026',
+    owner: DEMO_TENANT_DISPLAY_USER.evergreen,
+    cpu: '16 vCPU',
+    memory: '128 GiB',
+    storage: '1 TiB',
+    networkSummary: 'Isolated scoring fabric · 192.168.210.6',
+    hubName: 'Risk analytics hub · us-east',
+    createdAtMs: Date.UTC(2026, 0, 9),
+  },
+  {
+    id: 'efg-advisor-vdi',
+    name: 'advisor-vdi-pool-07',
+    description: 'Persistent desktop for licensed wealth advisors',
+    workspace: 'advisor-platform',
+    os: 'windows',
+    Icon: WindowsIcon,
+    iconAccent: 'windows',
+    created: 'Nov 30, 2025',
+    owner: DEMO_TENANT_DISPLAY_USER.evergreen,
+    cpu: '4 vCPU',
+    memory: '16 GiB',
+    storage: '240 GiB',
+    networkSummary: 'VDI gold VLAN · MFA-required segment',
+    hubName: 'Wealth advisory edge hub',
+    createdAtMs: Date.UTC(2025, 10, 30),
+  },
+  {
+    id: 'efg-sql-ha',
+    name: 'sql-client-ledger-ha',
+    description: 'Always-on SQL pair for custody and positions reporting',
+    workspace: 'data-platform',
+    os: 'windows',
+    Icon: WindowsIcon,
+    iconAccent: 'windows',
+    created: 'Sep 28, 2025',
+    owner: DEMO_TENANT_DISPLAY_USER.evergreen,
+    cpu: '12 vCPU',
+    memory: '96 GiB',
+    storage: '2 TiB',
+    networkSummary: 'DB tier · synchronous mirror · 10.131.9.44',
+    hubName: 'Data platform hub · central',
+    createdAtMs: Date.UTC(2025, 8, 28),
+  },
+  {
+    id: 'efg-mobile-bff',
+    name: 'mobile-bff-cluster-03',
+    description: 'GraphQL façade for retail mobile and wallet features',
+    workspace: 'digital-channel',
+    os: 'rhel',
+    Icon: RedhatIcon,
+    iconAccent: 'redhat',
+    created: 'Feb 11, 2026',
+    owner: DEMO_TENANT_DISPLAY_USER.evergreen,
+    cpu: '8 vCPU',
+    memory: '32 GiB',
+    storage: '120 GiB',
+    networkSummary: 'Public edge + service mesh sidecars',
+    hubName: 'Digital channel hub · edge',
+    createdAtMs: Date.UTC(2026, 1, 11),
+  },
+  {
+    id: 'efg-doc-retention',
+    name: 'doc-retention-worker',
+    description: 'WORM-compliant archival pipeline for statements and disclosures',
+    workspace: 'compliance-archive',
+    os: 'linux',
+    Icon: LinuxTuxIcon,
+    iconAccent: 'linux',
+    created: 'Mar 3, 2026',
+    owner: DEMO_TENANT_DISPLAY_USER.evergreen,
+    cpu: '8 vCPU',
+    memory: '64 GiB',
+    storage: '8 TiB',
+    networkSummary: 'Air-gapped ingest bridge · single uplink',
+    hubName: 'Compliance archive hub',
+    createdAtMs: Date.UTC(2026, 2, 3),
+  },
+  {
+    id: 'efg-kyc-batch',
+    name: 'kyc-batch-runner',
+    description: 'Nightly sanctions refresh and entity resolution jobs',
+    workspace: 'aml-operations',
+    os: 'rhel',
+    Icon: RedhatIcon,
+    iconAccent: 'redhat',
+    created: 'Oct 19, 2025',
+    owner: DEMO_TENANT_DISPLAY_USER.evergreen,
+    cpu: '16 vCPU',
+    memory: '64 GiB',
+    storage: '400 GiB',
+    networkSummary: 'Batch-only subnet · no inbound internet',
+    hubName: 'AML operations hub',
+    createdAtMs: Date.UTC(2025, 9, 19),
+  },
+  {
+    id: 'efg-sandbox-quant',
+    name: 'quant-sandbox-priya',
+    description: 'Personal research VM for portfolio stress scenarios',
+    workspace: 'quant-research',
+    os: 'linux',
+    Icon: LinuxTuxIcon,
+    iconAccent: 'linux',
+    created: 'Mar 27, 2026',
+    owner: DEMO_TENANT_DISPLAY_USER.evergreen,
+    cpu: '12 vCPU',
+    memory: '48 GiB',
+    storage: '512 GiB',
+    networkSummary: 'Research sandbox · NAT egress limited',
+    hubName: 'Quant research sandbox hub',
+    createdAtMs: Date.UTC(2026, 2, 27),
+  },
+]
+
+const EFG_GEN_WORKSPACES = [
+  'wealth-management',
+  'retail-core',
+  'risk-analytics',
+  'advisor-platform',
+  'digital-channel',
+  'treasury-ops',
+  'client-data-zone',
+  'pci-sandbox',
+  'reporting-mesh',
+  'shared-integration',
+] as const
+
+const EFG_GEN_DESCRIPTIONS = [
+  'Policy-hardened instance for regulated financial workloads.',
+  'Message fan-out worker attached to the enterprise service bus.',
+  'Customer-facing API node behind the regional WAF pair.',
+  'Staging harness for release certification of banking microservices.',
+  'Warm standby for cross-region failover drills.',
+  'Privileged access jump host for SOC-reviewed sessions only.',
+  'Session cache tier backing authenticated digital channels.',
+  'Scheduled reconciliation worker for nostro accounts.',
+  'Telemetry aggregator for branch connectivity health.',
+  'Vault-adjacent host for key ceremony rehearsal environments.',
+] as const
+
+const EFG_GEN_NETWORK_SUMMARY = [
+  'Private service mesh · mTLS everywhere',
+  'Wire transfer VLAN · static 172.22.x.x',
+  'No-egress research subnet',
+  'Dual-homed DMZ + internal NIC',
+  'SD-WAN overlay · QoS tagged',
+  'Single-homed sandbox bridge',
+] as const
+
+const EFG_GEN_HUB_NAME = [
+  'Bluestone interconnect · central',
+  'Treasury wire hub · east',
+  'Retail channel hub',
+  'Tenant default hub',
+  'PCI-scoped hub',
+  'Integration test hub',
+] as const
+
+const EFG_GEN_CREATED = [
+  'Jan 22, 2026',
+  'Feb 14, 2026',
+  'Mar 1, 2026',
+  'Dec 8, 2025',
+  'Nov 17, 2025',
+  'Jan 5, 2026',
+] as const
+
+const EFG_GEN_NAME_PREFIXES = [
+  'loan',
+  'fund',
+  'trade',
+  'kyc',
+  'vault',
+  'risk',
+  'card',
+  'wire',
+  'iris',
+  'trust',
+] as const
+
+function mulberry32(seed: number) {
+  return function () {
+    let t = (seed += 0x6d2b79f5)
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function shuffleVmPowerStatesSeeded(
+  counts: { running: number; paused: number; stopped: number },
+  seed: number,
+): VmPowerState[] {
   const pool: VmPowerState[] = [
-    ...Array.from({ length: running }, () => 'running' as const),
-    ...Array.from({ length: paused }, () => 'paused' as const),
-    ...Array.from({ length: stopped }, () => 'stopped' as const),
+    ...Array.from({ length: counts.running }, () => 'running' as const),
+    ...Array.from({ length: counts.paused }, () => 'paused' as const),
+    ...Array.from({ length: counts.stopped }, () => 'stopped' as const),
   ]
+  const rand = mulberry32(seed)
   for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[pool[i], pool[j]] = [pool[j], pool[i]]
+    const j = Math.floor(rand() * (i + 1))
+    const tmp = pool[i]
+    pool[i] = pool[j]!
+    pool[j] = tmp!
   }
   return pool
 }
 
-const SHUFFLED_DEMO_VM_STATUSES = shuffleVmPowerStates()
+function demoShuffleSeed(tenantId: DemoTenantId): number {
+  switch (tenantId) {
+    case 'northstar':
+      return 0x4e535f31
+    case 'evergreen':
+      return 0x45464731
+    default:
+      return 1
+  }
+}
 
 /** Synthetic VMs use older timestamps so user-provisioned rows stay “newest” with Date.now(). */
 const DEMO_SYNTHETIC_CREATED_MS_BASE = Date.UTC(2024, 0, 1)
 
-function buildSyntheticVm(index: number, status: VmPowerState): TenantVirtualMachine {
-  const n = index - TENANT_VM_SEEDS.length + 1
+function buildSyntheticVm(
+  tenantId: DemoTenantId,
+  index: number,
+  status: VmPowerState,
+): TenantVirtualMachine {
+  const seeds =
+    tenantId === 'northstar' ? NORTHSTAR_TENANT_VM_SEEDS : EVERGREEN_TENANT_VM_SEEDS
+  const n = index - seeds.length + 1
   const os = GEN_OS_CYCLE[index % GEN_OS_CYCLE.length]
   const { Icon, iconAccent } = GEN_ICON_FOR_OS[os]
-  const prefix = GEN_NAME_PREFIXES[index % GEN_NAME_PREFIXES.length]
+  const isNorthstar = tenantId === 'northstar'
+  const prefixPack = isNorthstar ? GEN_NAME_PREFIXES : EFG_GEN_NAME_PREFIXES
+  const prefix = prefixPack[index % prefixPack.length]
   const spec = GEN_SPECS[index % GEN_SPECS.length]
+  const workspacePack = isNorthstar ? GEN_WORKSPACES : EFG_GEN_WORKSPACES
+  const descPack = isNorthstar ? GEN_DESCRIPTIONS : EFG_GEN_DESCRIPTIONS
+  const createdPack = isNorthstar ? GEN_CREATED : EFG_GEN_CREATED
+  const netPack = isNorthstar ? GEN_NETWORK_SUMMARY : EFG_GEN_NETWORK_SUMMARY
+  const hubPack = isNorthstar ? GEN_HUB_NAME : EFG_GEN_HUB_NAME
   return {
-    id: `vm-synth-${String(n).padStart(3, '0')}`,
+    id: isNorthstar
+      ? `vm-synth-${String(n).padStart(3, '0')}`
+      : `vm-efg-${String(n).padStart(3, '0')}`,
     name: `${prefix}-${String(n).padStart(2, '0')}`,
-    description: GEN_DESCRIPTIONS[index % GEN_DESCRIPTIONS.length],
-    workspace: GEN_WORKSPACES[index % GEN_WORKSPACES.length],
+    description: descPack[index % descPack.length],
+    workspace: workspacePack[index % workspacePack.length],
     status,
     os,
     Icon,
     iconAccent,
-    created: GEN_CREATED[index % GEN_CREATED.length],
-    owner: 'Chris Morgan',
-    networkSummary: GEN_NETWORK_SUMMARY[index % GEN_NETWORK_SUMMARY.length],
-    hubName: GEN_HUB_NAME[index % GEN_HUB_NAME.length],
+    created: createdPack[index % createdPack.length],
+    owner: DEMO_TENANT_DISPLAY_USER[tenantId],
+    networkSummary: netPack[index % netPack.length],
+    hubName: hubPack[index % hubPack.length],
     cpu: spec.cpu,
     memory: spec.memory,
     storage: spec.storage,
@@ -571,7 +817,7 @@ const DEMO_CONSOLE_STOP_REASONS: VmConsoleStopReason[] = [
 const USER_CONSOLE_STOP_REASON: VmConsoleStopReason = {
   kind: 'user',
   summary: 'Stopped from console',
-  detail: 'Stop was requested from Virtual machines actions. Start the VM again to open a console session.',
+    detail: 'Stop was requested from My VMs actions. Start the VM again to open a console session.',
 }
 
 function demoConsoleStopReasonForVmId(vmId: string): VmConsoleStopReason {
@@ -589,6 +835,7 @@ function withConsoleStopReasonWhenStopped(vm: TenantVirtualMachine): TenantVirtu
 export function buildTenantVirtualMachineFromCatalogTemplate(
   template: TenantVmTemplate,
   vmName: string,
+  tenantId: DemoTenantId,
   vmDescription?: string,
 ): TenantVirtualMachine {
   const os = (template.os[0] ?? 'linux') as TenantOs
@@ -614,7 +861,7 @@ export function buildTenantVirtualMachineFromCatalogTemplate(
       year: 'numeric',
     }),
     createdAtMs: Date.now(),
-    owner: 'Chris Morgan',
+    owner: DEMO_TENANT_DISPLAY_USER[tenantId],
     cpu: template.cpu,
     memory: template.memory,
     storage: disk,
@@ -623,23 +870,38 @@ export function buildTenantVirtualMachineFromCatalogTemplate(
   }
 }
 
-export const TENANT_VIRTUAL_MACHINES: TenantVirtualMachine[] = (() => {
-  if (SHUFFLED_DEMO_VM_STATUSES.length !== NORTHSTAR_DEMO_VM_TOTAL) {
+export function buildTenantVirtualMachinesForTenant(
+  tenantId: DemoTenantId,
+): TenantVirtualMachine[] {
+  if (tenantId === 'vertexa') return []
+  const counts = DEMO_VM_POWER_COUNTS[tenantId]
+  const total = demoVmPowerTotal(tenantId)
+  const seeds =
+    tenantId === 'northstar' ? NORTHSTAR_TENANT_VM_SEEDS : EVERGREEN_TENANT_VM_SEEDS
+  const shuffled = shuffleVmPowerStatesSeeded(counts, demoShuffleSeed(tenantId))
+  if (shuffled.length !== total) {
     throw new Error('Demo VM status pool length must match total VM count')
   }
-  if (TENANT_VM_SEEDS.length > NORTHSTAR_DEMO_VM_TOTAL) {
+  if (seeds.length > total) {
     throw new Error('Too many VM seeds for demo total')
   }
-  const fromSeeds = TENANT_VM_SEEDS.map((seed, i) => ({
+  const fromSeeds = seeds.map((seed, i) => ({
     ...seed,
-    status: SHUFFLED_DEMO_VM_STATUSES[i],
+    status: shuffled[i]!,
   }))
   const synthetic: TenantVirtualMachine[] = []
-  for (let i = TENANT_VM_SEEDS.length; i < NORTHSTAR_DEMO_VM_TOTAL; i++) {
-    synthetic.push(buildSyntheticVm(i, SHUFFLED_DEMO_VM_STATUSES[i]))
+  for (let i = seeds.length; i < total; i++) {
+    synthetic.push(buildSyntheticVm(tenantId, i, shuffled[i]!))
   }
-  return [...fromSeeds, ...synthetic].map(withConsoleStopReasonWhenStopped)
-})()
+  const owner = DEMO_TENANT_DISPLAY_USER[tenantId]
+  return [...fromSeeds, ...synthetic]
+    .map(withConsoleStopReasonWhenStopped)
+    .map((vm) => ({ ...vm, owner }))
+}
+
+/** Northstar demo inventory — static export for legacy imports. */
+export const TENANT_VIRTUAL_MACHINES: TenantVirtualMachine[] =
+  buildTenantVirtualMachinesForTenant('northstar')
 
 type PowerFilterValue = 'all' | VmPowerState
 type OsFilterValue = 'all' | TenantOs
@@ -785,6 +1047,23 @@ function vmCardActionsMenuItems(
       </DropdownItem>
     </>
   )
+}
+
+function hashStringForVmIp(s: string): number {
+  let h = 0
+  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
+  return h >>> 0
+}
+
+/** Primary IPv4 for list cards when summary omits an address (demo; aligned with topology helper). */
+function extractPrimaryIpForVmCard(summary: string, vmId: string): string {
+  const m = summary.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/)
+  if (m) return m[1]
+  const h = hashStringForVmIp(vmId)
+  const second = (h % 200) + 1
+  const third = ((h >> 9) % 250) + 1
+  const fourth = ((h >> 18) % 250) + 1
+  return `10.${second}.${third}.${fourth}`
 }
 
 function specRow(label: string, value: string) {
@@ -945,12 +1224,14 @@ export type TenantVirtualMachinesPageProps = {
   /** Opens the create VM wizard on the clone path with this VM pre-selected as the source. */
   onOpenCloneVirtualMachine: (sourceVmId: string) => void
   /**
-   * Incremented in the app shell when the user chooses Virtual machines in the sidebar while
+   * Incremented in the app shell when the user chooses My VMs in the sidebar while
    * that section is already active (e.g. return from VM detail to the card/table list).
    */
   navReselectSeq?: number
   /** When opening this page from the dashboard, seed the power filter (e.g. running). */
   powerFilterIntent?: VmPowerState | null
+  /** Seeded demo fleet for the active financial institution tenant. */
+  seedVirtualMachines: TenantVirtualMachine[]
   /** VMs created from the catalog, shown first (newest at index 0). */
   vmsCreatedFromTemplate?: TenantVirtualMachine[]
   /**
@@ -975,6 +1256,7 @@ export function TenantVirtualMachinesPage({
   onOpenCloneVirtualMachine,
   navReselectSeq = 0,
   powerFilterIntent = null,
+  seedVirtualMachines,
   vmsCreatedFromTemplate = [],
   createdFilterNavigateSeq = 0,
   detailOpenRequest = null,
@@ -1010,8 +1292,8 @@ export function TenantVirtualMachinesPage({
   const powerTransitionTimerRef = useRef<number | null>(null)
 
   const allVirtualMachines = useMemo(
-    () => [...vmsCreatedFromTemplate, ...TENANT_VIRTUAL_MACHINES],
-    [vmsCreatedFromTemplate],
+    () => [...vmsCreatedFromTemplate, ...seedVirtualMachines],
+    [vmsCreatedFromTemplate, seedVirtualMachines],
   )
 
   const detailVm = useMemo(
@@ -1208,7 +1490,7 @@ export function TenantVirtualMachinesPage({
           <Breadcrumb aria-label="Virtual machine">
             <BreadcrumbItem>
               <Button variant="link" isInline onClick={() => setDetailVmId(null)}>
-                Virtual machines
+                My VMs
               </Button>
             </BreadcrumbItem>
             <BreadcrumbItem isActive>{detailVm.name}</BreadcrumbItem>
@@ -1460,7 +1742,7 @@ export function TenantVirtualMachinesPage({
           }}
         >
           <Title headingLevel="h1" size="2xl" style={{ margin: 0, minWidth: 0, flex: '1 1 auto' }}>
-            Virtual machines
+            My VMs
           </Title>
           <div style={{ flexShrink: 0 }}>
             <Button
@@ -1898,11 +2180,11 @@ export function TenantVirtualMachinesPage({
                       style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 'var(--pf-t--global--spacer--sm)',
+                        gap: 'var(--pf-t--global--spacer--xs)',
                       }}
                     >
+                      {specRow('IP address', extractPrimaryIpForVmCard(vm.networkSummary, vm.id))}
                       {specRow('Created', vm.created)}
-                      {specRow('Owner', vm.owner)}
                     </div>
                   </CardBody>
                 </Card>
@@ -1914,7 +2196,7 @@ export function TenantVirtualMachinesPage({
           <div className="tenant-vm-page-table-wrap">
             <table
               className={`${tableStyles.table} ${tableStyles.modifiers.compact} ${tableStyles.modifiers.striped} ${tableStyles.modifiers.truncate} tenant-vm-table`}
-              aria-label="Virtual machines"
+              aria-label="My VMs"
             >
               <thead className={tableStyles.tableThead}>
                 <tr className={tableStyles.tableTr}>

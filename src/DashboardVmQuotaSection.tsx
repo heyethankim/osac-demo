@@ -1,100 +1,114 @@
-import { useMemo } from 'react'
-import { Card, CardBody, CardHeader, CardTitle, Title } from '@patternfly/react-core'
-import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
-import { buildDashboardVmQuotaMetrics, type VmQuotaMetric } from './dashboardVmQuotaDemo'
-import { VM_UTILIZATION_CHART_GRID_STROKE } from './dashboardVmUtilizationDemo'
+import { useId, useMemo } from 'react'
+import { Card, CardBody, CardHeader, CardTitle, Content, Title } from '@patternfly/react-core'
+import type { DemoTenantId } from './demoTenant'
+import { buildDashboardVmQuotaMetrics } from './dashboardVmQuotaDemo'
+import type { TenantVirtualMachine } from './TenantVirtualMachinesPage'
+import { VmQuotaDonut } from './VmQuotaDonut'
 
-/** Hex for SVG fills (Recharts); matches PF danger tone on dark dashboards. */
-const OVER_QUOTA_FILL = '#fa4616'
-
-/** Visible “remaining quota” ring on light cards (matches html[data-osac-theme=light] CSS). */
-const QUOTA_UNUSED_FILL_LIGHT = '#c7c7c7'
-
-function QuotaDonut({
-  metric,
-  isDarkTheme,
-}: {
-  metric: VmQuotaMetric
+export type DashboardVmQuotaSectionProps = {
   isDarkTheme: boolean
-}) {
-  const { used, limit, stroke } = metric
-  const over = used > limit
-  const filled = Math.min(used, limit)
-  const remainder = Math.max(0, limit - filled)
-  const data = [
-    { name: 'used', value: filled },
-    { name: 'available', value: remainder },
-  ]
-  const fillUsed = over ? OVER_QUOTA_FILL : stroke
-  const fillAvail = isDarkTheme ? VM_UTILIZATION_CHART_GRID_STROKE : QUOTA_UNUSED_FILL_LIGHT
-
-  const usedStr = metric.formatUsed(used)
-  const limitStr = metric.formatLimit(limit)
-
-  return (
-    <div
-      className="osac-dashboard-quota-donut"
-      role="img"
-      aria-label={`${metric.title}: ${usedStr} out of ${limitStr} ${metric.unit} allocated`}
-    >
-      <div className="osac-dashboard-quota-donut__chart">
-        <ResponsiveContainer
-          width="100%"
-          height="100%"
-          initialDimension={{ width: 224, height: 224 }}
-        >
-          <PieChart margin={{ top: 4, right: 4, bottom: 4, left: 4 }}>
-            <Pie
-              data={data}
-              dataKey="value"
-              cx="50%"
-              cy="50%"
-              innerRadius="88%"
-              outerRadius="96%"
-              startAngle={90}
-              endAngle={-270}
-              stroke="none"
-              isAnimationActive={false}
-            >
-              <Cell fill={fillUsed} />
-              <Cell fill={fillAvail} />
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="osac-dashboard-quota-donut__center">
-        <span className="osac-dashboard-quota-donut__fraction">
-          <span className={over ? 'osac-dashboard-quota-donut__used--over' : undefined}>{usedStr}</span>
-          <span className="osac-dashboard-quota-donut__sep"> / </span>
-          <span>{limitStr}</span>
-        </span>
-        <span className="osac-dashboard-quota-donut__unit">{metric.unit}</span>
-      </div>
-    </div>
-  )
+  fleetVirtualMachines: readonly TenantVirtualMachine[]
+  /** Visible section title (default matches the user VM dashboard). */
+  title?: string
+  /** When set, shows utilization % above the donut and availability below it. */
+  showUsageBreakdown?: boolean
+  /** Optional lede under the title (e.g. tenant admin context). */
+  description?: string
+  /**
+   * `two-by-two`: CPU and Memory on the first row, GPU and Storage on the second (metrics stay in that order).
+   * `default`: responsive row of up to four columns.
+   */
+  quotaGridLayout?: 'default' | 'two-by-two'
+  /** Use when the section sits directly under other content (drops extra top margin). */
+  compactTopSpacing?: boolean
+  /**
+   * Tenant user dashboard only: scope quota to that persona’s VMs and apply per-bank utilization shaping
+   * (Chris Morgan / Priya Nair).
+   */
+  tenantUserPersona?: Extract<DemoTenantId, 'northstar' | 'evergreen'>
 }
 
-export function DashboardVmQuotaSection({ isDarkTheme }: { isDarkTheme: boolean }) {
-  const metrics = useMemo(() => buildDashboardVmQuotaMetrics(), [])
+export function DashboardVmQuotaSection({
+  isDarkTheme,
+  fleetVirtualMachines,
+  title = 'Resource quota',
+  showUsageBreakdown = false,
+  description,
+  quotaGridLayout = 'default',
+  compactTopSpacing = false,
+  tenantUserPersona,
+}: DashboardVmQuotaSectionProps) {
+  const headingId = useId()
+  const metrics = useMemo(
+    () =>
+      buildDashboardVmQuotaMetrics(
+        fleetVirtualMachines,
+        tenantUserPersona ? { tenantUserPersona } : undefined,
+      ),
+    [fleetVirtualMachines, tenantUserPersona],
+  )
+
+  const sectionClass =
+    'osac-dashboard-quota-section' +
+    (compactTopSpacing ? ' osac-dashboard-quota-section--compact-top' : '')
+  const gridClass =
+    'osac-dashboard-quota-grid' +
+    (quotaGridLayout === 'two-by-two' ? ' osac-dashboard-quota-grid--two-by-two' : '')
 
   return (
-    <section className="osac-dashboard-quota-section" aria-labelledby="osac-dashboard-quota-heading">
+    <section className={sectionClass} aria-labelledby={headingId}>
       <div className="osac-dashboard-quota-intro">
-        <Title headingLevel="h2" size="xl" id="osac-dashboard-quota-heading" style={{ margin: 0 }}>
-          Resource quota
+        <Title headingLevel="h2" size="xl" id={headingId} style={{ margin: 0 }}>
+          {title}
         </Title>
+        {description ? (
+          <Content
+            component="p"
+            style={{
+              margin: 'var(--pf-t--global--spacer--sm) 0 0',
+              maxWidth: '48rem',
+              color: 'var(--pf-t--global--text--color--subtle)',
+            }}
+          >
+            {description}
+          </Content>
+        ) : null}
       </div>
-      <div className="osac-dashboard-quota-grid">
-        {metrics.map((m) => (
-          <Card key={m.key} className="osac-dashboard-quota-card" component="article">
-            <CardHeader>
-              <CardTitle component="h3">{m.title}</CardTitle>
-            </CardHeader>
-            <CardBody className="osac-dashboard-quota-card__body">
-              <QuotaDonut metric={m} isDarkTheme={isDarkTheme} />
-            </CardBody>
-          </Card>
-        ))}
+      <div className={gridClass}>
+        {metrics.map((m) => {
+          const pctRounded = m.limit > 0 ? Math.round((m.used / m.limit) * 100) : 0
+          const available = Math.max(0, m.limit - m.used)
+          const availStr = m.formatUsed(available)
+          return (
+            <Card key={m.key} className="osac-dashboard-quota-card" component="article">
+              <CardHeader>
+                <CardTitle component="h3">{m.title}</CardTitle>
+              </CardHeader>
+              <CardBody
+                className={
+                  showUsageBreakdown
+                    ? 'osac-dashboard-quota-card__body osac-dashboard-quota-card__body--usage'
+                    : 'osac-dashboard-quota-card__body'
+                }
+              >
+                {showUsageBreakdown ? (
+                  <div
+                    className="osac-dashboard-quota-card__allocation-pct"
+                    aria-label={`${pctRounded} percent in use`}
+                  >
+                    <span className="osac-dashboard-quota-card__allocation-pct-value">{pctRounded}%</span>
+                  </div>
+                ) : null}
+                <VmQuotaDonut metric={m} isDarkTheme={isDarkTheme} />
+                {showUsageBreakdown ? (
+                  <div className="osac-dashboard-quota-card__availability">
+                    {availStr} {m.unit} available
+                  </div>
+                ) : null}
+              </CardBody>
+            </Card>
+          )
+        })}
       </div>
     </section>
   )

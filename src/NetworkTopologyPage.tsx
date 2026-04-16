@@ -276,7 +276,7 @@ export function NetworkTopologyPage({
                 component="p"
                 className="osac-topology-graph__vm-more"
               >
-                +{extra} more in this network (see Virtual machines list)
+                +{extra} more in this network (see My VMs list)
               </Content>
             ) : null}
           </div>

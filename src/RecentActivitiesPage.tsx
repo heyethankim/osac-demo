@@ -10,10 +10,12 @@ import {
   Label,
   Title,
 } from '@patternfly/react-core'
+import type { DemoTenantId } from './demoTenant'
 import {
   buildDemoVmRecentActivities,
   type VmRecentActivitySeverity,
 } from './dashboardVmRecentActivities'
+import type { TenantVirtualMachine } from './TenantVirtualMachinesPage'
 
 const RECENT_ACTIVITY_STATUS_LABELS: Record<VmRecentActivitySeverity, string> = {
   success: 'Success',
@@ -25,8 +27,17 @@ function statusLabel(severity: VmRecentActivitySeverity): string {
   return RECENT_ACTIVITY_STATUS_LABELS[severity]
 }
 
-export function RecentActivitiesPage() {
-  const activities = useMemo(() => buildDemoVmRecentActivities(), [])
+export function RecentActivitiesPage({
+  fleetVirtualMachines,
+  demoTenantId,
+}: {
+  fleetVirtualMachines: readonly TenantVirtualMachine[]
+  demoTenantId: DemoTenantId
+}) {
+  const activities = useMemo(
+    () => buildDemoVmRecentActivities(fleetVirtualMachines, demoTenantId),
+    [fleetVirtualMachines, demoTenantId],
+  )
 
   return (
     <div className="recent-activities-full">

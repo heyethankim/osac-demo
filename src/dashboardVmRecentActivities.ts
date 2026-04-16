@@ -1,4 +1,5 @@
-import { TENANT_VIRTUAL_MACHINES } from './TenantVirtualMachinesPage'
+import { DEMO_TENANT_DISPLAY_USER, type DemoTenantId } from './demoTenant'
+import type { TenantVirtualMachine } from './TenantVirtualMachinesPage'
 
 /** Outcome of the activity for UI treatment (maps to PatternFly status labels). */
 export type VmRecentActivitySeverity = 'success' | 'warning' | 'danger'
@@ -20,9 +21,21 @@ export type VmRecentActivityItem = {
 }
 
 /** Demo VM lifecycle and ops events aligned with names from the Virtual machines inventory. */
-export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
-  const v = TENANT_VIRTUAL_MACHINES
+export function buildDemoVmRecentActivities(
+  vms: readonly TenantVirtualMachine[],
+  tenantId: DemoTenantId,
+): VmRecentActivityItem[] {
+  const v = vms
   const pick = (i: number) => v[i % v.length]?.name ?? 'vm-instance'
+  const by = DEMO_TENANT_DISPLAY_USER[tenantId]
+  const catalogDetail =
+    tenantId === 'vertexa'
+      ? 'Global template baseline pushed to all registered tenant organizations'
+      : tenantId === 'northstar'
+        ? 'Catalog refreshed from Northstar golden images (RHEL 9.4, Windows Server 2022)'
+        : 'Catalog refreshed from Bluestone golden images (RHEL 9.4, Windows Server 2022)'
+  const evt =
+    tenantId === 'vertexa' ? 'evt-vtx' : tenantId === 'northstar' ? 'evt-ns' : 'evt-efg'
 
   return [
     {
@@ -35,8 +48,8 @@ export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
       resource: pick(0),
       resourceType: 'Virtual machine',
       workspace: 'tenant-prod',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-8f2a-01k9',
+      initiatedBy: by,
+      eventId: `${evt}-8f2a-01k9`,
     },
     {
       id: 'a2',
@@ -48,8 +61,8 @@ export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
       resource: pick(3),
       resourceType: 'Snapshot',
       workspace: 'tenant-prod',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-7c11-01k8',
+      initiatedBy: by,
+      eventId: `${evt}-7c11-01k8`,
     },
     {
       id: 'a3',
@@ -61,8 +74,8 @@ export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
       resource: pick(7),
       resourceType: 'Virtual machine',
       workspace: 'tenant-prod',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-6d03-01k7',
+      initiatedBy: by,
+      eventId: `${evt}-6d03-01k7`,
     },
     {
       id: 'a4',
@@ -74,8 +87,8 @@ export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
       resource: pick(2),
       resourceType: 'Console session',
       workspace: 'tenant-prod',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-5a90-01k6',
+      initiatedBy: by,
+      eventId: `${evt}-5a90-01k6`,
     },
     {
       id: 'a5',
@@ -87,21 +100,21 @@ export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
       resource: pick(11),
       resourceType: 'Virtual machine',
       workspace: 'tenant-prod',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-4b22-01k5',
+      initiatedBy: by,
+      eventId: `${evt}-4b22-01k5`,
     },
     {
       id: 'a6',
       timeLabel: '5 hr ago',
       title: 'Virtual machine created',
-      detail: `${pick(5)} provisioned from template in model-serving`,
+      detail: `${pick(5)} provisioned from template in ${v[5 % v.length]?.workspace ?? 'tenant-prod'}`,
       severity: 'success',
       occurredAt: 'Apr 6, 2026 · 04:14 UTC',
       resource: pick(5),
       resourceType: 'Virtual machine',
-      workspace: 'model-serving',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-3c88-01k4',
+      workspace: v[5 % v.length]?.workspace ?? 'tenant-prod',
+      initiatedBy: by,
+      eventId: `${evt}-3c88-01k4`,
     },
     {
       id: 'a7',
@@ -113,8 +126,8 @@ export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
       resource: pick(4),
       resourceType: 'Disk',
       workspace: 'tenant-prod',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-2d44-01k3',
+      initiatedBy: by,
+      eventId: `${evt}-2d44-01k3`,
     },
     {
       id: 'a8',
@@ -126,8 +139,8 @@ export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
       resource: 'nsg-workload-01',
       resourceType: 'Security group',
       workspace: 'tenant-prod',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-1e77-01k2',
+      initiatedBy: by,
+      eventId: `${evt}-1e77-01k2`,
     },
     {
       id: 'a9',
@@ -139,26 +152,30 @@ export function buildDemoVmRecentActivities(): VmRecentActivityItem[] {
       resource: pick(8),
       resourceType: 'Virtual machine',
       workspace: 'tenant-prod',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-0f91-01k1',
+      initiatedBy: by,
+      eventId: `${evt}-0f91-01k1`,
     },
     {
       id: 'a10',
       timeLabel: '1 day ago',
       title: 'Template sync finished',
-      detail: 'Catalog refreshed from Northstar golden images (RHEL 9.4, Windows Server 2022)',
+      detail: catalogDetail,
       severity: 'success',
       occurredAt: 'Apr 5, 2026 · 06:00 UTC',
       resource: 'tenant-image-catalog',
       resourceType: 'Catalog',
       workspace: 'platform-shared',
-      initiatedBy: 'Chris Morgan',
-      eventId: 'evt-ns-09aa-01k0',
+      initiatedBy: by,
+      eventId: `${evt}-09aa-01k0`,
     },
   ]
 }
 
 /** First N events for the dashboard sidebar (same data as the full list). */
-export function buildDashboardVmRecentActivitiesPreview(limit = 6): VmRecentActivityItem[] {
-  return buildDemoVmRecentActivities().slice(0, limit)
+export function buildDashboardVmRecentActivitiesPreview(
+  vms: readonly TenantVirtualMachine[],
+  tenantId: DemoTenantId,
+  limit = 6,
+): VmRecentActivityItem[] {
+  return buildDemoVmRecentActivities(vms, tenantId).slice(0, limit)
 }

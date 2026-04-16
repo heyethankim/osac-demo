@@ -22,10 +22,12 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import type { DemoTenantId } from './demoTenant'
 import {
   buildDashboardVmRecentActivitiesPreview,
   type VmRecentActivitySeverity,
 } from './dashboardVmRecentActivities'
+import type { TenantVirtualMachine } from './TenantVirtualMachinesPage'
 import {
   buildVmUtilizationDemoData,
   periodLabel,
@@ -115,15 +117,25 @@ function UtilizationTooltip({
 export function DashboardVmUtilizationSection({
   isDarkTheme,
   onOpenRecentActivities,
+  fleetVirtualMachines,
+  demoTenantId,
 }: {
   isDarkTheme: boolean
   onOpenRecentActivities: () => void
+  fleetVirtualMachines: readonly TenantVirtualMachine[]
+  demoTenantId: DemoTenantId
 }) {
   const [period, setPeriod] = useState<VmUtilizationPeriod>('7d')
   const [periodMenuOpen, setPeriodMenuOpen] = useState(false)
 
-  const data = useMemo(() => buildVmUtilizationDemoData(period), [period])
-  const activities = useMemo(() => buildDashboardVmRecentActivitiesPreview(6), [])
+  const data = useMemo(
+    () => buildVmUtilizationDemoData(period, fleetVirtualMachines),
+    [period, fleetVirtualMachines],
+  )
+  const activities = useMemo(
+    () => buildDashboardVmRecentActivitiesPreview(fleetVirtualMachines, demoTenantId, 6),
+    [fleetVirtualMachines, demoTenantId],
+  )
 
   const tickFill = isDarkTheme
     ? VM_UTILIZATION_CHART_AXIS_TICK

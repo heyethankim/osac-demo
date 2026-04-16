@@ -403,6 +403,367 @@ body {
   filter: brightness(0.96);
 }
 
+/* Vertexa Cloud Solutions — centered glass login (blue → violet → magenta + flowing lines) */
+.vertexa-login {
+  position: relative;
+  margin-inline: 0;
+  max-width: none;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  overflow-x: clip;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 2.75rem);
+  background:
+    radial-gradient(120% 90% at 50% 45%, rgb(255 255 255 / 6%) 0%, transparent 55%),
+    linear-gradient(
+      100deg,
+      #0c1a5c 0%,
+      #152578 14%,
+      #2a1f8c 30%,
+      #4a1f9e 46%,
+      #7b1fa8 58%,
+      #ab2a9a 72%,
+      #d81f7a 86%,
+      #f04ba8 100%
+    );
+  color: #fff;
+}
+
+.vertexa-login__ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.vertexa-login__waves-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.vertexa-login__frame {
+  position: relative;
+  z-index: 1;
+  width: min(calc(100vw - 2.5rem), 36rem);
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-inline: clamp(0.75rem, 3.5vw, 1.5rem);
+  container-type: inline-size;
+  container-name: vertexa-login;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  overflow-x: visible;
+}
+
+.vertexa-login__brand-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(4.25rem, 11vw, 5.5rem);
+  height: clamp(4.25rem, 11vw, 5.5rem);
+  border-radius: 1rem;
+  border: 1px solid rgb(0 0 0 / 10%);
+  background: rgb(255 255 255 / 96%);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 22%),
+    0 12px 40px rgb(0 0 0 / 20%);
+}
+
+.vertexa-login__brand-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.vertexa-login__company {
+  margin: 0;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding-inline: 0.25rem;
+  white-space: nowrap;
+  overflow: visible;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 92%);
+  line-height: 1.08;
+  /* Viewport fallback: conservative so long uppercase line does not clip */
+  font-size: clamp(0.8125rem, 4.6vw, 2.35rem);
+}
+
+@container vertexa-login (min-width: 0px) {
+  .vertexa-login__company {
+    /* ~24+ glyph-width budget incl. tracking; divisor avoids clipping “SOLUTIONS” */
+    font-size: clamp(0.8125rem, calc(100cqi / 19.25), 2.35rem);
+  }
+}
+
+.vertexa-login__headline.pf-v6-c-title {
+  margin: 0 !important;
+  color: rgb(255 255 255 / 92%) !important;
+  font-weight: 600 !important;
+  font-size: clamp(1rem, 2.2vw, 1.1875rem) !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 18%);
+}
+
+.vertexa-login__subhead {
+  margin: 0;
+  max-width: 20rem;
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  line-height: 1.45;
+  color: rgb(255 255 255 / 76%);
+  text-wrap: balance;
+}
+
+.vertexa-login__surface {
+  position: relative;
+  width: 100%;
+  padding: clamp(1.75rem, 4vw, 2.25rem) clamp(1.5rem, 3.5vw, 2rem);
+  border-radius: 1.25rem;
+  text-align: left;
+  background: rgb(255 255 255 / 12%);
+  border: 1px solid rgb(255 255 255 / 22%);
+  box-shadow:
+    0 24px 80px rgb(0 0 0 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 18%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* Full-screen neutral gray while signing in (no gradient / teal bleed-through) */
+.vertexa-login__loading-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  text-align: center;
+  background: rgb(76 76 80 / 98%);
+}
+
+.vertexa-login__loading-veil__text {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  font-weight: 500;
+  color: rgb(255 255 255 / 96%);
+}
+
+/* Standard indeterminate ring (stroke-only) — avoids PF spinner + fill overrides reading as a solid blob. */
+.vertexa-login__standard-spinner {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid rgb(255 255 255 / 22%);
+  border-top-color: rgb(255 255 255 / 92%);
+  animation: vertexa-login-standard-spin 0.7s linear infinite;
+}
+
+@keyframes vertexa-login-standard-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vertexa-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vertexa-login__field.pf-v6-c-form__group {
+  margin: 0;
+}
+
+.vertexa-login__glass-group.pf-v6-c-input-group {
+  --pf-v6-c-input-group--item--BorderWidth: 0;
+  border-radius: 0.625rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgb(0 0 0 / 12%);
+}
+
+.vertexa-login__glass-group .pf-v6-c-input-group__item {
+  background: rgb(255 255 255 / 14%);
+  border-color: rgb(255 255 255 / 22%);
+}
+
+.vertexa-login__glass-addon.pf-v6-c-input-group__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 0.875rem;
+  color: rgb(255 255 255 / 92%);
+}
+
+.vertexa-login__glass-addon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  fill: currentColor;
+}
+
+.vertexa-login__field-input.pf-v6-c-form-control {
+  --pf-v6-c-form-control--BackgroundColor: transparent;
+  --pf-v6-c-form-control--Color: #fff;
+  --pf-v6-c-form-control--m-placeholder--Color: rgb(255 255 255 / 52%);
+  --pf-v6-c-form-control--before--BorderColor: transparent;
+  --pf-v6-c-form-control--hover--after--BorderColor: rgb(255 255 255 / 35%);
+  --pf-v6-c-form-control--m-expanded--after--BorderColor: rgb(255 255 255 / 55%);
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.vertexa-login__eye.pf-v6-c-button.pf-m-plain {
+  --pf-v6-c-button--m-plain--Color: rgb(255 255 255 / 88%);
+  --pf-v6-c-button--m-plain--hover--Color: #fff;
+  height: 100%;
+  min-height: 2.5rem;
+  align-self: stretch;
+  padding-inline: 0.75rem;
+}
+
+.vertexa-login__eye .pf-v6-c-button__icon svg {
+  fill: currentColor;
+}
+
+.vertexa-login__submit.pf-v6-c-button.pf-m-primary {
+  margin-top: 0.375rem;
+  --pf-v6-c-button--m-primary--BackgroundColor: transparent;
+  --pf-v6-c-button--m-primary--Color: #fff;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 32%) 0%,
+    rgb(200 230 240 / 22%) 100%
+  ) !important;
+  border: 1px solid rgb(255 255 255 / 42%) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 18%);
+}
+
+.vertexa-login__submit.pf-v6-c-button.pf-m-primary:hover {
+  --pf-v6-c-button--m-primary--Color: #fff;
+  color: #fff !important;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 42%) 0%,
+    rgb(210 236 244 / 30%) 100%
+  ) !important;
+  filter: none;
+}
+
+.vertexa-login__submit.pf-v6-c-button.pf-m-primary:active {
+  filter: brightness(0.94);
+}
+
+.vertexa-login__back-row {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.vertexa-login__back-link.pf-v6-c-button.pf-m-link {
+  color: rgb(255 255 255 / 72%) !important;
+  padding: 0 !important;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.vertexa-login__back-link.pf-v6-c-button.pf-m-link:hover:not(:disabled) {
+  color: #fff !important;
+}
+
+.pf-v6-c-masthead__main .pf-v6-c-masthead__logo.vertexa-masthead-logo {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  max-width: min(100%, 26rem);
+  max-height: var(--pf-v6-c-masthead__logo--MaxHeight);
+  height: auto;
+}
+
+.pf-v6-c-masthead__main .pf-v6-c-masthead__logo.vertexa-masthead-logo .pf-v6-c-masthead__brand {
+  display: flex;
+  align-items: center;
+  align-self: auto;
+  line-height: 0;
+  padding-block-end: 0;
+}
+
+.pf-v6-c-masthead__main .pf-v6-c-masthead__logo.vertexa-masthead-logo > * {
+  max-height: var(--pf-v6-c-masthead__logo--MaxHeight);
+}
+
+.vertexa-masthead-brand {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  max-height: var(--pf-v6-c-masthead__logo--MaxHeight, 2.375rem);
+}
+
+.vertexa-masthead-brand__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.vertexa-masthead-brand__img {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: block;
+  object-fit: contain;
+  border-radius: 0.25rem;
+}
+
+.vertexa-masthead-brand__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.05;
+  gap: 0.05rem;
+}
+
+.vertexa-masthead-brand__line1 {
+  font-size: 0.5625rem;
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pf-t--global--text--color--regular);
+  opacity: 0.88;
+}
+
+.vertexa-masthead-brand__line2 {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pf-t--global--text--color--regular);
+}
+
 /* VM console demo — same shell as login, wider card + terminal */
 .northstar-console-demo__card.pf-v6-c-card {
   max-width: min(36rem, 100%);
@@ -1415,6 +1776,51 @@ body {
   max-width: 100%;
 }
 
+/* Tenant user / tenant admin: residency + compliance — left of masthead utility icons */
+.osac-masthead-tenant-trust-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.25rem;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: min(22rem, 100%);
+  margin-inline-end: var(--pf-t--global--spacer--xs);
+}
+
+.osac-masthead-tenant-trust-strip__residency {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.osac-masthead-region-flag {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.osac-masthead-region-line {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  line-height: 1.3;
+  color: var(--pf-t--global--text--color--regular);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.osac-masthead-tenant-trust-strip__compliance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
 /* Masthead logo slot — star + wordmark (matches login branding) */
 .pf-v6-c-masthead__main .pf-v6-c-masthead__logo.northstar-masthead-logo {
   display: inline-flex;
@@ -1492,6 +1898,23 @@ body {
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--pf-t--global--text--color--regular);
+}
+
+.osac-shell-sidebar-inner {
+  min-width: 0;
+}
+
+/* Sidebar footer: ⋯ + light/dark theme toggle — centered in the nav column */
+.osac-shell-sidebar-footer {
+  margin-top: auto;
+  align-self: stretch;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pf-t--global--spacer--sm);
+  padding-block: var(--pf-t--global--spacer--sm);
 }
 
 .osac-app-shell-nav.pf-v6-c-nav {
@@ -2110,6 +2533,432 @@ body {
   min-height: 0;
 }
 
+.osac-tenant-admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+  min-width: 0;
+}
+
+.tenant-admin-quota-page.tenant-admin-quota-page {
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.tenant-admin-quota-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+  min-width: 0;
+}
+
+.tenant-admin-quota-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--md);
+  flex-wrap: wrap;
+}
+
+.tenant-admin-quota-section-head .pf-v6-c-title {
+  margin: 0;
+}
+
+.tenant-admin-quota-alert.pf-v6-c-alert {
+  max-width: 52rem;
+}
+
+.tenant-admin-quota-chart {
+  width: 100%;
+  min-width: 0;
+  min-height: 13rem;
+}
+
+.tenant-admin-quota-chart--user-dist {
+  min-height: 15rem;
+}
+
+html[data-osac-theme='light'] .tenant-admin-quota-chart {
+  color: #383838;
+}
+
+html[data-osac-theme='light'] .tenant-admin-quota-chart .recharts-cartesian-axis-tick-value,
+html[data-osac-theme='light'] .tenant-admin-quota-chart .recharts-text,
+html[data-osac-theme='light'] .tenant-admin-quota-chart text,
+html[data-osac-theme='light'] .tenant-admin-quota-chart tspan {
+  fill: #383838 !important;
+}
+
+html[data-osac-theme='light'] .tenant-admin-quota-chart .recharts-cartesian-axis-line {
+  stroke: #a3a3a3 !important;
+}
+
+html[data-osac-theme='light'] .tenant-admin-quota-chart .recharts-cartesian-grid line {
+  stroke: #d2d2d2 !important;
+}
+
+.tenant-admin-quota-org-summary {
+  list-style: none;
+  margin: var(--pf-t--global--spacer--md) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--pf-t--global--spacer--sm);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+@media (min-width: 36rem) {
+  .tenant-admin-quota-org-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.tenant-admin-quota-org-summary__label {
+  display: block;
+  font-weight: 600;
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.tenant-admin-quota-org-summary__value {
+  color: var(--pf-t--global--text--color--subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.tenant-admin-quota-limits-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tenant-admin-quota-limits-table-wrap .tenant-admin-quota-limits-table {
+  width: 100%;
+  min-width: min(48rem, 100%);
+}
+
+.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__th--num,
+.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__td--input {
+  min-width: 7.5rem;
+  max-width: 10rem;
+}
+
+.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__td--input .pf-v6-c-form-control,
+.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__td--input .pf-v6-c-text-input-group,
+.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__td--input input {
+  width: 100%;
+  min-width: 0;
+}
+
+.tenant-admin-quota-actions {
+  margin-top: var(--pf-t--global--spacer--md);
+}
+
+.provider-tenant-orgs-table-wrap {
+  width: 100%;
+  min-width: 0;
+  margin-top: var(--pf-t--global--spacer--md);
+  overflow-x: auto;
+}
+
+.provider-tenant-orgs-table-wrap .provider-tenant-orgs-table {
+  width: 100%;
+  min-width: min(60rem, 100%);
+}
+
+.provider-tenant-orgs-table .provider-tenant-orgs-table__th--count,
+.provider-tenant-orgs-table .provider-tenant-orgs-table__td--count {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.provider-tenant-orgs-table .provider-tenant-orgs-table__th--usage,
+.provider-tenant-orgs-table .provider-tenant-orgs-table__td--usage {
+  min-width: 9.5rem;
+  max-width: 14rem;
+  vertical-align: middle;
+}
+
+/* Actions column: tableAction uses PF action padding (sm), not default cell (md).
+   Thead is vertical-align: bottom, so the smaller bottom padding pulls the label down
+   vs other headers; match default cell padding on the header only. */
+.provider-tenant-orgs-table .pf-v6-c-table__thead .pf-v6-c-table__th.pf-v6-c-table__action {
+  --pf-v6-c-table--cell--PaddingBlockStart: var(--pf-v6-c-table--cell--Padding--base);
+  --pf-v6-c-table--cell--PaddingBlockEnd: var(--pf-v6-c-table--cell--Padding--base);
+  --pf-v6-c-table--cell--PaddingInlineStart: var(--pf-v6-c-table--cell--Padding--base);
+  --pf-v6-c-table--cell--PaddingInlineEnd: var(--pf-v6-c-table--cell--Padding--base);
+}
+
+.provider-tenant-orgs-usage {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.provider-tenant-orgs-usage__labels {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: var(--pf-t--global--font--size--body--sm);
+  line-height: 1.2;
+}
+
+.provider-tenant-orgs-usage__fraction {
+  color: var(--pf-t--global--text--color--regular);
+  font-weight: 500;
+  white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.provider-tenant-orgs-usage__pct {
+  flex-shrink: 0;
+  color: var(--pf-t--global--text--color--subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Match PatternFly Progress bar tokens (default / brand indicator) */
+.provider-tenant-orgs-usage__track {
+  height: var(--pf-t--global--spacer--sm);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  background-color: var(--pf-t--global--color--nonstatus--gray--default);
+  border: var(--pf-t--global--border--width--high-contrast--regular) solid
+    var(--pf-t--global--border--color--high-contrast);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.provider-tenant-orgs-usage__fill {
+  height: 100%;
+  min-width: 0;
+  background-color: var(--pf-t--global--color--brand--default);
+  transition: width var(--pf-t--global--motion--duration--slide-in--default)
+    var(--pf-t--global--motion--timing-function--default);
+}
+
+.osac-tenant-admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+  min-width: 0;
+}
+
+/* Tenant admin KPI row: keep all four cards on one row (equal width). */
+.osac-tenant-admin-dashboard-grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.osac-tenant-admin-dashboard-grid--four > * {
+  min-width: 0;
+}
+
+.tenant-admin-dashboard-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
+  gap: var(--pf-t--global--spacer--md);
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+.tenant-admin-dashboard-columns__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  min-width: 0;
+}
+
+.tenant-admin-dashboard-columns__aside {
+  min-width: 0;
+}
+
+/* Tenant admin dashboard: Resource quota usage — no brand-blue percentage or tinted “chip” behind it */
+.tenant-admin-dashboard-quota .osac-dashboard-quota-card__allocation-pct {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.tenant-admin-dashboard-quota .osac-dashboard-quota-card__allocation-pct-value {
+  color: var(--pf-t--global--text--color--regular);
+}
+
+@media (max-width: 75rem) {
+  .tenant-admin-dashboard-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Provider admin dashboard: main column KPIs + org table + quick actions; aside recent activities */
+.provider-admin-dashboard-top-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
+  gap: var(--pf-t--global--spacer--md);
+  align-items: start;
+  width: 100%;
+  min-width: 0;
+}
+
+.provider-admin-dashboard-top-row__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+  min-width: 0;
+}
+
+.provider-admin-dashboard-top-row__aside {
+  min-width: 0;
+}
+
+@media (max-width: 75rem) {
+  .provider-admin-dashboard-top-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Provider admin: tenant org table inside standard (white) card */
+.provider-admin-tenant-orgs-card.pf-v6-c-card {
+  width: 100%;
+  min-width: 0;
+}
+
+.provider-admin-tenant-orgs-card__header.pf-v6-c-card__header {
+  padding-bottom: var(--pf-t--global--spacer--sm);
+}
+
+.provider-admin-tenant-orgs-card__header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+  min-width: 0;
+}
+
+.provider-admin-tenant-orgs-card__header-row .pf-v6-c-card__title {
+  margin: 0;
+  min-width: 0;
+}
+
+.provider-admin-tenant-orgs-card__filter {
+  flex: 0 0 auto;
+}
+
+.provider-admin-tenant-orgs-card__status-select.pf-v6-c-form-control {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 11rem;
+  max-width: 100%;
+}
+
+.provider-admin-tenant-orgs-card__body.pf-v6-c-card__body {
+  min-width: 0;
+  padding-top: var(--pf-t--global--spacer--sm);
+}
+
+.provider-admin-tenant-orgs-card__table-wrap {
+  margin-top: 0;
+}
+
+.provider-admin-tenant-orgs-card__table-wrap .provider-tenant-orgs-table {
+  min-width: min(56rem, 100%);
+}
+
+/* Full tenant organizations page (no dashboard card wrapper): room for Users + VMs columns. */
+.provider-tenant-orgs-table-wrap:not([class*='provider-admin-tenant-orgs-card']) .provider-tenant-orgs-table {
+  min-width: min(72rem, 100%);
+}
+
+/* Provider admin: three KPI-style shortcut cards, full width below main + aside row */
+.provider-admin-dashboard-action-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+  width: 100%;
+  min-width: 0;
+}
+
+.provider-admin-dashboard-action-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  background: color-mix(in srgb, var(--pf-t--global--color--brand--default) 16%, transparent);
+  color: var(--pf-t--global--color--brand--default);
+}
+
+html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
+  background: color-mix(in srgb, var(--pf-t--global--color--brand--default) 26%, transparent);
+}
+
+@media (max-width: 64rem) {
+  .provider-admin-dashboard-action-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tenant-admin-dashboard-kpi-card {
+  min-width: 0;
+}
+
+.tenant-admin-recent-activities {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Tenant admin — user management table */
+.tenant-admin-users-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tenant-admin-users-table-wrap .tenant-admin-users-table {
+  width: 100%;
+  min-width: min(64rem, 100%);
+}
+
+.tenant-admin-users-table-wrap .tenant-admin-users-table th,
+.tenant-admin-users-table-wrap .tenant-admin-users-table td {
+  vertical-align: middle;
+}
+
+.tenant-admin-users-table .tenant-admin-users-table__th--resource,
+.tenant-admin-users-table .tenant-admin-users-table__td--resource {
+  min-width: 11rem;
+  max-width: 16rem;
+}
+
+.tenant-admin-users-table .pf-v6-c-table__thead .pf-v6-c-table__th.pf-v6-c-table__action {
+  --pf-v6-c-table--cell--PaddingBlockStart: var(--pf-v6-c-table--cell--Padding--base);
+  --pf-v6-c-table--cell--PaddingBlockEnd: var(--pf-v6-c-table--cell--Padding--base);
+  --pf-v6-c-table--cell--PaddingInlineStart: var(--pf-v6-c-table--cell--Padding--base);
+  --pf-v6-c-table--cell--PaddingInlineEnd: var(--pf-v6-c-table--cell--Padding--base);
+}
+
+.tenant-admin-users-resource {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: var(--pf-t--global--font--size--body--sm);
+  line-height: 1.35;
+  color: var(--pf-t--global--text--color--regular);
+  min-width: 0;
+}
+
+.tenant-admin-users-resource__line {
+  white-space: nowrap;
+}
+
 /* Dashboard VM stats: one row, equal columns, full content width */
 .osac-dashboard-vm-stats-grid {
   display: grid;
@@ -2380,6 +3229,10 @@ html[data-osac-theme='light']
   gap: var(--pf-t--global--spacer--lg);
 }
 
+.osac-dashboard-quota-section.osac-dashboard-quota-section--compact-top {
+  margin-top: 0;
+}
+
 .osac-dashboard-quota-intro {
   min-width: 0;
 }
@@ -2404,6 +3257,17 @@ html[data-osac-theme='light']
   }
 }
 
+/* Tenant admin: CPU + Memory row, then GPU + Storage (metrics array order: cpu, memory, gpu, storage). */
+.osac-dashboard-quota-grid.osac-dashboard-quota-grid--two-by-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 36rem) {
+  .osac-dashboard-quota-grid.osac-dashboard-quota-grid--two-by-two {
+    grid-template-columns: 1fr;
+  }
+}
+
 .osac-dashboard-quota-card.pf-v6-c-card {
   min-width: 0;
 }
@@ -2413,6 +3277,34 @@ html[data-osac-theme='light']
   flex-direction: column;
   align-items: center;
   padding-top: var(--pf-t--global--spacer--sm);
+}
+
+.osac-dashboard-quota-card__body--usage {
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.osac-dashboard-quota-card__allocation-pct {
+  width: 100%;
+  max-width: 16rem;
+  text-align: center;
+  line-height: var(--pf-t--global--font--line-height--heading);
+}
+
+.osac-dashboard-quota-card__allocation-pct-value {
+  font-size: var(--pf-t--global--font--size--heading--lg);
+  font-weight: var(--pf-t--global--font--weight--heading--bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--pf-t--global--color--brand--default);
+  letter-spacing: -0.02em;
+}
+
+.osac-dashboard-quota-card__availability {
+  width: 100%;
+  max-width: 16rem;
+  text-align: center;
+  font-size: var(--pf-t--global--font--size--body--sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--pf-t--global--text--color--subtle);
 }
 
 .osac-dashboard-quota-donut {
@@ -3124,6 +4016,11 @@ html[data-osac-theme='light']
   gap: var(--pf-t--global--spacer--xs);
 }
 
+.osac-page-toolbar-sticky__actions {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+}
+
 .tenant-vm-page-sticky-heading {
   position: sticky;
   top: 0;
@@ -3466,4 +4363,737 @@ html[data-osac-theme='light']
       var(--pf-v6-c-page__sidebar--Width, 18.125rem) - 3.25rem
     );
   }
+}
+
+.northstar-login__back-row {
+  margin-top: var(--pf-t--global--spacer--md);
+  text-align: center;
+}
+
+/* Same light gray as `.northstar-login__card-subtitle` */
+.northstar-login__back-link.pf-v6-c-button.pf-m-link {
+  color: #8a8a8a !important;
+  padding: 0 !important;
+  font-size: 0.9375rem;
+  font-weight: 400;
+}
+
+.northstar-login__back-link.pf-v6-c-button.pf-m-link:hover:not(:disabled) {
+  color: #6e6e6e !important;
+}
+
+/* OSAC role landing — Provider / Tenant admin / Tenant user (VMaaS banks) */
+.osac-role-landing {
+  /* Dark gray CTAs + landing theme toggle selected (readable on light & dark landing backgrounds) */
+  --osac-landing-cta: #4a4d54;
+  --osac-landing-cta-hover: #5e6168;
+  --osac-landing-cta-active: #3d4046;
+  --osac-landing-cta-text: #f7f7f7;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--pf-t--global--spacer--2xl) var(--pf-t--global--spacer--lg)
+    calc(var(--pf-t--global--spacer--3xl) + 2rem);
+  box-sizing: border-box;
+}
+
+.osac-role-landing--dark {
+  color: #f8f5f2;
+  background:
+    radial-gradient(ellipse 85% 65% at 92% 6%, rgb(130 90 150 / 22%) 0%, transparent 42%),
+    radial-gradient(ellipse 75% 55% at 6% 88%, rgb(200 150 95 / 16%) 0%, transparent 46%),
+    radial-gradient(ellipse 60% 45% at 48% 102%, rgb(55 105 155 / 22%) 0%, transparent 52%),
+    linear-gradient(168deg, #252830 0%, #1c2029 38%, #1a1d26 100%);
+}
+
+.osac-role-landing--light {
+  color: #2c2825;
+  background:
+    radial-gradient(ellipse 90% 70% at 95% 4%, rgb(255 218 196 / 55%) 0%, transparent 44%),
+    radial-gradient(ellipse 75% 55% at 0% 96%, rgb(200 220 245 / 35%) 0%, transparent 48%),
+    linear-gradient(185deg, #fdfaf6 0%, #f5f1eb 40%, #efeae3 100%);
+}
+
+.osac-role-landing__wrap {
+  width: min(72rem, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--2xl);
+}
+
+.osac-role-landing__header {
+  text-align: center;
+  max-width: 36rem;
+}
+
+.osac-role-landing__title.pf-v6-c-title {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.osac-role-landing--dark .osac-role-landing__title.pf-v6-c-title {
+  color: #fffefb;
+  text-shadow: 0 1px 24px rgb(0 0 0 / 18%);
+}
+
+.osac-role-landing--light .osac-role-landing__title.pf-v6-c-title {
+  color: #2a2623;
+}
+
+.osac-role-landing__lede {
+  margin: var(--pf-t--global--spacer--md) 0 0;
+  font-size: var(--pf-t--global--font--size--body--lg);
+  line-height: 1.55;
+}
+
+.osac-role-landing--dark .osac-role-landing__lede {
+  color: rgb(248 242 235 / 78%);
+}
+
+.osac-role-landing--light .osac-role-landing__lede {
+  color: rgb(74 66 60 / 78%);
+}
+
+.osac-role-landing__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--lg);
+  align-items: stretch;
+  width: 100%;
+}
+
+@media (max-width: 992px) {
+  .osac-role-landing__grid {
+    grid-template-columns: 1fr;
+    max-width: 24rem;
+  }
+}
+
+.osac-role-landing__card.pf-v6-c-card {
+  border-radius: var(--pf-t--global--border--radius--large);
+  height: 100%;
+}
+
+.osac-role-landing--dark .osac-role-landing__card.pf-v6-c-card {
+  background: linear-gradient(165deg, rgb(44 48 58) 0%, rgb(38 42 52) 55%, rgb(34 38 48) 100%);
+  border: 1px solid rgb(255 232 214 / 14%);
+  box-shadow:
+    0 14px 42px rgb(0 0 0 / 32%),
+    0 0 0 1px rgb(255 255 255 / 5%) inset;
+}
+
+.osac-role-landing--light .osac-role-landing__card.pf-v6-c-card {
+  background: linear-gradient(180deg, #fffefb 0%, #faf7f2 100%);
+  border: 1px solid rgb(220 205 190 / 45%);
+  box-shadow:
+    0 10px 36px rgb(85 55 40 / 7%),
+    0 2px 10px rgb(0 0 0 / 5%);
+}
+
+.osac-role-landing__card-body.pf-v6-c-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--pf-t--global--spacer--md);
+  height: 100%;
+}
+
+.osac-role-landing__icon-wrap {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.osac-role-landing--dark .osac-role-landing__icon-wrap {
+  background: linear-gradient(150deg, rgb(52 58 72) 0%, rgb(38 44 56) 100%);
+  color: #fff8f0;
+  border: 1px solid rgb(210 200 230 / 22%);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 22%);
+}
+
+.osac-role-landing--light .osac-role-landing__icon-wrap {
+  background: linear-gradient(155deg, #4c5568 0%, #3c4352 100%);
+  color: #fffefb;
+  border: 1px solid rgb(255 255 255 / 18%);
+  box-shadow: 0 4px 12px rgb(40 35 55 / 12%);
+}
+
+.osac-role-landing__icon-svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  display: block;
+}
+
+.osac-role-landing__card-title.pf-v6-c-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.osac-role-landing--dark .osac-role-landing__card-title.pf-v6-c-title {
+  color: #fffefb;
+}
+
+.osac-role-landing--light .osac-role-landing__card-title.pf-v6-c-title {
+  color: #2a2623;
+}
+
+.osac-role-landing__card-copy {
+  margin: 0;
+  flex: 1 1 auto;
+  max-width: 28rem;
+  margin-inline: auto;
+  font-size: var(--pf-t--global--font--size--body--default);
+  line-height: 1.55;
+}
+
+.osac-role-landing--dark .osac-role-landing__card-copy {
+  color: rgb(236 228 218 / 76%);
+}
+
+.osac-role-landing--light .osac-role-landing__card-copy {
+  color: rgb(88 76 68 / 82%);
+}
+
+.osac-role-landing__tenant-user-actions {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: var(--pf-t--global--spacer--sm);
+  width: 100%;
+  margin-top: auto;
+}
+
+.osac-role-landing__enter.pf-v6-c-button.pf-m-primary {
+  width: 100%;
+  border-radius: 999px;
+  background-color: var(--osac-landing-cta) !important;
+  border-color: var(--osac-landing-cta) !important;
+  color: var(--osac-landing-cta-text) !important;
+  font-weight: 600;
+}
+
+.osac-role-landing__enter.pf-v6-c-button.pf-m-primary:hover:not(:disabled) {
+  background-color: var(--osac-landing-cta-hover) !important;
+  border-color: var(--osac-landing-cta-hover) !important;
+  color: var(--osac-landing-cta-text) !important;
+}
+
+.osac-role-landing__enter.pf-v6-c-button.pf-m-primary:focus-visible {
+  outline: 2px solid var(--osac-landing-cta-text);
+  outline-offset: 2px;
+}
+
+.osac-role-landing--light .osac-role-landing__enter.pf-v6-c-button.pf-m-primary:focus-visible {
+  outline-color: var(--osac-landing-cta);
+}
+
+.osac-role-landing__enter.pf-v6-c-button.pf-m-primary:active:not(:disabled) {
+  background-color: var(--osac-landing-cta-active) !important;
+  border-color: var(--osac-landing-cta-active) !important;
+}
+
+.osac-role-landing__enter.pf-v6-c-button.pf-m-primary:disabled {
+  background-color: rgb(18 18 18 / 28%) !important;
+  border-color: rgb(18 18 18 / 22%) !important;
+  color: rgb(247 247 247 / 45%) !important;
+  cursor: not-allowed;
+}
+
+.osac-role-landing--light .osac-role-landing__enter.pf-v6-c-button.pf-m-primary:disabled {
+  background-color: rgb(18 18 18 / 18%) !important;
+  border-color: rgb(18 18 18 / 16%) !important;
+  color: rgb(247 247 247 / 55%) !important;
+}
+
+/* OSAC light/dark theme toggle — landing (fixed) + app shell sidebar (same control as landing) */
+.osac-theme-toggle {
+  --osac-theme-toggle-cta: #121212;
+  --osac-theme-toggle-cta-hover: #2e2e2e;
+  --osac-theme-toggle-cta-text: #f7f7f7;
+  display: inline-flex;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgb(255 220 200 / 18%);
+  box-shadow:
+    0 6px 22px rgb(0 0 0 / 28%),
+    0 0 0 1px rgb(255 255 255 / 6%) inset;
+}
+
+.osac-theme-toggle--landing {
+  position: fixed;
+  bottom: var(--pf-t--global--spacer--lg);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.osac-role-landing--light .osac-theme-toggle--landing {
+  border-color: rgb(210 190 175 / 45%);
+  box-shadow:
+    0 6px 20px rgb(70 45 35 / 8%),
+    0 0 0 1px rgb(255 255 255 / 70%) inset;
+}
+
+.osac-theme-toggle--shell {
+  border: 1px solid var(--pf-t--global--border--color--default);
+  box-shadow:
+    0 2px 6px rgb(0 0 0 / 14%),
+    0 0 0 1px rgb(255 255 255 / 8%) inset;
+}
+
+html.pf-v6-theme-dark .osac-theme-toggle--shell {
+  border-color: rgb(255 255 255 / 12%);
+  box-shadow:
+    0 4px 16px rgb(0 0 0 / 38%),
+    0 0 0 1px rgb(255 255 255 / 6%) inset;
+}
+
+/* Subtle divider between landing (⋯) and theme segments in the shell */
+.osac-theme-toggle--shell-with-landing .osac-theme-toggle__seg + .osac-theme-toggle__seg {
+  border-inline-start: 1px solid rgb(0 0 0 / 10%);
+}
+
+html.pf-v6-theme-dark .osac-theme-toggle--shell-with-landing .osac-theme-toggle__seg + .osac-theme-toggle__seg {
+  border-inline-start: 1px solid rgb(255 255 255 / 10%);
+}
+
+.osac-theme-toggle__seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+html.pf-v6-theme-dark .osac-theme-toggle--shell .osac-theme-toggle__seg {
+  background: rgb(38 42 52);
+  color: rgb(255 240 230 / 58%);
+}
+
+html.pf-v6-theme-dark .osac-theme-toggle--shell .osac-theme-toggle__seg:hover:not(.osac-theme-toggle__seg--active) {
+  color: rgb(255 245 235 / 88%);
+}
+
+html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg {
+  background: linear-gradient(180deg, #fffefb 0%, #f2ebe4 100%);
+  color: rgb(72 62 55 / 55%);
+}
+
+html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg:hover:not(.osac-theme-toggle__seg--active) {
+  color: rgb(42 38 35 / 88%);
+  background: linear-gradient(180deg, #fff 0%, #ebe4dc 100%);
+}
+
+.osac-role-landing--dark .osac-theme-toggle--landing .osac-theme-toggle__seg {
+  background: rgb(38 42 52);
+  color: rgb(255 240 230 / 58%);
+}
+
+.osac-role-landing--light .osac-theme-toggle--landing .osac-theme-toggle__seg {
+  background: linear-gradient(180deg, #fffefb 0%, #f2ebe4 100%);
+  color: rgb(72 62 55 / 55%);
+}
+
+.osac-role-landing--dark .osac-theme-toggle--landing .osac-theme-toggle__seg:hover:not(.osac-theme-toggle__seg--active) {
+  color: rgb(255 245 235 / 88%);
+}
+
+.osac-role-landing--light .osac-theme-toggle--landing .osac-theme-toggle__seg:hover:not(.osac-theme-toggle__seg--active) {
+  color: rgb(42 38 35 / 88%);
+  background: linear-gradient(180deg, #fff 0%, #ebe4dc 100%);
+}
+
+.osac-theme-toggle__seg--active {
+  background: var(--osac-theme-toggle-cta);
+  color: var(--osac-theme-toggle-cta-text);
+}
+
+.osac-theme-toggle__seg--active:hover {
+  background: var(--osac-theme-toggle-cta-hover);
+  color: var(--osac-theme-toggle-cta-text);
+}
+
+.osac-theme-toggle__seg:focus-visible {
+  outline: 2px solid var(--osac-theme-toggle-cta-text);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg:focus-visible {
+  outline-color: var(--osac-theme-toggle-cta);
+}
+
+.osac-role-landing--light .osac-theme-toggle--landing .osac-theme-toggle__seg:focus-visible {
+  outline-color: var(--osac-theme-toggle-cta);
+}
+
+.osac-theme-toggle__seg--active:focus-visible {
+  outline-color: rgb(247 247 247 / 95%);
+}
+
+.osac-theme-toggle__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  display: block;
+}
+
+/* Landing sun/moon toggle: match card button gray (shell toggle keeps its own tokens) */
+.osac-role-landing .osac-theme-toggle.osac-theme-toggle--landing {
+  --osac-theme-toggle-cta: var(--osac-landing-cta);
+  --osac-theme-toggle-cta-hover: var(--osac-landing-cta-hover);
+  --osac-theme-toggle-cta-text: var(--osac-landing-cta-text);
+}
+
+/* Bluestone Financial Group — split-card sign-in (demo tenant id: evergreen) */
+.evergreen-login {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--pf-t--global--spacer--xl) var(--pf-t--global--spacer--md);
+  box-sizing: border-box;
+  overflow: hidden;
+  background: linear-gradient(145deg, #1f6feb 0%, #0b4bab 42%, #063a7a 100%);
+}
+
+.evergreen-login__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.evergreen-login__arc {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid rgb(255 255 255 / 14%);
+  box-sizing: border-box;
+}
+
+.evergreen-login__arc--a {
+  width: min(120vw, 72rem);
+  height: min(120vw, 72rem);
+  right: -18%;
+  top: -35%;
+}
+
+.evergreen-login__arc--b {
+  width: min(90vw, 48rem);
+  height: min(90vw, 48rem);
+  left: -22%;
+  bottom: -28%;
+  border-color: rgb(0 0 0 / 12%);
+}
+
+.evergreen-login__arc--c {
+  width: min(70vw, 36rem);
+  height: min(70vw, 36rem);
+  left: 38%;
+  bottom: -40%;
+  border-color: rgb(255 255 255 / 10%);
+}
+
+.evergreen-login__frame {
+  position: relative;
+  z-index: 1;
+  width: min(58rem, 100%);
+}
+
+.evergreen-login__split-card.pf-v6-c-card {
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow:
+    0 24px 80px rgb(0 0 0 / 28%),
+    0 2px 12px rgb(0 0 0 / 12%);
+  border: none;
+  /* Let the split columns define color; avoids a single flat card color at the top */
+  --pf-v6-c-card--BackgroundColor: transparent;
+  background-color: transparent;
+}
+
+.evergreen-login__split-body.pf-v6-c-card__body {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  align-items: stretch;
+  /* Full-height seam: white left half, bluish right half (matches column tops) */
+  --pf-v6-c-card--BackgroundColor: transparent;
+  background-color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #ffffff 50%,
+    #f0f7ff 50%,
+    #f0f7ff 100%
+  );
+}
+
+/* Full-height center rule (column border alone can look short at the top with PF layout) */
+.evergreen-login__split-body.pf-v6-c-card__body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  margin-left: -0.5px;
+  background-color: rgb(31 111 235 / 22%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+@media (max-width: 62rem) {
+  .evergreen-login__split-body.pf-v6-c-card__body {
+    grid-template-columns: 1fr;
+    background-image: none;
+    background-color: #ffffff;
+  }
+
+  .evergreen-login__split-body.pf-v6-c-card__body::after {
+    display: none;
+  }
+
+  .evergreen-login__right {
+    display: none;
+  }
+}
+
+.evergreen-login__left {
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  min-height: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.evergreen-login__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.evergreen-login__brand-mark {
+  display: flex;
+  align-items: center;
+}
+
+.evergreen-login__brand-logo-img {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.35rem;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgb(29 78 143 / 12%);
+}
+
+.evergreen-login__brand-wordstack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
+  line-height: 1.1;
+}
+
+.evergreen-login__brand-word {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1f6feb;
+}
+
+.evergreen-login__brand-subword {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #3d5a80;
+}
+
+.evergreen-login__headline {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: #0b3d91;
+}
+
+.evergreen-login__subhead {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #6a6e73;
+  line-height: 1.5;
+}
+
+.evergreen-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--sm);
+}
+
+.evergreen-login__field .pf-v6-c-form__group-label {
+  display: none;
+}
+
+.evergreen-login__field .pf-v6-c-text-input {
+  border-radius: var(--pf-t--global--border--radius--medium);
+}
+
+.evergreen-login__password-group {
+  width: 100%;
+}
+
+.evergreen-login__password-toggle.pf-v6-c-button {
+  height: 100%;
+}
+
+.evergreen-login__form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.evergreen-login__forgot-link.pf-v6-c-button.pf-m-link {
+  padding: 0;
+  color: #1f6feb;
+}
+
+.evergreen-login__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.evergreen-login__btn-primary.pf-v6-c-button {
+  flex: 1 1 8rem;
+  background-color: #1f6feb;
+  border-color: #1f6feb;
+}
+
+.evergreen-login__back-row {
+  margin-top: var(--pf-t--global--spacer--md);
+  text-align: center;
+}
+
+.evergreen-login__right {
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  min-height: 100%;
+  box-sizing: border-box;
+  /* Top matches body split (#f0f7ff); deepens toward bottom */
+  background: linear-gradient(180deg, #f0f7ff 0%, #e8f2fc 45%, #e3efff 100%);
+}
+
+.evergreen-login__illustration {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
+}
+
+.evergreen-login__illustration-img {
+  width: min(100%, 26rem);
+  height: auto;
+  max-height: min(48vh, 22rem);
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 10px 28px rgb(15 76 129 / 10%));
+}
+
+.evergreen-login__landing-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pf-t--global--spacer--md);
+  background: rgb(255 255 255 / 88%);
+  backdrop-filter: blur(2px);
+  z-index: 2;
+}
+
+.evergreen-login__landing-overlay-text {
+  margin: 0;
+  font-size: var(--pf-t--global--font--size--body--lg);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.pf-v6-c-masthead__main .pf-v6-c-masthead__logo.evergreen-masthead-logo .pf-v6-c-masthead__brand {
+  display: flex;
+  align-items: center;
+  align-self: auto;
+  line-height: 0;
+  padding-block-end: 0;
+}
+
+.evergreen-masthead-brand {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  max-height: var(--pf-v6-c-masthead__logo--MaxHeight, 2.375rem);
+}
+
+.evergreen-masthead-brand__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.evergreen-masthead-brand__logo-img {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.25rem;
+  object-fit: cover;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+}
+
+.evergreen-masthead-brand__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.05;
+  gap: 0.05rem;
+}
+
+.evergreen-masthead-brand__line1 {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.evergreen-masthead-brand__line2 {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--pf-t--global--text--color--regular);
 }

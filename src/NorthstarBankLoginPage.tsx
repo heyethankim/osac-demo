@@ -17,14 +17,19 @@ import {
 
 export type NorthstarBankLoginPageProps = {
   onLoginSuccess: () => void
+  /** Pre-filled username / email (tenant user vs tenant admin demo). */
+  defaultUsername: string
   isLandingPageLoading?: boolean
+  onChooseAnotherInstitution?: () => void
 }
 
 export function NorthstarBankLoginPage({
   onLoginSuccess,
+  defaultUsername,
   isLandingPageLoading = false,
+  onChooseAnotherInstitution,
 }: NorthstarBankLoginPageProps) {
-  const [username, setUsername] = useState('')
+  const [username, setUsername] = useState(defaultUsername)
   const [password, setPassword] = useState('')
   const [passwordHidden, setPasswordHidden] = useState(true)
   const [rememberMe, setRememberMe] = useState(false)
@@ -115,13 +120,13 @@ export function NorthstarBankLoginPage({
                   <TextInput
                     id="ns-username"
                     name="username"
-                    type="text"
-                    placeholder="Username"
+                    type="email"
+                    placeholder="Email address"
                     value={username}
                     onChange={(_e, v) => setUsername(v)}
-                    autoComplete="username"
+                    autoComplete="email"
                     validated="default"
-                    aria-label="Username"
+                    aria-label="Email address"
                     isDisabled={isLandingPageLoading}
                   />
                 </FormGroup>
@@ -171,6 +176,20 @@ export function NorthstarBankLoginPage({
                 >
                   Login
                 </Button>
+                {onChooseAnotherInstitution ? (
+                  <div className="northstar-login__back-row">
+                    <Button
+                      variant="link"
+                      isInline
+                      type="button"
+                      className="northstar-login__back-link"
+                      onClick={() => onChooseAnotherInstitution()}
+                      isDisabled={isLandingPageLoading}
+                    >
+                      Choose another institution
+                    </Button>
+                  </div>
+                ) : null}
               </Form>
             </CardBody>
             {isLandingPageLoading ? (

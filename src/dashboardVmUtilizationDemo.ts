@@ -1,7 +1,4 @@
-import {
-  TENANT_VIRTUAL_MACHINES,
-  type TenantVirtualMachine,
-} from './TenantVirtualMachinesPage'
+import type { TenantVirtualMachine } from './TenantVirtualMachinesPage'
 
 export type VmUtilizationPeriod = '24h' | '7d' | '30d' | '90d'
 
@@ -73,6 +70,7 @@ function vmLikelyHasGpu(vm: TenantVirtualMachine): boolean {
     n.includes('infer') ||
     n.includes('hpc') ||
     n.includes('gpu') ||
+    vm.workspace === 'risk-analytics' ||
     parseMemoryGiB(vm.memory) >= 64
   )
 }
@@ -162,8 +160,11 @@ function labelsForPeriod(period: VmUtilizationPeriod, n: number): string[] {
  * Builds time-series rows from the same demo VM inventory as the Virtual machines page.
  * Running VMs drive CPU / memory / GPU (where applicable); storage uses the full fleet footprint.
  */
-export function buildVmUtilizationDemoData(period: VmUtilizationPeriod): VmUtilizationRow[] {
-  return buildVmUtilizationFromVms(TENANT_VIRTUAL_MACHINES, period)
+export function buildVmUtilizationDemoData(
+  period: VmUtilizationPeriod,
+  vms: readonly TenantVirtualMachine[],
+): VmUtilizationRow[] {
+  return buildVmUtilizationFromVms(vms, period)
 }
 
 export function buildVmUtilizationFromVms(

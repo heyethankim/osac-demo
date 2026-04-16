@@ -5,10 +5,23 @@ import { CogIcon } from '@patternfly/react-icons/dist/esm/icons/cog-icon'
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon'
 import { UserIcon } from '@patternfly/react-icons/dist/esm/icons/user-icon'
 import { NorthstarBankMastheadLogo } from './NorthstarBankMastheadLogo'
+import { EvergreenFinancialGroupMastheadLogo } from './EvergreenFinancialGroupMastheadLogo'
+import { VertexaCloudMastheadLogo } from './VertexaCloudMastheadLogo'
+import { VertexaCloudLoginPage } from './VertexaCloudLoginPage'
 import {
-  NORTHSTAR_DEMO_VM_COUNTS,
-  NORTHSTAR_DEMO_VM_TOTAL,
-} from './northstarVmDemoCounts'
+  type DemoShellRole,
+  type DemoTenantId,
+  DEMO_PROVIDER_ADMIN_DISPLAY_NAME,
+  DEMO_TENANT_DISPLAY_ADMIN,
+  DEMO_TENANT_DISPLAY_USER,
+  DEMO_TENANT_LABEL,
+  demoLoginEmailForRole,
+  DEMO_VM_POWER_COUNTS,
+  demoVmPowerTotal,
+} from './demoTenant'
+import { DemoTenantLandingPage } from './DemoTenantLandingPage'
+import { OsacLightDarkToggle } from './OsacLightDarkToggle'
+import { EvergreenFinancialGroupLoginPage } from './EvergreenFinancialGroupLoginPage'
 import {
   CreateVirtualMachineLaunchButton,
   type CreateVirtualMachineLaunchHandle,
@@ -16,8 +29,8 @@ import {
 import { TenantVmTemplatesCatalog, getTenantVmTemplateById } from './TenantVmTemplatesCatalog'
 import {
   TenantVirtualMachinesPage,
-  TENANT_VIRTUAL_MACHINES,
   buildTenantVirtualMachineFromCatalogTemplate,
+  buildTenantVirtualMachinesForTenant,
   buildTenantVmFromModalNewPayload,
   type ProvisionNewVmFromModalPayload,
   type TenantOs,
@@ -30,6 +43,18 @@ import { VmConsoleDemoPage } from './VmConsoleDemoPage'
 import { DashboardVmUtilizationSection } from './DashboardVmUtilizationSection'
 import { RecentActivitiesPage } from './RecentActivitiesPage'
 import { DashboardVmQuotaSection } from './DashboardVmQuotaSection'
+import { TenantAdminQuotaControlPage } from './TenantAdminQuotaControlPage'
+import { TenantAdminUserManagementPage } from './TenantAdminUserManagementPage'
+import {
+  TenantAdminDashboardPage,
+  type TenantAdminDashboardNavTarget,
+} from './TenantAdminDashboardPage'
+import { TenantAdminPlaceholderPage } from './TenantAdminPlaceholderPage'
+import {
+  ProviderAdminDashboardPage,
+  type ProviderAdminDashboardNavTarget,
+} from './ProviderAdminDashboardPage'
+import { ProviderAdminTenantOrganizationsPage } from './ProviderAdminTenantOrganizationsPage'
 import {
   Button,
   Card,
@@ -42,6 +67,7 @@ import {
   DropdownList,
   Breadcrumb,
   BreadcrumbItem,
+  Label,
   Masthead,
   MastheadBrand,
   MastheadContent,
@@ -59,7 +85,6 @@ import {
   PageSidebarBody,
   PageToggleButton,
   SearchInput,
-  Switch,
   Title,
   Toolbar,
   ToolbarContent,
@@ -78,77 +103,128 @@ type ShellNavRow =
 
 const shellNavRows: ShellNavRow[] = [
   { kind: 'link', id: 'dashboard', label: 'Dashboard' },
-  {
-    kind: 'expand',
-    label: 'Compute',
-    groupId: 'nav-tenant-user-compute',
-    children: [
-      { id: 'compute-vms', label: 'Virtual machines' },
-      { id: 'catalog', label: 'Templates' },
-    ],
-  },
-  {
-    kind: 'expand',
-    label: 'Networking',
-    groupId: 'nav-tenant-user-networking',
-    children: [
-      { id: 'network-topology', label: 'Topology' },
-      { id: 'network-virtual-networks', label: 'Virtual networks' },
-      { id: 'network-ip-management', label: 'IP management' },
-      { id: 'network-firewall', label: 'Firewall' },
-    ],
-  },
-  {
-    kind: 'expand',
-    label: 'Storage',
-    groupId: 'nav-tenant-user-storage',
-    children: [
-      { id: 'storage-disks', label: 'Disks' },
-      { id: 'storage-policies', label: 'Storage policies' },
-      { id: 'storage-backups', label: 'Backups' },
-    ],
-  },
+  { kind: 'link', id: 'compute-vms', label: 'My VMs' },
+  { kind: 'link', id: 'catalog', label: 'Templates' },
 ]
 
 const catalogNavItemId = 'catalog'
 const dashboardNavItemId = 'dashboard'
-const topologyNavItemId = 'network-topology'
 const virtualMachinesNavItemId = 'compute-vms'
+const adminDashboardNavId = 'admin-dashboard'
+const adminManagementGroupId = 'nav-tenant-admin-management'
+const adminInfraGroupId = 'nav-tenant-admin-infrastructure'
+const adminOrgGroupId = 'nav-tenant-admin-organization'
+const adminMgmtUsersNavId = 'admin-mgmt-users'
+const adminMgmtQuotaNavId = 'admin-mgmt-quota'
+const adminMgmtTemplatesNavId = 'admin-mgmt-templates'
+const adminInfraNetworksNavId = 'admin-infra-networks'
+const adminInfraStorageNavId = 'admin-infra-storage'
+const adminOrgSettingsNavId = 'admin-org-settings'
+const adminOrgSecurityNavId = 'admin-org-security'
 
-const dashboardPageTitle = 'Welcome Chris Morgan'
+const tenantAdminNavRows: ShellNavRow[] = [
+  { kind: 'link', id: adminDashboardNavId, label: 'Dashboard' },
+  {
+    kind: 'expand',
+    label: 'Management',
+    groupId: adminManagementGroupId,
+    children: [
+      { id: adminMgmtUsersNavId, label: 'Users' },
+      { id: adminMgmtQuotaNavId, label: 'Quota control' },
+      { id: adminMgmtTemplatesNavId, label: 'Template catalog' },
+    ],
+  },
+  {
+    kind: 'expand',
+    label: 'Infrastructure',
+    groupId: adminInfraGroupId,
+    children: [
+      { id: adminInfraNetworksNavId, label: 'Networks' },
+      { id: adminInfraStorageNavId, label: 'Storage' },
+    ],
+  },
+  {
+    kind: 'expand',
+    label: 'Organization',
+    groupId: adminOrgGroupId,
+    children: [
+      { id: adminOrgSettingsNavId, label: 'Organization settings' },
+      { id: adminOrgSecurityNavId, label: 'Security & Compliance' },
+    ],
+  },
+]
+
+const providerDashboardNavId = 'provider-dashboard'
+const providerManagementGroupId = 'nav-provider-management'
+const providerSystemGroupId = 'nav-provider-system'
+const providerMgmtTenantsNavId = 'provider-mgmt-tenant-orgs'
+const providerMgmtAllocNavId = 'provider-mgmt-resource-allocation'
+const providerMgmtGlobalTemplatesNavId = 'provider-mgmt-global-templates'
+const providerSystemInfraNavId = 'provider-system-infrastructure'
+const providerSystemSecurityNavId = 'provider-system-security-compliance'
+const providerSystemSettingsNavId = 'provider-system-platform-settings'
+
+const providerAdminNavRows: ShellNavRow[] = [
+  { kind: 'link', id: providerDashboardNavId, label: 'Dashboard' },
+  {
+    kind: 'expand',
+    label: 'Management',
+    groupId: providerManagementGroupId,
+    children: [
+      { id: providerMgmtTenantsNavId, label: 'Tenant organizations' },
+      { id: providerMgmtAllocNavId, label: 'Resource allocation' },
+      { id: providerMgmtGlobalTemplatesNavId, label: 'Global templates' },
+    ],
+  },
+  {
+    kind: 'expand',
+    label: 'System',
+    groupId: providerSystemGroupId,
+    children: [
+      { id: providerSystemInfraNavId, label: 'Infrastructure' },
+      { id: providerSystemSecurityNavId, label: 'Security & Compliance' },
+      { id: providerSystemSettingsNavId, label: 'Platform settings' },
+    ],
+  },
+]
+
 const dashboardPageSubtitle =
   'This workspace is for VM as a Service — create, run, and manage virtual machines.'
 
-const dashboardVmStatusStats = [
-  {
-    key: 'all-vms',
-    label: 'All VMs',
-    value: NORTHSTAR_DEMO_VM_TOTAL,
-    valueColor: 'var(--pf-t--global--text--color--regular)',
-    caption: 'Total VMs across your workspaces',
-  },
-  {
-    key: 'running',
-    label: 'Running',
-    value: NORTHSTAR_DEMO_VM_COUNTS.running,
-    valueColor: 'var(--pf-t--global--color--status--success--default)',
-    caption: 'On and ready for workloads',
-  },
-  {
-    key: 'paused',
-    label: 'Paused',
-    value: NORTHSTAR_DEMO_VM_COUNTS.paused,
-    valueColor: 'var(--pf-t--global--color--status--warning--default)',
-    caption: 'Suspended with memory and disks retained',
-  },
-  {
-    key: 'stopped',
-    label: 'Stopped',
-    value: NORTHSTAR_DEMO_VM_COUNTS.stopped,
-    valueColor: 'var(--pf-t--global--color--status--danger--default)',
-    caption: 'Powered off storage may still incur cost',
-  },
-] as const
+function buildDashboardVmStatusStats(tenantId: DemoTenantId) {
+  const c = DEMO_VM_POWER_COUNTS[tenantId]
+  const total = demoVmPowerTotal(tenantId)
+  return [
+    {
+      key: 'all-vms',
+      label: 'All VMs',
+      value: total,
+      valueColor: 'var(--pf-t--global--text--color--regular)',
+      caption: 'Total VMs across your workspaces',
+    },
+    {
+      key: 'running',
+      label: 'Running',
+      value: c.running,
+      valueColor: 'var(--pf-t--global--color--status--success--default)',
+      caption: 'On and ready for workloads',
+    },
+    {
+      key: 'paused',
+      label: 'Paused',
+      value: c.paused,
+      valueColor: 'var(--pf-t--global--color--status--warning--default)',
+      caption: 'Suspended with memory and disks retained',
+    },
+    {
+      key: 'stopped',
+      label: 'Stopped',
+      value: c.stopped,
+      valueColor: 'var(--pf-t--global--color--status--danger--default)',
+      caption: 'Powered off storage may still incur cost',
+    },
+  ] as const
+}
 
 function navLabelForItemId(
   rows: ShellNavRow[],
@@ -196,13 +272,18 @@ function readVmConsoleDemoQuery(): {
 
 function App() {
   const [vmConsoleDemo, setVmConsoleDemo] = useState(readVmConsoleDemoQuery)
+  const [selectedDemoTenant, setSelectedDemoTenant] = useState<DemoTenantId | null>(null)
+  const [demoShellRole, setDemoShellRole] = useState<DemoShellRole>('tenantUser')
+  const demoShellRoleRef = useRef<DemoShellRole>('tenantUser')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLandingPageLoading, setIsLandingPageLoading] = useState(false)
   const [activeItem, setActiveItem] = useState<string | number>('dashboard')
   const [isDarkTheme, setIsDarkTheme] = useState(true)
-  const [computeNavExpanded, setComputeNavExpanded] = useState(true)
-  const [networkingNavExpanded, setNetworkingNavExpanded] = useState(true)
-  const [storageNavExpanded, setStorageNavExpanded] = useState(true)
+  const [adminManagementNavExpanded, setAdminManagementNavExpanded] = useState(true)
+  const [adminInfraNavExpanded, setAdminInfraNavExpanded] = useState(true)
+  const [adminOrgNavExpanded, setAdminOrgNavExpanded] = useState(true)
+  const [providerManagementNavExpanded, setProviderManagementNavExpanded] = useState(true)
+  const [providerSystemNavExpanded, setProviderSystemNavExpanded] = useState(true)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [vmListPowerFilterIntent, setVmListPowerFilterIntent] =
     useState<VmPowerState | null>(null)
@@ -210,7 +291,7 @@ function App() {
     TenantVirtualMachine[]
   >([])
   const [vmListCreatedFilterNavigateSeq, setVmListCreatedFilterNavigateSeq] = useState(0)
-  /** Bumps when user re-selects Virtual machines while already on that nav (return to list from detail). */
+  /** Bumps when user re-selects My VMs while already on that nav (return to list from detail). */
   const [vmListNavReselectSeq, setVmListNavReselectSeq] = useState(0)
   /** Bumps when user re-selects Templates while already on that nav (close drawer, show grid). */
   const [catalogNavReselectSeq, setCatalogNavReselectSeq] = useState(0)
@@ -223,6 +304,10 @@ function App() {
 
   const createVmLaunchRef = useRef<CreateVirtualMachineLaunchHandle>(null)
   const loginTransitionTimerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    demoShellRoleRef.current = demoShellRole
+  }, [demoShellRole])
   const openCreateVirtualMachineModal = useCallback(() => {
     createVmLaunchRef.current?.open()
   }, [])
@@ -238,13 +323,31 @@ function App() {
     createVmLaunchRef.current?.openFromCloneSource(sourceVmId)
   }, [])
 
+  const seedFleetVirtualMachines = useMemo(() => {
+    if (!selectedDemoTenant) return []
+    if (selectedDemoTenant === 'vertexa') {
+      return [
+        ...buildTenantVirtualMachinesForTenant('northstar'),
+        ...buildTenantVirtualMachinesForTenant('evergreen'),
+      ]
+    }
+    return buildTenantVirtualMachinesForTenant(selectedDemoTenant)
+  }, [selectedDemoTenant])
+
   const allTenantVirtualMachines = useMemo(
-    () => [...vmsCreatedFromTemplate, ...TENANT_VIRTUAL_MACHINES],
-    [vmsCreatedFromTemplate],
+    () => [...vmsCreatedFromTemplate, ...seedFleetVirtualMachines],
+    [vmsCreatedFromTemplate, seedFleetVirtualMachines],
+  )
+
+  const dashboardVmStatusStats = useMemo(
+    () =>
+      selectedDemoTenant && selectedDemoTenant !== 'vertexa'
+        ? buildDashboardVmStatusStats(selectedDemoTenant)
+        : [],
+    [selectedDemoTenant],
   )
 
   const openVirtualMachineDetailFromTopology = useCallback((vmId: string) => {
-    setComputeNavExpanded(true)
     setActiveItem(virtualMachinesNavItemId)
     setTopologyVmDetailOpenRequest((prev) => ({
       vmId,
@@ -259,21 +362,29 @@ function App() {
   const createVirtualMachineFromCatalogTemplate = useCallback(
     (templateId: string, vmName: string, vmDescription?: string) => {
       const tpl = getTenantVmTemplateById(templateId)
-      if (!tpl) return
-      const vm = buildTenantVirtualMachineFromCatalogTemplate(tpl, vmName, vmDescription)
+      if (!tpl || !selectedDemoTenant || selectedDemoTenant === 'vertexa') return
+      const vm = buildTenantVirtualMachineFromCatalogTemplate(
+        tpl,
+        vmName,
+        selectedDemoTenant,
+        vmDescription,
+      )
       setVmsCreatedFromTemplate((prev) => [vm, ...prev])
       setVmListCreatedFilterNavigateSeq((s) => s + 1)
-      setComputeNavExpanded(true)
       setActiveItem(virtualMachinesNavItemId)
     },
-    [],
+    [selectedDemoTenant],
   )
 
-  const provisionNewVmFromModal = useCallback((payload: ProvisionNewVmFromModalPayload) => {
-    const vm = buildTenantVmFromModalNewPayload(payload)
-    setVmsCreatedFromTemplate((prev) => [vm, ...prev])
-    setVmListCreatedFilterNavigateSeq((s) => s + 1)
-  }, [])
+  const provisionNewVmFromModal = useCallback(
+    (payload: ProvisionNewVmFromModalPayload) => {
+      if (!selectedDemoTenant || selectedDemoTenant === 'vertexa') return
+      const vm = buildTenantVmFromModalNewPayload(payload, selectedDemoTenant)
+      setVmsCreatedFromTemplate((prev) => [vm, ...prev])
+      setVmListCreatedFilterNavigateSeq((s) => s + 1)
+    },
+    [selectedDemoTenant],
+  )
 
   const provisionVmCloneFromModal = useCallback(
     (sourceVmId: string, newName: string) => {
@@ -298,6 +409,79 @@ function App() {
     [allTenantVirtualMachines],
   )
 
+  const effectiveShellNavRows = useMemo(() => {
+    if (demoShellRole === 'providerAdmin') return providerAdminNavRows
+    if (demoShellRole === 'tenantAdmin') return tenantAdminNavRows
+    return shellNavRows
+  }, [demoShellRole])
+
+  const handleSelectTenantUserBank = useCallback((tenantId: DemoTenantId) => {
+    setDemoShellRole('tenantUser')
+    setSelectedDemoTenant(tenantId)
+    setActiveItem(dashboardNavItemId)
+  }, [])
+
+  const handleSelectTenantAdminBank = useCallback((tenantId: DemoTenantId) => {
+    setDemoShellRole('tenantAdmin')
+    setSelectedDemoTenant(tenantId)
+    setActiveItem(adminDashboardNavId)
+  }, [])
+
+  const navigateTenantAdminFromDashboard = useCallback((target: TenantAdminDashboardNavTarget) => {
+    switch (target) {
+      case 'users':
+        setActiveItem(adminMgmtUsersNavId)
+        break
+      case 'networks':
+        setActiveItem(adminInfraNetworksNavId)
+        break
+      case 'storage':
+        setActiveItem(adminInfraStorageNavId)
+        break
+      case 'templates':
+        setActiveItem(adminMgmtTemplatesNavId)
+        break
+      default:
+        break
+    }
+  }, [])
+
+  const handleSelectProviderAdmin = useCallback(() => {
+    setDemoShellRole('providerAdmin')
+    setSelectedDemoTenant('vertexa')
+    setActiveItem(providerDashboardNavId)
+  }, [])
+
+  const navigateProviderAdminFromDashboard = useCallback((target: ProviderAdminDashboardNavTarget) => {
+    switch (target) {
+      case 'tenant-organizations':
+        setActiveItem(providerMgmtTenantsNavId)
+        break
+      case 'global-templates':
+        setActiveItem(providerMgmtGlobalTemplatesNavId)
+        break
+      case 'resource-allocation':
+        setActiveItem(providerMgmtAllocNavId)
+        break
+      case 'system-infrastructure':
+        setActiveItem(providerSystemInfraNavId)
+        break
+      default:
+        break
+    }
+  }, [])
+
+  const goToLandingHome = useCallback(() => {
+    setIsUserMenuOpen(false)
+    setRecentActivitiesPageOpen(false)
+    setGlobalSearchQuery('')
+    setVmListPowerFilterIntent(null)
+    setVmsCreatedFromTemplate([])
+    setSelectedDemoTenant(null)
+    setDemoShellRole('tenantUser')
+    setActiveItem(dashboardNavItemId)
+  }, [])
+
   useLayoutEffect(() => {
     const root = document.documentElement
     root.classList.toggle('pf-v6-theme-dark', isDarkTheme)
@@ -305,8 +489,36 @@ function App() {
   }, [isDarkTheme])
 
   useEffect(() => {
-    document.title = 'Northstar Bank - Smart banking starts here.'
-  }, [])
+    if (!isLoggedIn && !selectedDemoTenant) {
+      document.title = 'Welcome to OSAC'
+      return
+    }
+    if (!isLoggedIn && selectedDemoTenant === 'northstar') {
+      document.title = 'Northstar Bank - Smart banking starts here.'
+      return
+    }
+    if (!isLoggedIn && selectedDemoTenant === 'evergreen') {
+      document.title = 'Bluestone Financial Group - Sign in'
+      return
+    }
+    if (!isLoggedIn && selectedDemoTenant === 'vertexa') {
+      document.title = 'Vertexa Cloud Solutions - Sign in'
+      return
+    }
+    if (selectedDemoTenant) {
+      document.title = `${DEMO_TENANT_LABEL[selectedDemoTenant]} - Cloud workspace`
+    }
+  }, [isLoggedIn, selectedDemoTenant])
+
+  /** Northstar sign-in defaults to dark; Bluestone defaults to light (login + shell until user toggles). */
+  useEffect(() => {
+    if (isLoggedIn) return
+    if (selectedDemoTenant === 'northstar' || selectedDemoTenant === 'vertexa') {
+      setIsDarkTheme(true)
+    } else if (selectedDemoTenant === 'evergreen') {
+      setIsDarkTheme(false)
+    }
+  }, [isLoggedIn, selectedDemoTenant])
 
   useEffect(() => {
     if (activeItem !== virtualMachinesNavItemId) {
@@ -345,9 +557,71 @@ function App() {
   }
 
   if (!isLoggedIn) {
+    if (!selectedDemoTenant) {
+      return (
+        <DemoTenantLandingPage
+          onSelectProviderAdmin={handleSelectProviderAdmin}
+          onSelectTenantUserBank={handleSelectTenantUserBank}
+          onSelectTenantAdminBank={handleSelectTenantAdminBank}
+          isLandingDark={isDarkTheme}
+          onLandingThemeChange={setIsDarkTheme}
+        />
+      )
+    }
+    if (selectedDemoTenant === 'vertexa') {
+      return (
+        <VertexaCloudLoginPage
+          key="vx-login-provider"
+          defaultUsername={demoLoginEmailForRole('vertexa', demoShellRole)}
+          isLandingPageLoading={isLandingPageLoading}
+          onChooseAnotherInstitution={() => setSelectedDemoTenant(null)}
+          onLoginSuccess={() => {
+            setIsLandingPageLoading(true)
+            if (loginTransitionTimerRef.current != null) {
+              clearTimeout(loginTransitionTimerRef.current)
+            }
+            loginTransitionTimerRef.current = window.setTimeout(() => {
+              loginTransitionTimerRef.current = null
+              setIsLandingPageLoading(false)
+              setActiveItem(providerDashboardNavId)
+              setIsLoggedIn(true)
+            }, 2000)
+          }}
+        />
+      )
+    }
+    if (selectedDemoTenant === 'northstar') {
+      return (
+        <NorthstarBankLoginPage
+          key={`ns-login-${demoShellRole}`}
+          defaultUsername={demoLoginEmailForRole('northstar', demoShellRole)}
+          isLandingPageLoading={isLandingPageLoading}
+          onChooseAnotherInstitution={() => setSelectedDemoTenant(null)}
+          onLoginSuccess={() => {
+            setIsLandingPageLoading(true)
+            if (loginTransitionTimerRef.current != null) {
+              clearTimeout(loginTransitionTimerRef.current)
+            }
+            loginTransitionTimerRef.current = window.setTimeout(() => {
+              loginTransitionTimerRef.current = null
+              setIsLandingPageLoading(false)
+              setActiveItem(
+                demoShellRoleRef.current === 'tenantAdmin'
+                  ? adminDashboardNavId
+                  : dashboardNavItemId,
+              )
+              setIsLoggedIn(true)
+            }, 2000)
+          }}
+        />
+      )
+    }
     return (
-      <NorthstarBankLoginPage
+      <EvergreenFinancialGroupLoginPage
+        key={`eg-login-${demoShellRole}`}
+        defaultEmail={demoLoginEmailForRole('evergreen', demoShellRole)}
         isLandingPageLoading={isLandingPageLoading}
+        onChooseAnotherInstitution={() => setSelectedDemoTenant(null)}
         onLoginSuccess={() => {
           setIsLandingPageLoading(true)
           if (loginTransitionTimerRef.current != null) {
@@ -356,7 +630,11 @@ function App() {
           loginTransitionTimerRef.current = window.setTimeout(() => {
             loginTransitionTimerRef.current = null
             setIsLandingPageLoading(false)
-            setActiveItem('dashboard')
+            setActiveItem(
+              demoShellRoleRef.current === 'tenantAdmin'
+                ? adminDashboardNavId
+                : dashboardNavItemId,
+            )
             setIsLoggedIn(true)
           }, 2000)
         }}
@@ -364,9 +642,55 @@ function App() {
     )
   }
 
-  const showCatalogPage = activeItem === catalogNavItemId
-  const showVirtualMachinesPage = activeItem === virtualMachinesNavItemId
-  const showTopologyPage = activeItem === topologyNavItemId
+  if (!selectedDemoTenant) {
+    return (
+      <DemoTenantLandingPage
+        onSelectProviderAdmin={handleSelectProviderAdmin}
+        onSelectTenantUserBank={handleSelectTenantUserBank}
+        onSelectTenantAdminBank={handleSelectTenantAdminBank}
+        isLandingDark={isDarkTheme}
+        onLandingThemeChange={setIsDarkTheme}
+      />
+    )
+  }
+
+  const demoTenantId = selectedDemoTenant
+
+  const showProviderDashboardPage =
+    demoShellRole === 'providerAdmin' && activeItem === providerDashboardNavId
+  const showProviderMgmtTenantsPage =
+    demoShellRole === 'providerAdmin' && activeItem === providerMgmtTenantsNavId
+  const showProviderMgmtAllocPage =
+    demoShellRole === 'providerAdmin' && activeItem === providerMgmtAllocNavId
+  const showProviderMgmtTemplatesPage =
+    demoShellRole === 'providerAdmin' && activeItem === providerMgmtGlobalTemplatesNavId
+  const showProviderSystemInfraPage =
+    demoShellRole === 'providerAdmin' && activeItem === providerSystemInfraNavId
+  const showProviderSystemSecurityPage =
+    demoShellRole === 'providerAdmin' && activeItem === providerSystemSecurityNavId
+  const showProviderSystemSettingsPage =
+    demoShellRole === 'providerAdmin' && activeItem === providerSystemSettingsNavId
+
+  const showCatalogPage =
+    demoShellRole === 'tenantUser' && activeItem === catalogNavItemId
+  const showVirtualMachinesPage =
+    demoShellRole === 'tenantUser' && activeItem === virtualMachinesNavItemId
+  const showAdminDashboardPage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminDashboardNavId
+  const showAdminMgmtUsersPage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminMgmtUsersNavId
+  const showAdminMgmtQuotaPage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminMgmtQuotaNavId
+  const showAdminMgmtTemplatesPage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminMgmtTemplatesNavId
+  const showAdminInfraNetworksPage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminInfraNetworksNavId
+  const showAdminInfraStoragePage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminInfraStorageNavId
+  const showAdminOrgSettingsPage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminOrgSettingsNavId
+  const showAdminOrgSecurityPage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminOrgSecurityNavId
 
   const recentActivitiesBreadcrumb = recentActivitiesPageOpen ? (
     <Breadcrumb>
@@ -376,7 +700,11 @@ function App() {
           isInline
           onClick={() => {
             setRecentActivitiesPageOpen(false)
-            setActiveItem(dashboardNavItemId)
+            setActiveItem(
+              demoShellRole === 'providerAdmin'
+                ? providerDashboardNavId
+                : dashboardNavItemId,
+            )
           }}
         >
           Dashboard
@@ -386,6 +714,9 @@ function App() {
     </Breadcrumb>
   ) : undefined
 
+  const showTenantTrustStrip =
+    isLoggedIn && (demoShellRole === 'tenantUser' || demoShellRole === 'tenantAdmin')
+
   const masthead = (
     <Masthead>
       <MastheadMain>
@@ -394,9 +725,23 @@ function App() {
             <BarsIcon />
           </PageToggleButton>
         </MastheadToggle>
-        <MastheadLogo className="northstar-masthead-logo">
+        <MastheadLogo
+          className={
+            demoTenantId === 'vertexa'
+              ? 'vertexa-masthead-logo'
+              : demoTenantId === 'evergreen'
+                ? 'evergreen-masthead-logo'
+                : 'northstar-masthead-logo'
+          }
+        >
           <MastheadBrand>
-            <NorthstarBankMastheadLogo />
+            {demoTenantId === 'vertexa' ? (
+              <VertexaCloudMastheadLogo />
+            ) : demoTenantId === 'evergreen' ? (
+              <EvergreenFinancialGroupMastheadLogo />
+            ) : (
+              <NorthstarBankMastheadLogo />
+            )}
           </MastheadBrand>
         </MastheadLogo>
       </MastheadMain>
@@ -411,6 +756,26 @@ function App() {
           />
         </div>
         <span className="northstar-masthead-content__spacer" aria-hidden />
+        {showTenantTrustStrip ? (
+          <div className="osac-masthead-tenant-trust-strip" aria-label="Data residency and compliance">
+            <div className="osac-masthead-tenant-trust-strip__residency">
+              <span className="osac-masthead-region-flag" role="img" aria-label="United Kingdom">
+                🇬🇧
+              </span>
+              <span className="osac-masthead-region-line" title="UK, London, EU-West-1-DC-A">
+                UK, London, EU-West-1-DC-A
+              </span>
+            </div>
+            <div className="osac-masthead-tenant-trust-strip__compliance">
+              <Label color="blue" variant="outline" isCompact>
+                GDPR
+              </Label>
+              <Label color="teal" variant="outline" isCompact>
+                ISO27001
+              </Label>
+            </div>
+          </div>
+        ) : null}
         <Toolbar
           ouiaId="masthead-utilities-toolbar"
           className="northstar-masthead-utilities-toolbar"
@@ -462,7 +827,11 @@ function App() {
                       icon={<UserIcon />}
                       aria-label="Account menu"
                     >
-                      Chris Morgan
+                      {demoShellRole === 'providerAdmin'
+                        ? DEMO_PROVIDER_ADMIN_DISPLAY_NAME
+                        : demoShellRole === 'tenantAdmin'
+                          ? DEMO_TENANT_DISPLAY_ADMIN[demoTenantId]
+                          : DEMO_TENANT_DISPLAY_USER[demoTenantId]}
                     </MenuToggle>
                   )}
                 >
@@ -476,6 +845,10 @@ function App() {
                         setIsUserMenuOpen(false)
                         setGlobalSearchQuery('')
                         setIsLandingPageLoading(false)
+                        setVmsCreatedFromTemplate([])
+                        setSelectedDemoTenant(null)
+                        setDemoShellRole('tenantUser')
+                        setActiveItem(dashboardNavItemId)
                         setIsLoggedIn(false)
                       }}
                     >
@@ -495,10 +868,12 @@ function App() {
     <PageSidebar>
       <PageSidebarBody isFilled>
         <div
+          className="osac-shell-sidebar-inner"
           style={{
             display: 'flex',
             flexDirection: 'column',
             minHeight: '100%',
+            width: '100%',
             gap: 'var(--pf-t--global--spacer--md)',
           }}
         >
@@ -517,11 +892,23 @@ function App() {
               if (id === catalogNavItemId && String(activeItem) === catalogNavItemId) {
                 setCatalogNavReselectSeq((s) => s + 1)
               }
+              if (
+                id === adminMgmtTemplatesNavId &&
+                String(activeItem) === adminMgmtTemplatesNavId
+              ) {
+                setCatalogNavReselectSeq((s) => s + 1)
+              }
+              if (
+                id === providerMgmtGlobalTemplatesNavId &&
+                String(activeItem) === providerMgmtGlobalTemplatesNavId
+              ) {
+                setCatalogNavReselectSeq((s) => s + 1)
+              }
               setActiveItem(item.itemId)
             }}
           >
             <NavList>
-              {shellNavRows.map((row) =>
+              {effectiveShellNavRows.map((row) =>
                 row.kind === 'link' ? (
                   <NavItem
                     key={row.id}
@@ -538,19 +925,29 @@ function App() {
                     title={row.label}
                     groupId={row.groupId}
                     isExpanded={
-                      row.groupId === 'nav-tenant-user-compute'
-                        ? computeNavExpanded
-                        : row.groupId === 'nav-tenant-user-networking'
-                          ? networkingNavExpanded
-                          : storageNavExpanded
+                      row.groupId === adminManagementGroupId
+                        ? adminManagementNavExpanded
+                        : row.groupId === adminInfraGroupId
+                          ? adminInfraNavExpanded
+                          : row.groupId === adminOrgGroupId
+                            ? adminOrgNavExpanded
+                            : row.groupId === providerManagementGroupId
+                              ? providerManagementNavExpanded
+                              : row.groupId === providerSystemGroupId
+                                ? providerSystemNavExpanded
+                                : true
                     }
                     onExpand={(_event, expanded) => {
-                      if (row.groupId === 'nav-tenant-user-compute') {
-                        setComputeNavExpanded(expanded)
-                      } else if (row.groupId === 'nav-tenant-user-networking') {
-                        setNetworkingNavExpanded(expanded)
-                      } else {
-                        setStorageNavExpanded(expanded)
+                      if (row.groupId === adminManagementGroupId) {
+                        setAdminManagementNavExpanded(expanded)
+                      } else if (row.groupId === adminInfraGroupId) {
+                        setAdminInfraNavExpanded(expanded)
+                      } else if (row.groupId === adminOrgGroupId) {
+                        setAdminOrgNavExpanded(expanded)
+                      } else if (row.groupId === providerManagementGroupId) {
+                        setProviderManagementNavExpanded(expanded)
+                      } else if (row.groupId === providerSystemGroupId) {
+                        setProviderSystemNavExpanded(expanded)
                       }
                     }}
                     isActive={row.children.some((c) => c.id === String(activeItem))}
@@ -572,21 +969,14 @@ function App() {
               )}
             </NavList>
           </Nav>
-          <div
-            style={{
-              marginTop: 'auto',
-              alignSelf: 'stretch',
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: 'var(--pf-t--global--spacer--md)',
-            }}
-          >
-            <Switch
-              id="northstar-tenant-dark-theme"
-              label="Dark theme"
-              isChecked={isDarkTheme}
-              onChange={(_event, checked) => setIsDarkTheme(checked)}
+          <div className="osac-shell-sidebar-footer">
+            <OsacLightDarkToggle
+              variant="shell"
+              isDark={isDarkTheme}
+              onChange={setIsDarkTheme}
+              landingOnSelect={goToLandingHome}
+              landingAriaLabel="Back to welcome — choose institution and role"
+              aria-label="Theme"
             />
           </div>
         </div>
@@ -595,10 +985,11 @@ function App() {
   )
 
   const isSparseShellPage =
+    demoShellRole !== 'tenantAdmin' &&
+    demoShellRole !== 'providerAdmin' &&
     !recentActivitiesPageOpen &&
     !showCatalogPage &&
     !showVirtualMachinesPage &&
-    !showTopologyPage &&
     activeItem !== dashboardNavItemId
 
   return (
@@ -609,11 +1000,15 @@ function App() {
       breadcrumb={recentActivitiesBreadcrumb}
       isManagedSidebar
       isContentFilled={!isSparseShellPage}
-      mainAriaLabel="Northstar Bank cloud workspace"
+      mainAriaLabel={`${DEMO_TENANT_LABEL[demoTenantId]} cloud workspace`}
     >
       <PageSection
         isFilled={!isSparseShellPage}
-        className={`osac-page-main-section${showTopologyPage ? ' osac-page-main-section--topology' : ''}`}
+        className={`osac-page-main-section${
+          showAdminInfraNetworksPage || showProviderSystemInfraPage
+            ? ' osac-page-main-section--topology'
+            : ''
+        }`}
       >
         <CreateVirtualMachineLaunchButton
           ref={createVmLaunchRef}
@@ -625,8 +1020,230 @@ function App() {
         />
         {recentActivitiesPageOpen ? (
           <div className="osac-non-catalog-main">
-            <RecentActivitiesPage />
+            <RecentActivitiesPage
+              fleetVirtualMachines={allTenantVirtualMachines}
+              demoTenantId={demoTenantId}
+            />
           </div>
+        ) : demoShellRole === 'providerAdmin' ? (
+          showProviderMgmtTemplatesPage ? (
+            <TenantVmTemplatesCatalog
+              navReselectSeq={catalogNavReselectSeq}
+              onOpenCreateVirtualMachineWizardFromTemplate={
+                openCreateVirtualMachineWizardFromCatalogTemplate
+              }
+            />
+          ) : showProviderSystemInfraPage ? (
+            <div className="osac-non-catalog-main osac-non-catalog-main--topology">
+              <div
+                className="osac-page-toolbar-sticky"
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 'var(--pf-t--global--spacer--md)',
+                }}
+              >
+                <div className="osac-page-toolbar-sticky__lead">
+                  <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
+                    {navLabelForItemId(effectiveShellNavRows, activeItem)}
+                  </Title>
+                  <Content
+                    component="p"
+                    style={{
+                      margin: 0,
+                      maxWidth: '48rem',
+                      color: 'var(--pf-t--global--text--color--subtle)',
+                      fontSize: 'var(--pf-t--global--font--size--body--default)',
+                    }}
+                  >
+                    Platform view for {DEMO_TENANT_LABEL[demoTenantId]}.
+                  </Content>
+                </div>
+              </div>
+              <NetworkTopologyPage
+                vms={allTenantVirtualMachines}
+                onOpenVirtualMachineDetail={() => {}}
+              />
+            </div>
+          ) : (
+            <div className="osac-non-catalog-main">
+              <div
+                className="osac-page-toolbar-sticky"
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 'var(--pf-t--global--spacer--md)',
+                }}
+              >
+                <div className="osac-page-toolbar-sticky__lead">
+                  <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
+                    {navLabelForItemId(effectiveShellNavRows, activeItem)}
+                  </Title>
+                  <Content
+                    component="p"
+                    style={{
+                      margin: 0,
+                      maxWidth: '48rem',
+                      color: 'var(--pf-t--global--text--color--subtle)',
+                      fontSize: 'var(--pf-t--global--font--size--body--default)',
+                    }}
+                  >
+                    Manage and monitor all tenant organizations.
+                  </Content>
+                </div>
+              </div>
+              {showProviderDashboardPage ? (
+                <ProviderAdminDashboardPage onNavigate={navigateProviderAdminFromDashboard} />
+              ) : showProviderMgmtTenantsPage ? (
+                <ProviderAdminTenantOrganizationsPage />
+              ) : showProviderMgmtAllocPage ? (
+                <TenantAdminPlaceholderPage
+                  demoTenantId={demoTenantId}
+                  title="Resource allocation"
+                  lede="Capacity pools, region quotas, and fair-share limits across tenants."
+                />
+              ) : showProviderSystemSecurityPage ? (
+                <TenantAdminPlaceholderPage
+                  demoTenantId={demoTenantId}
+                  title="Security & Compliance"
+                  lede="Platform-wide policies, encryption standards, and audit exports."
+                />
+              ) : showProviderSystemSettingsPage ? (
+                <TenantAdminPlaceholderPage
+                  demoTenantId={demoTenantId}
+                  title="Platform settings"
+                  lede="Feature flags, integrations, maintenance windows, and API endpoints."
+                />
+              ) : (
+                <ProviderAdminDashboardPage onNavigate={navigateProviderAdminFromDashboard} />
+              )}
+            </div>
+          )
+        ) : demoShellRole === 'tenantAdmin' ? (
+          showAdminMgmtTemplatesPage ? (
+            <TenantVmTemplatesCatalog
+              navReselectSeq={catalogNavReselectSeq}
+              onOpenCreateVirtualMachineWizardFromTemplate={
+                openCreateVirtualMachineWizardFromCatalogTemplate
+              }
+            />
+          ) : showAdminInfraNetworksPage ? (
+            <div className="osac-non-catalog-main osac-non-catalog-main--topology">
+              <div
+                className="osac-page-toolbar-sticky"
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  gap: 'var(--pf-t--global--spacer--md)',
+                }}
+              >
+                <div className="osac-page-toolbar-sticky__lead">
+                  <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
+                    {navLabelForItemId(effectiveShellNavRows, activeItem)}
+                  </Title>
+                  <Content
+                    component="p"
+                    style={{
+                      margin: 0,
+                      maxWidth: '48rem',
+                      color: 'var(--pf-t--global--text--color--subtle)',
+                      fontSize: 'var(--pf-t--global--font--size--body--default)',
+                    }}
+                  >
+                    Tenant administration for {DEMO_TENANT_LABEL[demoTenantId]}.
+                  </Content>
+                </div>
+              </div>
+              <NetworkTopologyPage
+                vms={allTenantVirtualMachines}
+                onOpenVirtualMachineDetail={openVirtualMachineDetailFromTopology}
+              />
+            </div>
+          ) : (
+            <div className="osac-non-catalog-main">
+              <div
+                className="osac-page-toolbar-sticky"
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 'var(--pf-t--global--spacer--md)',
+                }}
+              >
+                <div className="osac-page-toolbar-sticky__lead">
+                  <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
+                    {navLabelForItemId(effectiveShellNavRows, activeItem)}
+                  </Title>
+                  <Content
+                    component="p"
+                    style={{
+                      margin: 0,
+                      maxWidth: '48rem',
+                      color: 'var(--pf-t--global--text--color--subtle)',
+                      fontSize: 'var(--pf-t--global--font--size--body--default)',
+                    }}
+                  >
+                    Tenant administration for {DEMO_TENANT_LABEL[demoTenantId]}.
+                  </Content>
+                </div>
+                {showAdminMgmtUsersPage ? (
+                  <div className="osac-page-toolbar-sticky__actions">
+                    <Button variant="primary" type="button" onClick={() => {}}>
+                      Add user
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+              {showAdminDashboardPage ? (
+                <TenantAdminDashboardPage
+                  demoTenantId={demoTenantId}
+                  fleetVirtualMachines={allTenantVirtualMachines}
+                  isDarkTheme={isDarkTheme}
+                  onNavigateToTenantAdmin={navigateTenantAdminFromDashboard}
+                />
+              ) : showAdminMgmtUsersPage ? (
+                <TenantAdminUserManagementPage demoTenantId={demoTenantId} />
+              ) : showAdminMgmtQuotaPage ? (
+                <TenantAdminQuotaControlPage
+                  demoTenantId={demoTenantId}
+                  isDarkTheme={isDarkTheme}
+                  fleetVirtualMachines={allTenantVirtualMachines}
+                />
+              ) : showAdminInfraStoragePage ? (
+                <TenantAdminPlaceholderPage
+                  demoTenantId={demoTenantId}
+                  title="Storage"
+                  lede="Disk pools, snapshots, and backup policies for your tenant."
+                />
+              ) : showAdminOrgSettingsPage ? (
+                <TenantAdminPlaceholderPage
+                  demoTenantId={demoTenantId}
+                  title="Organization settings"
+                  lede="Branding, identity providers, and tenant-wide defaults."
+                />
+              ) : showAdminOrgSecurityPage ? (
+                <TenantAdminPlaceholderPage
+                  demoTenantId={demoTenantId}
+                  title="Security & Compliance"
+                  lede="Audit logs, policy packs, and compliance reporting."
+                />
+              ) : (
+                <TenantAdminDashboardPage
+                  demoTenantId={demoTenantId}
+                  fleetVirtualMachines={allTenantVirtualMachines}
+                  isDarkTheme={isDarkTheme}
+                  onNavigateToTenantAdmin={navigateTenantAdminFromDashboard}
+                />
+              )}
+            </div>
+          )
         ) : showCatalogPage ? (
           <TenantVmTemplatesCatalog
             navReselectSeq={catalogNavReselectSeq}
@@ -634,19 +1251,13 @@ function App() {
               openCreateVirtualMachineWizardFromCatalogTemplate
             }
           />
-        ) : showTopologyPage ? (
-          <div className="osac-non-catalog-main osac-non-catalog-main--topology">
-            <NetworkTopologyPage
-              vms={allTenantVirtualMachines}
-              onOpenVirtualMachineDetail={openVirtualMachineDetailFromTopology}
-            />
-          </div>
         ) : showVirtualMachinesPage ? (
           <TenantVirtualMachinesPage
             onOpenCreateVirtualMachineModal={openCreateVirtualMachineModal}
             onOpenCloneVirtualMachine={openCreateVirtualMachineWizardFromCloneSource}
             navReselectSeq={vmListNavReselectSeq}
             powerFilterIntent={vmListPowerFilterIntent}
+            seedVirtualMachines={seedFleetVirtualMachines}
             vmsCreatedFromTemplate={vmsCreatedFromTemplate}
             createdFilterNavigateSeq={vmListCreatedFilterNavigateSeq}
             detailOpenRequest={topologyVmDetailOpenRequest}
@@ -673,7 +1284,7 @@ function App() {
               {activeItem === dashboardNavItemId ? (
                 <div className="osac-page-toolbar-sticky__lead">
                   <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
-                    {dashboardPageTitle}
+                    {`Welcome ${DEMO_TENANT_DISPLAY_USER[demoTenantId]}`}
                   </Title>
                   <Content
                     component="p"
@@ -690,7 +1301,7 @@ function App() {
               ) : (
                 <div className="osac-page-toolbar-sticky__lead">
                   <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
-                    {navLabelForItemId(shellNavRows, activeItem)}
+                    {navLabelForItemId(effectiveShellNavRows, activeItem)}
                   </Title>
                 </div>
               )}
@@ -763,10 +1374,9 @@ function App() {
                           selectableActions={{
                             onClickAction: () => {
                               setVmListPowerFilterIntent(null)
-                              setComputeNavExpanded(true)
                               setActiveItem(virtualMachinesNavItemId)
                             },
-                            selectableActionAriaLabel: `${stat.label}, ${stat.value}, ${stat.caption}. Open Virtual machines`,
+                            selectableActionAriaLabel: `${stat.label}, ${stat.value}, ${stat.caption}. Open My VMs`,
                           }}
                         >
                           <CardTitle component="h2" style={labelTextStyle}>
@@ -799,10 +1409,9 @@ function App() {
                           selectableActions={{
                             onClickAction: () => {
                               setVmListPowerFilterIntent('running')
-                              setComputeNavExpanded(true)
                               setActiveItem(virtualMachinesNavItemId)
                             },
-                            selectableActionAriaLabel: `${stat.label}, ${stat.value}, ${stat.caption}. Open Virtual machines filtered to running`,
+                            selectableActionAriaLabel: `${stat.label}, ${stat.value}, ${stat.caption}. Open My VMs filtered to running`,
                           }}
                         >
                           <CardTitle component="h2" style={labelTextStyle}>
@@ -835,10 +1444,9 @@ function App() {
                           selectableActions={{
                             onClickAction: () => {
                               setVmListPowerFilterIntent('paused')
-                              setComputeNavExpanded(true)
                               setActiveItem(virtualMachinesNavItemId)
                             },
-                            selectableActionAriaLabel: `${stat.label}, ${stat.value}, ${stat.caption}. Open Virtual machines filtered to paused`,
+                            selectableActionAriaLabel: `${stat.label}, ${stat.value}, ${stat.caption}. Open My VMs filtered to paused`,
                           }}
                         >
                           <CardTitle component="h2" style={labelTextStyle}>
@@ -871,10 +1479,9 @@ function App() {
                           selectableActions={{
                             onClickAction: () => {
                               setVmListPowerFilterIntent('stopped')
-                              setComputeNavExpanded(true)
                               setActiveItem(virtualMachinesNavItemId)
                             },
-                            selectableActionAriaLabel: `${stat.label}, ${stat.value}, ${stat.caption}. Open Virtual machines filtered to stopped`,
+                            selectableActionAriaLabel: `${stat.label}, ${stat.value}, ${stat.caption}. Open My VMs filtered to stopped`,
                           }}
                         >
                           <CardTitle component="h2" style={labelTextStyle}>
@@ -899,8 +1506,16 @@ function App() {
               <DashboardVmUtilizationSection
                 isDarkTheme={isDarkTheme}
                 onOpenRecentActivities={() => setRecentActivitiesPageOpen(true)}
+                fleetVirtualMachines={allTenantVirtualMachines}
+                demoTenantId={demoTenantId}
               />
-              <DashboardVmQuotaSection isDarkTheme={isDarkTheme} />
+              <DashboardVmQuotaSection
+                isDarkTheme={isDarkTheme}
+                fleetVirtualMachines={allTenantVirtualMachines}
+                tenantUserPersona={
+                  demoTenantId === 'northstar' || demoTenantId === 'evergreen' ? demoTenantId : undefined
+                }
+              />
               </>
             )}
           </div>
