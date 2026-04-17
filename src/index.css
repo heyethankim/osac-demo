@@ -2545,111 +2545,66 @@ body {
   gap: var(--pf-t--global--spacer--lg);
 }
 
-.tenant-admin-quota-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pf-t--global--spacer--md);
-  width: 100%;
-  min-width: 0;
-}
-
-.tenant-admin-quota-section-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--pf-t--global--spacer--md);
-  flex-wrap: wrap;
-}
-
-.tenant-admin-quota-section-head .pf-v6-c-title {
-  margin: 0;
-}
-
-.tenant-admin-quota-alert.pf-v6-c-alert {
-  max-width: 52rem;
-}
-
-.tenant-admin-quota-chart {
-  width: 100%;
-  min-width: 0;
-  min-height: 13rem;
-}
-
-.tenant-admin-quota-chart--user-dist {
-  min-height: 15rem;
-}
-
-html[data-osac-theme='light'] .tenant-admin-quota-chart {
-  color: #383838;
-}
-
-html[data-osac-theme='light'] .tenant-admin-quota-chart .recharts-cartesian-axis-tick-value,
-html[data-osac-theme='light'] .tenant-admin-quota-chart .recharts-text,
-html[data-osac-theme='light'] .tenant-admin-quota-chart text,
-html[data-osac-theme='light'] .tenant-admin-quota-chart tspan {
-  fill: #383838 !important;
-}
-
-html[data-osac-theme='light'] .tenant-admin-quota-chart .recharts-cartesian-axis-line {
-  stroke: #a3a3a3 !important;
-}
-
-html[data-osac-theme='light'] .tenant-admin-quota-chart .recharts-cartesian-grid line {
-  stroke: #d2d2d2 !important;
-}
-
-.tenant-admin-quota-org-summary {
-  list-style: none;
-  margin: var(--pf-t--global--spacer--md) 0 0;
-  padding: 0;
-  display: grid;
-  gap: var(--pf-t--global--spacer--sm);
-  font-size: var(--pf-t--global--font--size--body--sm);
-}
-
-@media (min-width: 36rem) {
-  .tenant-admin-quota-org-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.tenant-admin-quota-org-summary__label {
-  display: block;
-  font-weight: 600;
-  color: var(--pf-t--global--text--color--regular);
-}
-
-.tenant-admin-quota-org-summary__value {
-  color: var(--pf-t--global--text--color--subtle);
-  font-variant-numeric: tabular-nums;
-}
-
-.tenant-admin-quota-limits-table-wrap {
+.tenant-admin-quota-project-table-wrap {
   width: 100%;
   min-width: 0;
   overflow-x: auto;
 }
 
-.tenant-admin-quota-limits-table-wrap .tenant-admin-quota-limits-table {
+.tenant-admin-quota-project-table-wrap .tenant-admin-quota-project-table {
   width: 100%;
-  min-width: min(48rem, 100%);
+  min-width: min(52rem, 100%);
+  table-layout: fixed;
 }
 
-.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__th--num,
-.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__td--input {
-  min-width: 7.5rem;
-  max-width: 10rem;
+/* Even column distribution — avoids a single wide “Project” cell pushing quota headers to the right */
+.tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--project {
+  width: 26%;
 }
 
-.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__td--input .pf-v6-c-form-control,
-.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__td--input .pf-v6-c-text-input-group,
-.tenant-admin-quota-limits-table .tenant-admin-quota-limits-table__td--input input {
-  width: 100%;
-  min-width: 0;
+.tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--vcpu {
+  width: 12%;
 }
 
-.tenant-admin-quota-actions {
-  margin-top: var(--pf-t--global--spacer--md);
+.tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--memory {
+  width: 15%;
+}
+
+.tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--gpu {
+  width: 11%;
+}
+
+.tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--storage {
+  width: 15%;
+}
+
+.tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--util {
+  width: 13%;
+}
+
+.tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--actions {
+  width: 8%;
+}
+
+.tenant-admin-quota-project-table th,
+.tenant-admin-quota-project-table td {
+  text-align: start;
+  vertical-align: middle;
+}
+
+.tenant-admin-quota-project-table th:last-child,
+.tenant-admin-quota-project-table td:last-child {
+  text-align: center;
+}
+
+.tenant-admin-quota-project-table td:first-child {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.tenant-admin-quota-project-table .tenant-admin-quota-project-table__mono {
+  font-family: var(--pf-t--global--font--family--mono);
+  font-size: var(--pf-t--global--font--size--body--sm);
 }
 
 .provider-tenant-orgs-table-wrap {
@@ -4019,6 +3974,64 @@ html[data-osac-theme='light']
 .osac-page-toolbar-sticky__actions {
   flex-shrink: 0;
   margin-inline-start: auto;
+}
+
+.tenant-admin-networks-alert.pf-v6-c-alert {
+  max-width: 48rem;
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.tenant-admin-networks-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tenant-admin-networks-table-wrap .tenant-admin-networks-table {
+  width: 100%;
+  min-width: min(52rem, 100%);
+}
+
+.tenant-admin-networks-table .tenant-admin-networks-table__mono {
+  font-family: var(--pf-t--global--font--family--mono);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+.tenant-admin-storage-alert.pf-v6-c-alert {
+  max-width: 48rem;
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.tenant-admin-storage-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tenant-admin-storage-table-wrap .tenant-admin-storage-table {
+  width: 100%;
+  min-width: min(60rem, 100%);
+}
+
+.tenant-admin-storage-table .tenant-admin-storage-table__mono {
+  font-family: var(--pf-t--global--font--family--mono);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+.tenant-admin-projects-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.tenant-admin-projects-table-wrap .tenant-admin-projects-table {
+  width: 100%;
+  min-width: min(72rem, 100%);
+}
+
+.tenant-admin-projects-table .tenant-admin-projects-table__mono {
+  font-family: var(--pf-t--global--font--family--mono);
+  font-size: var(--pf-t--global--font--size--body--sm);
 }
 
 .tenant-vm-page-sticky-heading {

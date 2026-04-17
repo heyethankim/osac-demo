@@ -43,6 +43,9 @@ import { VmConsoleDemoPage } from './VmConsoleDemoPage'
 import { DashboardVmUtilizationSection } from './DashboardVmUtilizationSection'
 import { RecentActivitiesPage } from './RecentActivitiesPage'
 import { DashboardVmQuotaSection } from './DashboardVmQuotaSection'
+import { TenantAdminNetworksPage } from './TenantAdminNetworksPage'
+import { TenantAdminStoragePage } from './TenantAdminStoragePage'
+import { TenantAdminProjectsPage } from './TenantAdminProjectsPage'
 import { TenantAdminQuotaControlPage } from './TenantAdminQuotaControlPage'
 import { TenantAdminUserManagementPage } from './TenantAdminUserManagementPage'
 import {
@@ -114,6 +117,7 @@ const adminDashboardNavId = 'admin-dashboard'
 const adminManagementGroupId = 'nav-tenant-admin-management'
 const adminInfraGroupId = 'nav-tenant-admin-infrastructure'
 const adminOrgGroupId = 'nav-tenant-admin-organization'
+const adminMgmtProjectsNavId = 'admin-mgmt-projects'
 const adminMgmtUsersNavId = 'admin-mgmt-users'
 const adminMgmtQuotaNavId = 'admin-mgmt-quota'
 const adminMgmtTemplatesNavId = 'admin-mgmt-templates'
@@ -126,12 +130,12 @@ const tenantAdminNavRows: ShellNavRow[] = [
   { kind: 'link', id: adminDashboardNavId, label: 'Dashboard' },
   {
     kind: 'expand',
-    label: 'Management',
+    label: 'Project management',
     groupId: adminManagementGroupId,
     children: [
-      { id: adminMgmtUsersNavId, label: 'Users' },
+      { id: adminMgmtProjectsNavId, label: 'Projects' },
       { id: adminMgmtQuotaNavId, label: 'Quota control' },
-      { id: adminMgmtTemplatesNavId, label: 'Template catalog' },
+      { id: adminMgmtUsersNavId, label: 'Users' },
     ],
   },
   {
@@ -139,6 +143,7 @@ const tenantAdminNavRows: ShellNavRow[] = [
     label: 'Infrastructure',
     groupId: adminInfraGroupId,
     children: [
+      { id: adminMgmtTemplatesNavId, label: 'VM templates' },
       { id: adminInfraNetworksNavId, label: 'Networks' },
       { id: adminInfraStorageNavId, label: 'Storage' },
     ],
@@ -297,11 +302,11 @@ function App() {
   const [catalogNavReselectSeq, setCatalogNavReselectSeq] = useState(0)
   const [recentActivitiesPageOpen, setRecentActivitiesPageOpen] = useState(false)
   const [globalSearchQuery, setGlobalSearchQuery] = useState('')
-  const [topologyVmDetailOpenRequest, setTopologyVmDetailOpenRequest] = useState<{
-    vmId: string
-    seq: number
-  } | null>(null)
-
+  const [tenantAdminStorageExpansionDemoNotice, setTenantAdminStorageExpansionDemoNotice] =
+    useState(false)
+  const [tenantAdminCreateProjectModalOpen, setTenantAdminCreateProjectModalOpen] = useState(false)
+  const [tenantAdminNetworkSegmentDemoNotice, setTenantAdminNetworkSegmentDemoNotice] =
+    useState(false)
   const createVmLaunchRef = useRef<CreateVirtualMachineLaunchHandle>(null)
   const loginTransitionTimerRef = useRef<number | null>(null)
 
@@ -346,18 +351,6 @@ function App() {
         : [],
     [selectedDemoTenant],
   )
-
-  const openVirtualMachineDetailFromTopology = useCallback((vmId: string) => {
-    setActiveItem(virtualMachinesNavItemId)
-    setTopologyVmDetailOpenRequest((prev) => ({
-      vmId,
-      seq: (prev?.seq ?? 0) + 1,
-    }))
-  }, [])
-
-  const clearTopologyVmDetailOpenRequest = useCallback(() => {
-    setTopologyVmDetailOpenRequest(null)
-  }, [])
 
   const createVirtualMachineFromCatalogTemplate = useCallback(
     (templateId: string, vmName: string, vmDescription?: string) => {
@@ -542,6 +535,24 @@ function App() {
     [],
   )
 
+  useEffect(() => {
+    const onTenantAdminStorage =
+      demoShellRole === 'tenantAdmin' && activeItem === adminInfraStorageNavId
+    if (!onTenantAdminStorage) setTenantAdminStorageExpansionDemoNotice(false)
+  }, [demoShellRole, activeItem])
+
+  useEffect(() => {
+    const onTenantAdminProjects =
+      demoShellRole === 'tenantAdmin' && activeItem === adminMgmtProjectsNavId
+    if (!onTenantAdminProjects) setTenantAdminCreateProjectModalOpen(false)
+  }, [demoShellRole, activeItem])
+
+  useEffect(() => {
+    const onTenantAdminNetworks =
+      demoShellRole === 'tenantAdmin' && activeItem === adminInfraNetworksNavId
+    if (!onTenantAdminNetworks) setTenantAdminNetworkSegmentDemoNotice(false)
+  }, [demoShellRole, activeItem])
+
   if (vmConsoleDemo) {
     return (
       <VmConsoleDemoPage
@@ -677,6 +688,8 @@ function App() {
     demoShellRole === 'tenantUser' && activeItem === virtualMachinesNavItemId
   const showAdminDashboardPage =
     demoShellRole === 'tenantAdmin' && activeItem === adminDashboardNavId
+  const showAdminMgmtProjectsPage =
+    demoShellRole === 'tenantAdmin' && activeItem === adminMgmtProjectsNavId
   const showAdminMgmtUsersPage =
     demoShellRole === 'tenantAdmin' && activeItem === adminMgmtUsersNavId
   const showAdminMgmtQuotaPage =
@@ -1131,40 +1144,6 @@ function App() {
                 openCreateVirtualMachineWizardFromCatalogTemplate
               }
             />
-          ) : showAdminInfraNetworksPage ? (
-            <div className="osac-non-catalog-main osac-non-catalog-main--topology">
-              <div
-                className="osac-page-toolbar-sticky"
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'flex-start',
-                  justifyContent: 'space-between',
-                  gap: 'var(--pf-t--global--spacer--md)',
-                }}
-              >
-                <div className="osac-page-toolbar-sticky__lead">
-                  <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
-                    {navLabelForItemId(effectiveShellNavRows, activeItem)}
-                  </Title>
-                  <Content
-                    component="p"
-                    style={{
-                      margin: 0,
-                      maxWidth: '48rem',
-                      color: 'var(--pf-t--global--text--color--subtle)',
-                      fontSize: 'var(--pf-t--global--font--size--body--default)',
-                    }}
-                  >
-                    Tenant administration for {DEMO_TENANT_LABEL[demoTenantId]}.
-                  </Content>
-                </div>
-              </div>
-              <NetworkTopologyPage
-                vms={allTenantVirtualMachines}
-                onOpenVirtualMachineDetail={openVirtualMachineDetailFromTopology}
-              />
-            </div>
           ) : (
             <div className="osac-non-catalog-main">
               <div
@@ -1199,6 +1178,36 @@ function App() {
                       Add user
                     </Button>
                   </div>
+                ) : showAdminInfraStoragePage ? (
+                  <div className="osac-page-toolbar-sticky__actions">
+                    <Button
+                      variant="primary"
+                      type="button"
+                      onClick={() => setTenantAdminStorageExpansionDemoNotice(true)}
+                    >
+                      Request storage expansion
+                    </Button>
+                  </div>
+                ) : showAdminMgmtProjectsPage ? (
+                  <div className="osac-page-toolbar-sticky__actions">
+                    <Button
+                      variant="primary"
+                      type="button"
+                      onClick={() => setTenantAdminCreateProjectModalOpen(true)}
+                    >
+                      Create project
+                    </Button>
+                  </div>
+                ) : showAdminInfraNetworksPage ? (
+                  <div className="osac-page-toolbar-sticky__actions">
+                    <Button
+                      variant="primary"
+                      type="button"
+                      onClick={() => setTenantAdminNetworkSegmentDemoNotice(true)}
+                    >
+                      Request network segment
+                    </Button>
+                  </div>
                 ) : null}
               </div>
               {showAdminDashboardPage ? (
@@ -1208,19 +1217,25 @@ function App() {
                   isDarkTheme={isDarkTheme}
                   onNavigateToTenantAdmin={navigateTenantAdminFromDashboard}
                 />
+              ) : showAdminMgmtProjectsPage ? (
+                <TenantAdminProjectsPage
+                  demoTenantId={demoTenantId}
+                  createProjectModalOpen={tenantAdminCreateProjectModalOpen}
+                  onCloseCreateProjectModal={() => setTenantAdminCreateProjectModalOpen(false)}
+                />
               ) : showAdminMgmtUsersPage ? (
                 <TenantAdminUserManagementPage demoTenantId={demoTenantId} />
               ) : showAdminMgmtQuotaPage ? (
-                <TenantAdminQuotaControlPage
+                <TenantAdminQuotaControlPage demoTenantId={demoTenantId} />
+              ) : showAdminInfraNetworksPage ? (
+                <TenantAdminNetworksPage
                   demoTenantId={demoTenantId}
-                  isDarkTheme={isDarkTheme}
-                  fleetVirtualMachines={allTenantVirtualMachines}
+                  segmentRequestNotice={tenantAdminNetworkSegmentDemoNotice}
                 />
               ) : showAdminInfraStoragePage ? (
-                <TenantAdminPlaceholderPage
+                <TenantAdminStoragePage
                   demoTenantId={demoTenantId}
-                  title="Storage"
-                  lede="Disk pools, snapshots, and backup policies for your tenant."
+                  expansionRequestNotice={tenantAdminStorageExpansionDemoNotice}
                 />
               ) : showAdminOrgSettingsPage ? (
                 <TenantAdminPlaceholderPage
@@ -1260,8 +1275,6 @@ function App() {
             seedVirtualMachines={seedFleetVirtualMachines}
             vmsCreatedFromTemplate={vmsCreatedFromTemplate}
             createdFilterNavigateSeq={vmListCreatedFilterNavigateSeq}
-            detailOpenRequest={topologyVmDetailOpenRequest}
-            onDetailOpenRequestConsumed={clearTopologyVmDetailOpenRequest}
           />
         ) : (
           <div

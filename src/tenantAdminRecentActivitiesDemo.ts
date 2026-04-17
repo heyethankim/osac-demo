@@ -35,7 +35,7 @@ export function buildTenantAdminRecentActivities(tenantId: DemoTenantId): Tenant
     },
     {
       id: 'ta-3',
-      area: 'Template catalog',
+      area: 'VM templates',
       labelColor: 'purple',
       timeLabel: '3 hr ago',
       title: 'Gold image published',

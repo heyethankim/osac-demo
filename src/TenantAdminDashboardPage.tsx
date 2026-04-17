@@ -71,7 +71,7 @@ export function TenantAdminDashboardPage({
       value: m.activeTemplates,
       hint: 'Published images and service definitions',
       nav: 'templates' as const,
-      navLabel: 'Template catalog',
+      navLabel: 'VM templates',
     },
   ] as const
 
