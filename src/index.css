@@ -2742,26 +2742,6 @@ body {
   min-width: 0;
 }
 
-.tenant-admin-dashboard-columns {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
-  gap: var(--pf-t--global--spacer--md);
-  align-items: start;
-  width: 100%;
-  min-width: 0;
-}
-
-.tenant-admin-dashboard-columns__main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pf-t--global--spacer--md);
-  min-width: 0;
-}
-
-.tenant-admin-dashboard-columns__aside {
-  min-width: 0;
-}
-
 /* Tenant admin dashboard: Resource quota usage — no brand-blue percentage or tinted “chip” behind it */
 .tenant-admin-dashboard-quota .osac-dashboard-quota-card__allocation-pct {
   background: transparent;
@@ -2773,39 +2753,6 @@ body {
 
 .tenant-admin-dashboard-quota .osac-dashboard-quota-card__allocation-pct-value {
   color: var(--pf-t--global--text--color--regular);
-}
-
-@media (max-width: 75rem) {
-  .tenant-admin-dashboard-columns {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Provider admin dashboard: main column KPIs + org table + quick actions; aside recent activities */
-.provider-admin-dashboard-top-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
-  gap: var(--pf-t--global--spacer--md);
-  align-items: start;
-  width: 100%;
-  min-width: 0;
-}
-
-.provider-admin-dashboard-top-row__main {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pf-t--global--spacer--lg);
-  min-width: 0;
-}
-
-.provider-admin-dashboard-top-row__aside {
-  min-width: 0;
-}
-
-@media (max-width: 75rem) {
-  .provider-admin-dashboard-top-row {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Provider admin: tenant org table inside standard (white) card */
@@ -2862,7 +2809,7 @@ body {
   min-width: min(72rem, 100%);
 }
 
-/* Provider admin: three KPI-style shortcut cards, full width below main + aside row */
+/* Provider admin: three KPI-style shortcut cards below tenant org preview (dashboard main column) */
 .provider-admin-dashboard-action-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2903,8 +2850,7 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
 
 .osac-dashboard-vm-stat-card--link:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value,
 .tenant-admin-dashboard-kpi-card:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value,
-.osac-dashboard-recent-activity-card:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value,
-.provider-admin-tenant-orgs-card:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value {
+.osac-dashboard-recent-activity-card:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value {
   color: var(
     --pf-t--global--color--brand--hover,
     var(--pf-t--global--palette--blue--300)

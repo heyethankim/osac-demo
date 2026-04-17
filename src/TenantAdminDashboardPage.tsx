@@ -34,6 +34,14 @@ const TENANT_DASHBOARD_METRICS: Record<
 
 const KPI_CARD_BODY_STYLE = { paddingTop: 'var(--pf-t--global--spacer--sm)' } as const
 
+/** Match tenant user dashboard VM stat card caption (`App.tsx` captionStyle). */
+const KPI_CARD_HINT_STYLE = {
+  margin: 'var(--pf-t--global--spacer--sm) 0 0',
+  color: 'var(--pf-t--global--text--color--subtle)',
+  fontSize: 'var(--pf-t--global--font--size--body--sm)',
+  lineHeight: 'var(--pf-t--global--font--line-height--body)',
+} as const
+
 /** Tenant admin — organization overview (demo metrics). */
 export function TenantAdminDashboardPage({
   demoTenantId,
@@ -42,7 +50,10 @@ export function TenantAdminDashboardPage({
   onNavigateToTenantAdmin,
 }: TenantAdminDashboardPageProps) {
   const m = TENANT_DASHBOARD_METRICS[demoTenantId]
-  const recentActivities = useMemo(() => buildTenantAdminRecentActivities(demoTenantId), [demoTenantId])
+  const recentActivities = useMemo(
+    () => buildTenantAdminRecentActivities(demoTenantId).slice(0, 7),
+    [demoTenantId],
+  )
 
   const cards = [
     {
@@ -77,116 +88,118 @@ export function TenantAdminDashboardPage({
 
   return (
     <div className="osac-tenant-admin-page">
-      <div className="tenant-admin-dashboard-columns">
-        <div className="tenant-admin-dashboard-columns__main">
-          <div className="osac-tenant-admin-dashboard-grid osac-tenant-admin-dashboard-grid--four">
-            {cards.map(({ title, value, hint, nav, navLabel }) => (
-              <Card
-                key={title}
-                component="article"
-                isFullHeight
-                isClickable
-                className="tenant-admin-dashboard-kpi-card"
-              >
-                <CardHeader
-                  selectableActions={{
-                    onClickAction: () => onNavigateToTenantAdmin(nav),
-                    selectableActionAriaLabel: `${title}, ${value}. Open ${navLabel}`,
-                  }}
-                >
-                  <CardTitle component="h2">{title}</CardTitle>
-                </CardHeader>
-                <CardBody style={KPI_CARD_BODY_STYLE}>
-                  <Title
-                    headingLevel="h3"
-                    size="4xl"
-                    className="osac-dashboard-clickable-kpi-value"
-                    style={{
-                      margin: 0,
-                      fontVariantNumeric: 'tabular-nums',
-                    }}
-                  >
-                    {value}
-                  </Title>
-                  <Content
-                    component="p"
-                    style={{
-                      margin: 'var(--pf-t--global--spacer--sm) 0 0',
-                      color: 'var(--pf-t--global--text--color--subtle)',
-                    }}
-                  >
-                    {hint}
-                  </Content>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-
-          <div className="tenant-admin-dashboard-quota">
-            <DashboardVmQuotaSection
-              isDarkTheme={isDarkTheme}
-              fleetVirtualMachines={fleetVirtualMachines}
-              title="Resource quota usage"
-              showUsageBreakdown
-              quotaGridLayout="two-by-two"
-              compactTopSpacing
-            />
-          </div>
-        </div>
-
-        <aside className="tenant-admin-dashboard-columns__aside">
+      <div className="osac-dashboard-vm-stats-grid">
+        {cards.map(({ title, value, hint, nav, navLabel }) => (
           <Card
-            className="tenant-admin-recent-activities osac-dashboard-recent-activity-card"
-            component="section"
-            aria-labelledby="tenant-admin-recent-activities-heading"
+            key={title}
+            component="article"
             isFullHeight
+            isClickable
+            className="tenant-admin-dashboard-kpi-card"
           >
-            <CardHeader>
-              <CardTitle component="h2" id="tenant-admin-recent-activities-heading">
-                Recent activities
-              </CardTitle>
+            <CardHeader
+              selectableActions={{
+                onClickAction: () => onNavigateToTenantAdmin(nav),
+                selectableActionAriaLabel: `${title}, ${value}. Open ${navLabel}`,
+              }}
+            >
+              <CardTitle component="h2">{title}</CardTitle>
             </CardHeader>
-            <CardBody className="osac-dashboard-recent-activity-body">
-              <ul className="osac-dashboard-recent-activity-list">
-                {recentActivities.map((item) => (
-                  <li key={item.id} className="osac-dashboard-recent-activity-item">
-                    <div className="osac-dashboard-recent-activity-item__meta">
-                      <Label
-                        isCompact
-                        color={item.labelColor}
-                        className="osac-dashboard-recent-activity-item__status"
-                      >
-                        {item.area}
-                      </Label>
-                      <span className="osac-dashboard-recent-activity-item__time">{item.timeLabel}</span>
-                    </div>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 'var(--pf-t--global--spacer--xs) 0 0',
-                        fontWeight: 'var(--pf-t--global--font--weight--body--bold)',
-                        fontSize: 'var(--pf-t--global--font--size--body--default)',
-                      }}
-                    >
-                      {item.title}
-                    </Content>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 'var(--pf-t--global--spacer--xs) 0 0',
-                        fontSize: 'var(--pf-t--global--font--size--body--sm)',
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {item.detail}
-                    </Content>
-                  </li>
-                ))}
-              </ul>
+            <CardBody style={KPI_CARD_BODY_STYLE}>
+              <Title
+                headingLevel="h3"
+                size="4xl"
+                className="osac-dashboard-clickable-kpi-value"
+                style={{
+                  margin: 0,
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
+                {value}
+              </Title>
+              <Content component="p" style={KPI_CARD_HINT_STYLE}>
+                {hint}
+              </Content>
             </CardBody>
           </Card>
-        </aside>
+        ))}
       </div>
+
+      <section
+        className="osac-dashboard-utilization-section"
+        aria-label="Resource quota usage and recent activities"
+      >
+        <div className="osac-dashboard-utilization-layout">
+          <div className="osac-dashboard-utilization-main">
+            <div className="tenant-admin-dashboard-quota">
+              <DashboardVmQuotaSection
+                isDarkTheme={isDarkTheme}
+                fleetVirtualMachines={fleetVirtualMachines}
+                title="Resource quota usage"
+                showUsageBreakdown
+                quotaGridLayout="two-by-two"
+                compactTopSpacing
+              />
+            </div>
+          </div>
+
+          <aside
+            className="osac-dashboard-utilization-sidebar"
+            aria-labelledby="tenant-admin-recent-activities-heading"
+          >
+            <Card
+              className="tenant-admin-recent-activities osac-dashboard-recent-activity-card"
+              component="section"
+              aria-labelledby="tenant-admin-recent-activities-heading"
+              isFullHeight
+            >
+              <CardHeader>
+                <CardTitle component="h2" id="tenant-admin-recent-activities-heading">
+                  Recent activities
+                </CardTitle>
+              </CardHeader>
+              <CardBody className="osac-dashboard-recent-activity-body">
+                <ul className="osac-dashboard-recent-activity-list">
+                  {recentActivities.map((item) => (
+                    <li key={item.id} className="osac-dashboard-recent-activity-item">
+                      <div className="osac-dashboard-recent-activity-item__meta">
+                        <Label
+                          isCompact
+                          color={item.labelColor}
+                          className="osac-dashboard-recent-activity-item__status"
+                        >
+                          {item.area}
+                        </Label>
+                        <span className="osac-dashboard-recent-activity-item__time">{item.timeLabel}</span>
+                      </div>
+                      <Content
+                        component="p"
+                        style={{
+                          margin: 'var(--pf-t--global--spacer--xs) 0 0',
+                          fontWeight: 'var(--pf-t--global--font--weight--body--bold)',
+                          fontSize: 'var(--pf-t--global--font--size--body--default)',
+                        }}
+                      >
+                        {item.title}
+                      </Content>
+                      <Content
+                        component="p"
+                        style={{
+                          margin: 'var(--pf-t--global--spacer--xs) 0 0',
+                          fontSize: 'var(--pf-t--global--font--size--body--sm)',
+                          color: 'var(--pf-t--global--text--color--subtle)',
+                        }}
+                      >
+                        {item.detail}
+                      </Content>
+                    </li>
+                  ))}
+                </ul>
+              </CardBody>
+            </Card>
+          </aside>
+        </div>
+      </section>
     </div>
   )
 }
