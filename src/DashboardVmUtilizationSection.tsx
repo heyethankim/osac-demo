@@ -285,7 +285,11 @@ export function DashboardVmUtilizationSection({
                   'Open recent activities — full page with detailed event information',
               }}
             >
-              <CardTitle component="h2" id="osac-dashboard-recent-activity-heading">
+              <CardTitle
+                component="h2"
+                id="osac-dashboard-recent-activity-heading"
+                className="osac-dashboard-clickable-kpi-value"
+              >
                 Recent activities
               </CardTitle>
             </CardHeader>

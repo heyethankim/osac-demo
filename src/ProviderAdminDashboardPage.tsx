@@ -132,6 +132,7 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
                   <Title
                     headingLevel="h3"
                     size="4xl"
+                    className="osac-dashboard-clickable-kpi-value"
                     style={{
                       margin: 0,
                       fontVariantNumeric: 'tabular-nums',
@@ -168,7 +169,11 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
               }}
             >
               <div className="provider-admin-tenant-orgs-card__header-row">
-                <CardTitle component="h2" id="provider-admin-dashboard-tenant-orgs-title">
+                <CardTitle
+                  component="h2"
+                  id="provider-admin-dashboard-tenant-orgs-title"
+                  className="osac-dashboard-clickable-kpi-value"
+                >
                   Tenant organizations
                 </CardTitle>
                 <div
@@ -220,7 +225,9 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
                     selectableActionAriaLabel: `${title}. ${actionAria}`,
                   }}
                 >
-                  <CardTitle component="h2">{title}</CardTitle>
+                  <CardTitle component="h2" className="osac-dashboard-clickable-kpi-value">
+                    {title}
+                  </CardTitle>
                 </CardHeader>
                 <CardBody style={KPI_CARD_BODY_STYLE}>
                   <div className="provider-admin-dashboard-action-card__icon" aria-hidden>

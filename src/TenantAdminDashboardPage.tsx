@@ -100,6 +100,7 @@ export function TenantAdminDashboardPage({
                   <Title
                     headingLevel="h3"
                     size="4xl"
+                    className="osac-dashboard-clickable-kpi-value"
                     style={{
                       margin: 0,
                       fontVariantNumeric: 'tabular-nums',

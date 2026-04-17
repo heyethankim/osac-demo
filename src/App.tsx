@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react'
 import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon'
 import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon'
 import { CogIcon } from '@patternfly/react-icons/dist/esm/icons/cog-icon'
@@ -204,7 +212,6 @@ function buildDashboardVmStatusStats(tenantId: DemoTenantId) {
       key: 'all-vms',
       label: 'All VMs',
       value: total,
-      valueColor: 'var(--pf-t--global--text--color--regular)',
       caption: 'Total VMs across your workspaces',
     },
     {
@@ -272,6 +279,45 @@ function readVmConsoleDemoQuery(): {
     vmId: p.get('vm') ?? '',
     vmName,
     guestOs: parseGuestOsQueryParam(p.get('os')),
+  }
+}
+
+/** Masthead account toggle: tenant shells show role as PF Label pills; provider admin shows name only. */
+function mastheadAccountToggleContent(
+  role: DemoShellRole,
+  tenantId: DemoTenantId,
+): { node: ReactNode; ariaLabel: string } {
+  if (role === 'providerAdmin') {
+    return {
+      node: DEMO_PROVIDER_ADMIN_DISPLAY_NAME,
+      ariaLabel: `Account menu, ${DEMO_PROVIDER_ADMIN_DISPLAY_NAME}`,
+    }
+  }
+  if (role === 'tenantAdmin') {
+    const name = DEMO_TENANT_DISPLAY_ADMIN[tenantId]
+    return {
+      node: (
+        <span className="osac-masthead-account-toggle">
+          <span className="osac-masthead-account-toggle__name">{name}</span>
+          <Label color="grey" className="osac-masthead-account-toggle__role-label">
+            Admin
+          </Label>
+        </span>
+      ),
+      ariaLabel: `Account menu, ${name}, tenant administrator`,
+    }
+  }
+  const name = DEMO_TENANT_DISPLAY_USER[tenantId]
+  return {
+    node: (
+      <span className="osac-masthead-account-toggle">
+        <span className="osac-masthead-account-toggle__name">{name}</span>
+        <Label color="grey" className="osac-masthead-account-toggle__role-label">
+          User
+        </Label>
+      </span>
+    ),
+    ariaLabel: `Account menu, ${name}, tenant user`,
   }
 }
 
@@ -666,6 +712,7 @@ function App() {
   }
 
   const demoTenantId = selectedDemoTenant
+  const mastheadAccountToggle = mastheadAccountToggleContent(demoShellRole, demoTenantId)
 
   const showProviderDashboardPage =
     demoShellRole === 'providerAdmin' && activeItem === providerDashboardNavId
@@ -759,16 +806,6 @@ function App() {
         </MastheadLogo>
       </MastheadMain>
       <MastheadContent className="northstar-masthead-content">
-        <div className="northstar-masthead-search">
-          <SearchInput
-            placeholder="Search"
-            value={globalSearchQuery}
-            onChange={(_e, value) => setGlobalSearchQuery(value)}
-            onClear={() => setGlobalSearchQuery('')}
-            aria-label="Global search"
-          />
-        </div>
-        <span className="northstar-masthead-content__spacer" aria-hidden />
         {showTenantTrustStrip ? (
           <div className="osac-masthead-tenant-trust-strip" aria-label="Data residency and compliance">
             <div className="osac-masthead-tenant-trust-strip__residency">
@@ -789,6 +826,17 @@ function App() {
             </div>
           </div>
         ) : null}
+        <span className="northstar-masthead-content__spacer" aria-hidden />
+        <div className="northstar-masthead-search">
+          <SearchInput
+            placeholder="Search"
+            value={globalSearchQuery}
+            onChange={(_e, value) => setGlobalSearchQuery(value)}
+            onClear={() => setGlobalSearchQuery('')}
+            aria-label="Global search"
+          />
+        </div>
+        <span className="northstar-masthead-content__spacer" aria-hidden />
         <Toolbar
           ouiaId="masthead-utilities-toolbar"
           className="northstar-masthead-utilities-toolbar"
@@ -838,13 +886,10 @@ function App() {
                       isExpanded={isUserMenuOpen}
                       onClick={() => setIsUserMenuOpen((o) => !o)}
                       icon={<UserIcon />}
-                      aria-label="Account menu"
+                      className="osac-masthead-account-menu-toggle"
+                      aria-label={mastheadAccountToggle.ariaLabel}
                     >
-                      {demoShellRole === 'providerAdmin'
-                        ? DEMO_PROVIDER_ADMIN_DISPLAY_NAME
-                        : demoShellRole === 'tenantAdmin'
-                          ? DEMO_TENANT_DISPLAY_ADMIN[demoTenantId]
-                          : DEMO_TENANT_DISPLAY_USER[demoTenantId]}
+                      {mastheadAccountToggle.node}
                     </MenuToggle>
                   )}
                 >
@@ -1353,13 +1398,15 @@ function App() {
                   }
                   const valueTitleStyle = {
                     margin: 0,
-                    color: stat.valueColor,
+                    ...('valueColor' in stat ? { color: stat.valueColor } : {}),
                     fontWeight: 'var(--pf-t--global--font--weight--heading--bold)',
                     whiteSpace: 'nowrap' as const,
                     overflow: 'hidden' as const,
                     textOverflow: 'ellipsis' as const,
                     minWidth: 0,
                   }
+                  const valueTitleClassName =
+                    stat.key === 'all-vms' ? 'osac-dashboard-clickable-kpi-value' : undefined
                   const captionStyle = {
                     margin: 0,
                     marginTop: 'auto',
@@ -1397,7 +1444,12 @@ function App() {
                           </CardTitle>
                         </CardHeader>
                         <CardBody style={statCardBodyStyle}>
-                          <Title headingLevel="h3" size="4xl" style={valueTitleStyle}>
+                          <Title
+                            headingLevel="h3"
+                            size="4xl"
+                            className={valueTitleClassName}
+                            style={valueTitleStyle}
+                          >
                             {stat.value}
                           </Title>
                           <Content component="p" title={stat.caption} style={captionStyle}>
@@ -1432,7 +1484,12 @@ function App() {
                           </CardTitle>
                         </CardHeader>
                         <CardBody style={statCardBodyStyle}>
-                          <Title headingLevel="h3" size="4xl" style={valueTitleStyle}>
+                          <Title
+                            headingLevel="h3"
+                            size="4xl"
+                            className={valueTitleClassName}
+                            style={valueTitleStyle}
+                          >
                             {stat.value}
                           </Title>
                           <Content component="p" title={stat.caption} style={captionStyle}>
@@ -1467,7 +1524,12 @@ function App() {
                           </CardTitle>
                         </CardHeader>
                         <CardBody style={statCardBodyStyle}>
-                          <Title headingLevel="h3" size="4xl" style={valueTitleStyle}>
+                          <Title
+                            headingLevel="h3"
+                            size="4xl"
+                            className={valueTitleClassName}
+                            style={valueTitleStyle}
+                          >
                             {stat.value}
                           </Title>
                           <Content component="p" title={stat.caption} style={captionStyle}>
@@ -1502,7 +1564,12 @@ function App() {
                           </CardTitle>
                         </CardHeader>
                         <CardBody style={statCardBodyStyle}>
-                          <Title headingLevel="h3" size="4xl" style={valueTitleStyle}>
+                          <Title
+                            headingLevel="h3"
+                            size="4xl"
+                            className={valueTitleClassName}
+                            style={valueTitleStyle}
+                          >
                             {stat.value}
                           </Title>
                           <Content component="p" title={stat.caption} style={captionStyle}>

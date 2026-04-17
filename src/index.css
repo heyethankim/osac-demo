@@ -1722,7 +1722,7 @@ body {
 }
 
 /* App shell: slight horizontal inset so nav hover/selected backgrounds sit off the text and edges */
-/* Masthead: global search left; flexible gap; utilities on the end */
+/* Masthead: geo (optional) + flex + search + flex + utilities — equal spacers center search */
 .northstar-masthead-content.pf-v6-c-masthead__content {
   display: flex;
   flex-direction: row;
@@ -1734,20 +1734,16 @@ body {
 }
 
 .northstar-masthead-content__spacer {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-width: 0;
 }
 
 .northstar-masthead-search {
-  flex: 1 1 28rem;
-  width: auto;
+  flex: 0 1 28rem;
+  width: min(28rem, 100%);
   max-width: min(28rem, 100%);
   min-width: 0;
-  margin-inline-start: calc(
-    var(--pf-t--global--spacer--4xl) + var(--pf-t--global--spacer--4xl) +
-      var(--pf-t--global--spacer--3xl) + var(--pf-t--global--spacer--3xl) +
-      var(--pf-t--global--spacer--2xl)
-  );
+  margin-inline-start: 0;
 }
 
 /* Shrink with viewport: no wrap (extra row height); override PF input min-width */
@@ -1776,17 +1772,46 @@ body {
   max-width: 100%;
 }
 
-/* Tenant user / tenant admin: residency + compliance — left of masthead utility icons */
+/* Masthead account menu: tenant admin / tenant user show “Name · Admin|User”; provider admin unchanged. */
+.osac-masthead-account-menu-toggle {
+  max-width: min(22rem, 100%);
+}
+
+.osac-masthead-account-toggle {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: var(--pf-t--global--spacer--xs);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.osac-masthead-account-toggle__name {
+  font-weight: var(--pf-t--global--font--weight--body--default);
+  color: var(--pf-t--global--text--color--regular);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* Role pill — single neutral grey for Admin and User (masthead only). */
+.osac-masthead-account-toggle__role-label {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+/* Tenant user / tenant admin: residency + compliance — before search, left-aligned */
 .osac-masthead-tenant-trust-strip {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
   gap: 0.25rem;
-  flex-shrink: 1;
+  flex-shrink: 0;
   min-width: 0;
   max-width: min(22rem, 100%);
-  margin-inline-end: var(--pf-t--global--spacer--xs);
+  margin-inline-end: 0;
 }
 
 .osac-masthead-tenant-trust-strip__residency {
@@ -1817,7 +1842,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 0.25rem;
 }
 
@@ -2553,37 +2578,37 @@ body {
 
 .tenant-admin-quota-project-table-wrap .tenant-admin-quota-project-table {
   width: 100%;
-  min-width: min(58rem, 100%);
+  min-width: min(68rem, 100%);
   table-layout: fixed;
 }
 
-/* Even column distribution — avoids a single wide “Project” cell pushing quota headers to the right */
+/* Project only needs ~1 slug width; give vCPU–Overall room for labels + bars (sums to 100%). */
 .tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--project {
-  width: 26%;
+  width: 16%;
 }
 
 .tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--vcpu {
-  width: 12%;
+  width: 16%;
 }
 
 .tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--memory {
-  width: 15%;
+  width: 17%;
 }
 
 .tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--gpu {
-  width: 11%;
+  width: 14%;
 }
 
 .tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--storage {
-  width: 15%;
+  width: 17%;
 }
 
 .tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--util {
-  width: 13%;
+  width: 14%;
 }
 
 .tenant-admin-quota-project-table col.tenant-admin-quota-project-table__col--actions {
-  width: 8%;
+  width: 6%;
 }
 
 .tenant-admin-quota-project-table th,
@@ -2594,12 +2619,17 @@ body {
 
 .tenant-admin-quota-project-table th:last-child,
 .tenant-admin-quota-project-table td:last-child {
-  text-align: center;
+  text-align: end;
+}
+
+.tenant-admin-quota-project-table th:first-child {
+  white-space: nowrap;
 }
 
 .tenant-admin-quota-project-table td:first-child {
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .provider-tenant-orgs-table-wrap {
@@ -2864,6 +2894,21 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
 
 .tenant-admin-dashboard-kpi-card {
   min-width: 0;
+}
+
+/* Clickable dashboard metrics: brand blue (tenant user VM counts, tenant/provider KPI values & quick-action titles). */
+.osac-dashboard-clickable-kpi-value {
+  color: var(--pf-t--global--color--brand--default);
+}
+
+.osac-dashboard-vm-stat-card--link:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value,
+.tenant-admin-dashboard-kpi-card:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value,
+.osac-dashboard-recent-activity-card:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value,
+.provider-admin-tenant-orgs-card:is(:hover, :focus-within) .osac-dashboard-clickable-kpi-value {
+  color: var(
+    --pf-t--global--color--brand--hover,
+    var(--pf-t--global--palette--blue--300)
+  );
 }
 
 .tenant-admin-recent-activities {
