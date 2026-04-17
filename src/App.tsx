@@ -282,6 +282,21 @@ function readVmConsoleDemoQuery(): {
   }
 }
 
+/** Persona switch row in account dropdown — same name + grey role pill as masthead. */
+function accountDropdownPersonaSwitchLabel(
+  displayName: string,
+  rolePill: 'User' | 'Admin',
+): ReactNode {
+  return (
+    <span className="osac-masthead-account-toggle osac-masthead-account-toggle--account-dropdown-item">
+      <span className="osac-masthead-account-toggle__name">{displayName}</span>
+      <Label color="grey" className="osac-masthead-account-toggle__role-label">
+        {rolePill}
+      </Label>
+    </span>
+  )
+}
+
 /** Masthead account toggle: tenant shells show role as PF Label pills; provider admin shows name only. */
 function mastheadAccountToggleContent(
   role: DemoShellRole,
@@ -489,6 +504,25 @@ function App() {
     setDemoShellRole('providerAdmin')
     setSelectedDemoTenant('vertexa')
     setActiveItem(providerDashboardNavId)
+  }, [])
+
+  /** Bank tenants only: switch shell between tenant admin and tenant user without re-signing in. */
+  const switchSignedInShellToTenantUser = useCallback(() => {
+    setIsUserMenuOpen(false)
+    setRecentActivitiesPageOpen(false)
+    setGlobalSearchQuery('')
+    setVmListPowerFilterIntent(null)
+    setDemoShellRole('tenantUser')
+    setActiveItem(dashboardNavItemId)
+  }, [])
+
+  const switchSignedInShellToTenantAdmin = useCallback(() => {
+    setIsUserMenuOpen(false)
+    setRecentActivitiesPageOpen(false)
+    setGlobalSearchQuery('')
+    setVmListPowerFilterIntent(null)
+    setDemoShellRole('tenantAdmin')
+    setActiveItem(adminDashboardNavId)
   }, [])
 
   const navigateProviderAdminFromDashboard = useCallback((target: ProviderAdminDashboardNavTarget) => {
@@ -713,6 +747,8 @@ function App() {
 
   const demoTenantId = selectedDemoTenant
   const mastheadAccountToggle = mastheadAccountToggleContent(demoShellRole, demoTenantId)
+  const showTenantPersonaSwitcher =
+    demoTenantId === 'northstar' || demoTenantId === 'evergreen'
 
   const showProviderDashboardPage =
     demoShellRole === 'providerAdmin' && activeItem === providerDashboardNavId
@@ -894,6 +930,30 @@ function App() {
                   )}
                 >
                   <DropdownList>
+                    {showTenantPersonaSwitcher && demoShellRole === 'tenantAdmin' ? (
+                      <DropdownItem
+                        value="switch-tenant-user"
+                        onClick={switchSignedInShellToTenantUser}
+                        aria-label={`Switch to tenant user workspace as ${DEMO_TENANT_DISPLAY_USER[demoTenantId]}`}
+                      >
+                        {accountDropdownPersonaSwitchLabel(
+                          DEMO_TENANT_DISPLAY_USER[demoTenantId],
+                          'User',
+                        )}
+                      </DropdownItem>
+                    ) : null}
+                    {showTenantPersonaSwitcher && demoShellRole === 'tenantUser' ? (
+                      <DropdownItem
+                        value="switch-tenant-admin"
+                        onClick={switchSignedInShellToTenantAdmin}
+                        aria-label={`Switch to tenant admin console as ${DEMO_TENANT_DISPLAY_ADMIN[demoTenantId]}`}
+                      >
+                        {accountDropdownPersonaSwitchLabel(
+                          DEMO_TENANT_DISPLAY_ADMIN[demoTenantId],
+                          'Admin',
+                        )}
+                      </DropdownItem>
+                    ) : null}
                     <DropdownItem value="profile" onClick={(e) => e.preventDefault()}>
                       Account settings
                     </DropdownItem>

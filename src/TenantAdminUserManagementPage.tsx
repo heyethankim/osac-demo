@@ -39,7 +39,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     status: 'Active',
   },
   {
-    id: 'ns-chris',
+    id: 'ns-jordan-user',
     name: DEMO_TENANT_DISPLAY_USER.northstar,
     email: DEMO_TENANT_LOGIN_EMAIL_USER.northstar,
     role: 'User',
@@ -123,7 +123,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     status: 'Active',
   },
   {
-    id: 'ev-priya',
+    id: 'ev-mchen-user',
     name: DEMO_TENANT_DISPLAY_USER.evergreen,
     email: DEMO_TENANT_LOGIN_EMAIL_USER.evergreen,
     role: 'User',

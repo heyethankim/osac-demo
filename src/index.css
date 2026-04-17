@@ -1801,6 +1801,12 @@ body {
   margin: 0;
 }
 
+/* Account menu: persona switch uses same name + pill row as masthead toggle */
+.osac-masthead-account-toggle--account-dropdown-item {
+  width: 100%;
+  justify-content: flex-start;
+}
+
 /* Tenant user / tenant admin: residency + compliance — before search, left-aligned */
 .osac-masthead-tenant-trust-strip {
   display: flex;

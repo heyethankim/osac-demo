@@ -26,8 +26,9 @@ export const DEMO_TENANT_LABEL: Record<DemoTenantId, string> = {
 
 /** Signed-in display name for tenant user: masthead, VM workspace dashboard, VM ownership, activities (demo). */
 export const DEMO_TENANT_DISPLAY_USER: Record<DemoTenantId, string> = {
-  northstar: 'Chris Morgan',
-  evergreen: 'Priya Nair',
+  /** Same person as tenant admin in this demo; switch roles from the account menu while signed in. */
+  northstar: 'Jordan Lee',
+  evergreen: 'Marcus Chen',
   vertexa: 'Alex Johnson',
 }
 
@@ -46,8 +47,8 @@ export const DEMO_PROVIDER_ADMIN_DISPLAY_NAME = 'Alex Johnson'
 
 /** Pre-filled login identifier on institution sign-in pages for tenant user (demo). */
 export const DEMO_TENANT_LOGIN_EMAIL_USER: Record<DemoTenantId, string> = {
-  northstar: 'cmorgan@northstarbank.com',
-  evergreen: 'priya.nair@bluestonefinancial.com',
+  northstar: 'jordan.lee@northstarbank.com',
+  evergreen: 'marcus.chen.user@bluestonefinancial.com',
   vertexa: DEMO_VERTEXA_PROVIDER_LOGIN_EMAIL,
 }
 
