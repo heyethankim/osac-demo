@@ -3,40 +3,57 @@ import type { DemoTenantId } from './demoTenant'
 export type TenantAdminProjectQuotaRow = {
   id: string
   project: string
-  vcpuQuota: string
-  memoryQuota: string
-  gpuQuota: string
-  storageQuota: string
-  utilization: string
+  vcpuUsed: number
+  vcpuAlloc: number
+  memUsedGiB: number
+  memAllocGiB: number
+  gpuUsed: number
+  gpuAlloc: number
+  storUsedTb: number
+  storAllocTb: number
+  /** Aggregate utilization for the summary column (0–100). */
+  utilizationPct: number
 }
 
 const NORTHSTAR_ROWS: TenantAdminProjectQuotaRow[] = [
   {
     id: 'ns-pq-1',
     project: 'wire-core-platform',
-    vcpuQuota: '512',
-    memoryQuota: '2.0 TiB',
-    gpuQuota: '12',
-    storageQuota: '256 TiB',
-    utilization: '61%',
+    vcpuUsed: 312,
+    vcpuAlloc: 512,
+    memUsedGiB: 1250,
+    memAllocGiB: 2048,
+    gpuUsed: 7,
+    gpuAlloc: 12,
+    storUsedTb: 156,
+    storAllocTb: 256,
+    utilizationPct: 61,
   },
   {
     id: 'ns-pq-2',
     project: 'fraud-analytics-lab',
-    vcpuQuota: '192',
-    memoryQuota: '768 GiB',
-    gpuQuota: '8',
-    storageQuota: '64 TiB',
-    utilization: '46%',
+    vcpuUsed: 88,
+    vcpuAlloc: 192,
+    memUsedGiB: 236,
+    memAllocGiB: 768,
+    gpuUsed: 2,
+    gpuAlloc: 8,
+    storUsedTb: 29,
+    storAllocTb: 64,
+    utilizationPct: 46,
   },
   {
     id: 'ns-pq-3',
     project: 'branch-sdwan-pilot',
-    vcpuQuota: '64',
-    memoryQuota: '256 GiB',
-    gpuQuota: '2',
-    storageQuota: '16 TiB',
-    utilization: '38%',
+    vcpuUsed: 24,
+    vcpuAlloc: 64,
+    memUsedGiB: 97,
+    memAllocGiB: 256,
+    gpuUsed: 0,
+    gpuAlloc: 2,
+    storUsedTb: 6,
+    storAllocTb: 16,
+    utilizationPct: 38,
   },
 ]
 
@@ -44,29 +61,41 @@ const EVERGREEN_ROWS: TenantAdminProjectQuotaRow[] = [
   {
     id: 'efg-pq-1',
     project: 'payments-modernization',
-    vcpuQuota: '256',
-    memoryQuota: '1.0 TiB',
-    gpuQuota: '8',
-    storageQuota: '128 TiB',
-    utilization: '59%',
+    vcpuUsed: 151,
+    vcpuAlloc: 256,
+    memUsedGiB: 604,
+    memAllocGiB: 1024,
+    gpuUsed: 5,
+    gpuAlloc: 8,
+    storUsedTb: 76,
+    storAllocTb: 128,
+    utilizationPct: 59,
   },
   {
     id: 'efg-pq-2',
     project: 'risk-data-mesh',
-    vcpuQuota: '128',
-    memoryQuota: '512 GiB',
-    gpuQuota: '4',
-    storageQuota: '48 TiB',
-    utilization: '31%',
+    vcpuUsed: 40,
+    vcpuAlloc: 128,
+    memUsedGiB: 159,
+    memAllocGiB: 512,
+    gpuUsed: 1,
+    gpuAlloc: 4,
+    storUsedTb: 15,
+    storAllocTb: 48,
+    utilizationPct: 31,
   },
   {
     id: 'efg-pq-3',
     project: 'mobile-api-next',
-    vcpuQuota: '96',
-    memoryQuota: '384 GiB',
-    gpuQuota: '4',
-    storageQuota: '32 TiB',
-    utilization: '74%',
+    vcpuUsed: 71,
+    vcpuAlloc: 96,
+    memUsedGiB: 284,
+    memAllocGiB: 384,
+    gpuUsed: 3,
+    gpuAlloc: 4,
+    storUsedTb: 24,
+    storAllocTb: 32,
+    utilizationPct: 74,
   },
 ]
 
@@ -74,20 +103,28 @@ const VERTEXA_ROWS: TenantAdminProjectQuotaRow[] = [
   {
     id: 'vx-pq-1',
     project: 'partner-integration-hub',
-    vcpuQuota: '64',
-    memoryQuota: '256 GiB',
-    gpuQuota: '2',
-    storageQuota: '16 TiB',
-    utilization: '25%',
+    vcpuUsed: 16,
+    vcpuAlloc: 64,
+    memUsedGiB: 64,
+    memAllocGiB: 256,
+    gpuUsed: 0,
+    gpuAlloc: 2,
+    storUsedTb: 4,
+    storAllocTb: 16,
+    utilizationPct: 25,
   },
   {
     id: 'vx-pq-2',
     project: 'observability-sandbox',
-    vcpuQuota: '48',
-    memoryQuota: '192 GiB',
-    gpuQuota: '0',
-    storageQuota: '8 TiB',
-    utilization: '22%',
+    vcpuUsed: 11,
+    vcpuAlloc: 48,
+    memUsedGiB: 42,
+    memAllocGiB: 192,
+    gpuUsed: 0,
+    gpuAlloc: 0,
+    storUsedTb: 1.8,
+    storAllocTb: 8,
+    utilizationPct: 22,
   },
 ]
 

@@ -9,9 +9,14 @@ export type TenantAdminProjectRow = {
   owner: string
   members: number
   vms: number
-  vcpuUsage: string
-  memoryUsage: string
-  gpuUsage: string
+  vcpuUsed: number
+  vcpuAlloc: number
+  memUsedGiB: number
+  memAllocGiB: number
+  gpuUsed: number
+  gpuAlloc: number
+  storUsedTb: number
+  storAllocTb: number
   status: TenantAdminProjectStatus
 }
 
@@ -23,9 +28,14 @@ const NORTHSTAR_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Jordan Lee',
     members: 14,
     vms: 38,
-    vcpuUsage: '312 / 512',
-    memoryUsage: '1.1 TiB / 2.0 TiB',
-    gpuUsage: '6 / 12',
+    vcpuUsed: 312,
+    vcpuAlloc: 512,
+    memUsedGiB: 1126,
+    memAllocGiB: 2048,
+    gpuUsed: 6,
+    gpuAlloc: 12,
+    storUsedTb: 142,
+    storAllocTb: 256,
     status: 'Active',
   },
   {
@@ -35,9 +45,14 @@ const NORTHSTAR_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Chris Morgan',
     members: 7,
     vms: 12,
-    vcpuUsage: '88 / 192',
-    memoryUsage: '256 GiB / 768 GiB',
-    gpuUsage: '2 / 8',
+    vcpuUsed: 88,
+    vcpuAlloc: 192,
+    memUsedGiB: 256,
+    memAllocGiB: 768,
+    gpuUsed: 2,
+    gpuAlloc: 8,
+    storUsedTb: 22,
+    storAllocTb: 64,
     status: 'Active',
   },
   {
@@ -47,9 +62,14 @@ const NORTHSTAR_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Sam Rivera',
     members: 5,
     vms: 6,
-    vcpuUsage: '24 / 64',
-    memoryUsage: '96 GiB / 256 GiB',
-    gpuUsage: '0 / 2',
+    vcpuUsed: 24,
+    vcpuAlloc: 64,
+    memUsedGiB: 96,
+    memAllocGiB: 256,
+    gpuUsed: 0,
+    gpuAlloc: 2,
+    storUsedTb: 5,
+    storAllocTb: 16,
     status: 'Provisioning',
   },
   {
@@ -59,9 +79,14 @@ const NORTHSTAR_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Avery Brooks',
     members: 9,
     vms: 22,
-    vcpuUsage: '410 / 448',
-    memoryUsage: '1.8 TiB / 2.0 TiB',
-    gpuUsage: '0 / 0',
+    vcpuUsed: 410,
+    vcpuAlloc: 448,
+    memUsedGiB: 1843,
+    memAllocGiB: 2048,
+    gpuUsed: 0,
+    gpuAlloc: 0,
+    storUsedTb: 198,
+    storAllocTb: 220,
     status: 'Maintenance',
   },
 ]
@@ -74,9 +99,14 @@ const EVERGREEN_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Marcus Chen',
     members: 11,
     vms: 27,
-    vcpuUsage: '156 / 256',
-    memoryUsage: '512 GiB / 1.0 TiB',
-    gpuUsage: '4 / 8',
+    vcpuUsed: 156,
+    vcpuAlloc: 256,
+    memUsedGiB: 512,
+    memAllocGiB: 1024,
+    gpuUsed: 4,
+    gpuAlloc: 8,
+    storUsedTb: 68,
+    storAllocTb: 128,
     status: 'Active',
   },
   {
@@ -86,9 +116,14 @@ const EVERGREEN_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Priya Nair',
     members: 6,
     vms: 9,
-    vcpuUsage: '40 / 128',
-    memoryUsage: '128 GiB / 512 GiB',
-    gpuUsage: '1 / 4',
+    vcpuUsed: 40,
+    vcpuAlloc: 128,
+    memUsedGiB: 128,
+    memAllocGiB: 512,
+    gpuUsed: 1,
+    gpuAlloc: 4,
+    storUsedTb: 12,
+    storAllocTb: 48,
     status: 'Active',
   },
   {
@@ -98,9 +133,14 @@ const EVERGREEN_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Elena Park',
     members: 8,
     vms: 15,
-    vcpuUsage: '72 / 96',
-    memoryUsage: '192 GiB / 384 GiB',
-    gpuUsage: '0 / 4',
+    vcpuUsed: 72,
+    vcpuAlloc: 96,
+    memUsedGiB: 192,
+    memAllocGiB: 384,
+    gpuUsed: 0,
+    gpuAlloc: 4,
+    storUsedTb: 21,
+    storAllocTb: 32,
     status: 'Degraded',
   },
 ]
@@ -113,9 +153,14 @@ const VERTEXA_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Alex Johnson',
     members: 4,
     vms: 5,
-    vcpuUsage: '16 / 64',
-    memoryUsage: '64 GiB / 256 GiB',
-    gpuUsage: '0 / 2',
+    vcpuUsed: 16,
+    vcpuAlloc: 64,
+    memUsedGiB: 64,
+    memAllocGiB: 256,
+    gpuUsed: 0,
+    gpuAlloc: 2,
+    storUsedTb: 3,
+    storAllocTb: 16,
     status: 'Active',
   },
   {
@@ -125,9 +170,14 @@ const VERTEXA_PROJECTS: TenantAdminProjectRow[] = [
     owner: 'Riley Ortiz',
     members: 3,
     vms: 4,
-    vcpuUsage: '12 / 48',
-    memoryUsage: '48 GiB / 192 GiB',
-    gpuUsage: '0 / 0',
+    vcpuUsed: 12,
+    vcpuAlloc: 48,
+    memUsedGiB: 48,
+    memAllocGiB: 192,
+    gpuUsed: 0,
+    gpuAlloc: 0,
+    storUsedTb: 1.4,
+    storAllocTb: 8,
     status: 'Provisioning',
   },
 ]

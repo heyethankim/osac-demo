@@ -17,24 +17,13 @@ import {
 
 type UserRole = 'Admin' | 'User' | 'Viewer'
 
-type UserResource = {
-  vcpuUsed: number
-  vcpuAlloc: number
-  memUsedGiB: number
-  memAllocGiB: number
-  gpuUsed: number
-  gpuAlloc: number
-  storUsedTb: number
-  storAllocTb: number
-}
-
 export type TenantAdminUserRow = {
   id: string
   name: string
   email: string
   role: UserRole
-  vms: number
-  resource: UserResource
+  /** Comma-separated project memberships (demo). */
+  projects: string
   lastLogin: string
   status: 'Active' | 'Locked' | 'Suspended'
 }
@@ -45,17 +34,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: DEMO_TENANT_DISPLAY_ADMIN.northstar,
     email: 'jlee@northstarbank.com',
     role: 'Admin',
-    vms: 5,
-    resource: {
-      vcpuUsed: 48,
-      vcpuAlloc: 96,
-      memUsedGiB: 192,
-      memAllocGiB: 384,
-      gpuUsed: 2,
-      gpuAlloc: 4,
-      storUsedTb: 4.2,
-      storAllocTb: 12,
-    },
+    projects: 'All projects (tenant admin)',
     lastLogin: 'Active now',
     status: 'Active',
   },
@@ -64,17 +43,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: DEMO_TENANT_DISPLAY_USER.northstar,
     email: DEMO_TENANT_LOGIN_EMAIL_USER.northstar,
     role: 'User',
-    vms: 7,
-    resource: {
-      vcpuUsed: 40,
-      vcpuAlloc: 80,
-      memUsedGiB: 160,
-      memAllocGiB: 320,
-      gpuUsed: 1,
-      gpuAlloc: 4,
-      storUsedTb: 3.4,
-      storAllocTb: 10,
-    },
+    projects: 'wire-core-platform, fraud-analytics-lab',
     lastLogin: '52 min ago',
     status: 'Active',
   },
@@ -83,17 +52,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Taylor Kim',
     email: 'tkim@northstarbank.com',
     role: 'User',
-    vms: 4,
-    resource: {
-      vcpuUsed: 32,
-      vcpuAlloc: 64,
-      memUsedGiB: 128,
-      memAllocGiB: 256,
-      gpuUsed: 1,
-      gpuAlloc: 2,
-      storUsedTb: 2.8,
-      storAllocTb: 8,
-    },
+    projects: 'wire-core-platform, branch-sdwan-pilot',
     lastLogin: '18 min ago',
     status: 'Active',
   },
@@ -102,17 +61,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Jamie Ortiz',
     email: 'jortiz@northstarbank.com',
     role: 'Viewer',
-    vms: 0,
-    resource: {
-      vcpuUsed: 0,
-      vcpuAlloc: 16,
-      memUsedGiB: 0,
-      memAllocGiB: 64,
-      gpuUsed: 0,
-      gpuAlloc: 0,
-      storUsedTb: 0,
-      storAllocTb: 2,
-    },
+    projects: 'wire-core-platform (read-only)',
     lastLogin: 'Yesterday',
     status: 'Active',
   },
@@ -121,17 +70,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Avery Collins',
     email: 'acollins@northstarbank.com',
     role: 'User',
-    vms: 2,
-    resource: {
-      vcpuUsed: 16,
-      vcpuAlloc: 48,
-      memUsedGiB: 64,
-      memAllocGiB: 192,
-      gpuUsed: 0,
-      gpuAlloc: 2,
-      storUsedTb: 1.1,
-      storAllocTb: 6,
-    },
+    projects: 'fraud-analytics-lab',
     lastLogin: '3 hr ago',
     status: 'Active',
   },
@@ -140,17 +79,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Rio Nakamura',
     email: 'rnakamura@northstarbank.com',
     role: 'Viewer',
-    vms: 0,
-    resource: {
-      vcpuUsed: 0,
-      vcpuAlloc: 8,
-      memUsedGiB: 0,
-      memAllocGiB: 32,
-      gpuUsed: 0,
-      gpuAlloc: 0,
-      storUsedTb: 0,
-      storAllocTb: 1,
-    },
+    projects: 'legacy-core-readonly (read-only)',
     lastLogin: 'Mar 28, 2026',
     status: 'Active',
   },
@@ -159,17 +88,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Casey Wu',
     email: 'cwu@northstarbank.com',
     role: 'User',
-    vms: 3,
-    resource: {
-      vcpuUsed: 24,
-      vcpuAlloc: 64,
-      memUsedGiB: 96,
-      memAllocGiB: 256,
-      gpuUsed: 1,
-      gpuAlloc: 2,
-      storUsedTb: 2.4,
-      storAllocTb: 10,
-    },
+    projects: 'wire-core-platform, legacy-core-readonly',
     lastLogin: '2 days ago',
     status: 'Locked',
   },
@@ -178,17 +97,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Dana Frost',
     email: 'dfrost@northstarbank.com',
     role: 'User',
-    vms: 1,
-    resource: {
-      vcpuUsed: 8,
-      vcpuAlloc: 32,
-      memUsedGiB: 32,
-      memAllocGiB: 128,
-      gpuUsed: 0,
-      gpuAlloc: 1,
-      storUsedTb: 0.6,
-      storAllocTb: 4,
-    },
+    projects: 'branch-sdwan-pilot',
     lastLogin: 'Apr 2, 2026',
     status: 'Active',
   },
@@ -197,17 +106,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Morgan Blake',
     email: 'mblake@northstarbank.com',
     role: 'Viewer',
-    vms: 0,
-    resource: {
-      vcpuUsed: 0,
-      vcpuAlloc: 8,
-      memUsedGiB: 0,
-      memAllocGiB: 32,
-      gpuUsed: 0,
-      gpuAlloc: 0,
-      storUsedTb: 0,
-      storAllocTb: 1,
-    },
+    projects: '—',
     lastLogin: 'Mar 15, 2026',
     status: 'Suspended',
   },
@@ -219,17 +118,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     name: DEMO_TENANT_DISPLAY_ADMIN.evergreen,
     email: 'mchen@bluestonefinancial.com',
     role: 'Admin',
-    vms: 4,
-    resource: {
-      vcpuUsed: 40,
-      vcpuAlloc: 80,
-      memUsedGiB: 160,
-      memAllocGiB: 320,
-      gpuUsed: 2,
-      gpuAlloc: 4,
-      storUsedTb: 3.6,
-      storAllocTb: 10,
-    },
+    projects: 'All projects (tenant admin)',
     lastLogin: 'Active now',
     status: 'Active',
   },
@@ -238,17 +127,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     name: DEMO_TENANT_DISPLAY_USER.evergreen,
     email: DEMO_TENANT_LOGIN_EMAIL_USER.evergreen,
     role: 'User',
-    vms: 5,
-    resource: {
-      vcpuUsed: 28,
-      vcpuAlloc: 64,
-      memUsedGiB: 112,
-      memAllocGiB: 256,
-      gpuUsed: 1,
-      gpuAlloc: 2,
-      storUsedTb: 2.6,
-      storAllocTb: 8,
-    },
+    projects: 'payments-modernization, risk-data-mesh',
     lastLogin: '36 min ago',
     status: 'Active',
   },
@@ -257,17 +136,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Sasha Patel',
     email: 'spatel@bluestonefinancial.com',
     role: 'User',
-    vms: 3,
-    resource: {
-      vcpuUsed: 24,
-      vcpuAlloc: 64,
-      memUsedGiB: 96,
-      memAllocGiB: 256,
-      gpuUsed: 1,
-      gpuAlloc: 2,
-      storUsedTb: 2.2,
-      storAllocTb: 8,
-    },
+    projects: 'payments-modernization, mobile-api-next',
     lastLogin: '42 min ago',
     status: 'Active',
   },
@@ -276,17 +145,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Devon Hayes',
     email: 'dhayes@bluestonefinancial.com',
     role: 'Viewer',
-    vms: 0,
-    resource: {
-      vcpuUsed: 0,
-      vcpuAlloc: 16,
-      memUsedGiB: 0,
-      memAllocGiB: 64,
-      gpuUsed: 0,
-      gpuAlloc: 0,
-      storUsedTb: 0,
-      storAllocTb: 2,
-    },
+    projects: 'risk-data-mesh (read-only)',
     lastLogin: 'Yesterday',
     status: 'Active',
   },
@@ -295,17 +154,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Riley Kim',
     email: 'rkim@bluestonefinancial.com',
     role: 'User',
-    vms: 5,
-    resource: {
-      vcpuUsed: 36,
-      vcpuAlloc: 72,
-      memUsedGiB: 144,
-      memAllocGiB: 288,
-      gpuUsed: 1,
-      gpuAlloc: 4,
-      storUsedTb: 3.1,
-      storAllocTb: 12,
-    },
+    projects: 'mobile-api-next',
     lastLogin: '5 hr ago',
     status: 'Active',
   },
@@ -314,17 +163,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Emerson Cruz',
     email: 'ecruz@bluestonefinancial.com',
     role: 'Viewer',
-    vms: 0,
-    resource: {
-      vcpuUsed: 0,
-      vcpuAlloc: 8,
-      memUsedGiB: 0,
-      memAllocGiB: 32,
-      gpuUsed: 0,
-      gpuAlloc: 0,
-      storUsedTb: 0,
-      storAllocTb: 1,
-    },
+    projects: '—',
     lastLogin: 'Mar 22, 2026',
     status: 'Active',
   },
@@ -333,17 +172,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Quinn Brooks',
     email: 'qbrooks@bluestonefinancial.com',
     role: 'User',
-    vms: 2,
-    resource: {
-      vcpuUsed: 12,
-      vcpuAlloc: 48,
-      memUsedGiB: 48,
-      memAllocGiB: 192,
-      gpuUsed: 0,
-      gpuAlloc: 2,
-      storUsedTb: 1.4,
-      storAllocTb: 6,
-    },
+    projects: 'risk-data-mesh, mobile-api-next',
     lastLogin: 'Apr 1, 2026',
     status: 'Locked',
   },
@@ -355,17 +184,7 @@ const VERTEXA_USER_ROWS: TenantAdminUserRow[] = [
     name: DEMO_TENANT_DISPLAY_ADMIN.vertexa,
     email: 'ajohnson@vertexacloud.com',
     role: 'Admin',
-    vms: 2,
-    resource: {
-      vcpuUsed: 16,
-      vcpuAlloc: 48,
-      memUsedGiB: 64,
-      memAllocGiB: 192,
-      gpuUsed: 0,
-      gpuAlloc: 2,
-      storUsedTb: 1.2,
-      storAllocTb: 5,
-    },
+    projects: 'All projects (tenant admin)',
     lastLogin: 'Active now',
     status: 'Active',
   },
@@ -374,17 +193,7 @@ const VERTEXA_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Riley Park',
     email: 'rpark@vertexacloud.com',
     role: 'User',
-    vms: 1,
-    resource: {
-      vcpuUsed: 8,
-      vcpuAlloc: 24,
-      memUsedGiB: 32,
-      memAllocGiB: 96,
-      gpuUsed: 0,
-      gpuAlloc: 1,
-      storUsedTb: 0.5,
-      storAllocTb: 3,
-    },
+    projects: 'partner-integration-hub, observability-sandbox',
     lastLogin: '1 hr ago',
     status: 'Active',
   },
@@ -393,17 +202,7 @@ const VERTEXA_USER_ROWS: TenantAdminUserRow[] = [
     name: 'Sam Vega',
     email: 'svega@vertexacloud.com',
     role: 'Viewer',
-    vms: 0,
-    resource: {
-      vcpuUsed: 0,
-      vcpuAlloc: 8,
-      memUsedGiB: 0,
-      memAllocGiB: 32,
-      gpuUsed: 0,
-      gpuAlloc: 0,
-      storUsedTb: 0,
-      storAllocTb: 1,
-    },
+    projects: 'observability-sandbox (read-only)',
     lastLogin: 'Mar 30, 2026',
     status: 'Active',
   },
@@ -448,29 +247,6 @@ function statusLabelColor(status: TenantAdminUserRow['status']): 'green' | 'oran
   }
 }
 
-function formatStorageTb(n: number): string {
-  return Number.isInteger(n) ? `${n}` : n.toFixed(1)
-}
-
-function ResourceUsageCell({ r }: { r: UserResource }) {
-  return (
-    <div className="tenant-admin-users-resource">
-      <div className="tenant-admin-users-resource__line">
-        vCPU {r.vcpuUsed}/{r.vcpuAlloc}
-      </div>
-      <div className="tenant-admin-users-resource__line">
-        Memory {r.memUsedGiB}/{r.memAllocGiB} GiB
-      </div>
-      <div className="tenant-admin-users-resource__line">
-        GPU {r.gpuUsed}/{r.gpuAlloc}
-      </div>
-      <div className="tenant-admin-users-resource__line">
-        Storage {formatStorageTb(r.storUsedTb)}/{formatStorageTb(r.storAllocTb)} TB
-      </div>
-    </div>
-  )
-}
-
 export type TenantAdminUserManagementPageProps = {
   demoTenantId: DemoTenantId
 }
@@ -498,11 +274,8 @@ export function TenantAdminUserManagementPage({ demoTenantId }: TenantAdminUserM
               <th className={`${tableStyles.tableTh} ${tableStyles.modifiers.fitContent}`} scope="col">
                 Role
               </th>
-              <th className={`${tableStyles.tableTh} ${tableStyles.modifiers.fitContent}`} scope="col">
-                VMs
-              </th>
-              <th className={`${tableStyles.tableTh} tenant-admin-users-table__th--resource`} scope="col">
-                Resource usage
+              <th className={tableStyles.tableTh} scope="col">
+                Projects
               </th>
               <th className={tableStyles.tableTh} scope="col">
                 Last login
@@ -531,11 +304,8 @@ export function TenantAdminUserManagementPage({ demoTenantId }: TenantAdminUserM
                 <td className={tableStyles.tableTd} data-label="Role">
                   <Label color={roleLabelColor(row.role)}>{row.role}</Label>
                 </td>
-                <td className={tableStyles.tableTd} data-label="VMs">
-                  {row.vms}
-                </td>
-                <td className={`${tableStyles.tableTd} tenant-admin-users-table__td--resource`} data-label="Resource usage">
-                  <ResourceUsageCell r={row.resource} />
+                <td className={`${tableStyles.tableTd} tenant-admin-users-table__td--projects`} data-label="Projects">
+                  {row.projects}
                 </td>
                 <td className={tableStyles.tableTd} data-label="Last login">
                   {row.lastLogin}

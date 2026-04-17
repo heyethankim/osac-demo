@@ -7,6 +7,11 @@ import {
   getTenantAdminProjectQuotaRows,
   type TenantAdminProjectQuotaRow,
 } from './tenantAdminProjectQuotasDemo'
+import {
+  TenantAdminUsageMicroBar,
+  formatMemoryGiBPair,
+  formatStorageTbPair,
+} from './TenantAdminUsageMicroBar'
 
 export type TenantAdminQuotaControlPageProps = {
   demoTenantId: DemoTenantId
@@ -39,19 +44,19 @@ export function TenantAdminQuotaControlPage({ demoTenantId }: TenantAdminQuotaCo
                 Project
               </th>
               <th className={tableStyles.tableTh} scope="col">
-                vCPU quota
+                vCPU
               </th>
               <th className={tableStyles.tableTh} scope="col">
-                Memory quota
+                Memory
               </th>
               <th className={tableStyles.tableTh} scope="col">
-                GPU quota
+                GPU
               </th>
               <th className={tableStyles.tableTh} scope="col">
-                Storage quota
+                Storage
               </th>
               <th className={tableStyles.tableTh} scope="col">
-                Utilization
+                Overall
               </th>
               <th
                 className={`${tableStyles.tableTh} ${tableStyles.tableAction}`}
@@ -68,20 +73,45 @@ export function TenantAdminQuotaControlPage({ demoTenantId }: TenantAdminQuotaCo
                 <td className={tableStyles.tableTd} data-label="Project">
                   <strong>{row.project}</strong>
                 </td>
-                <td className={tableStyles.tableTd} data-label="vCPU quota">
-                  <code className="tenant-admin-quota-project-table__mono">{row.vcpuQuota}</code>
+                <td className={tableStyles.tableTd} data-label="vCPU">
+                  <TenantAdminUsageMicroBar
+                    used={row.vcpuUsed}
+                    total={row.vcpuAlloc}
+                    valueLabel={`${row.vcpuUsed} / ${row.vcpuAlloc}`}
+                    ariaLabel={`${row.project} vCPU quota usage`}
+                  />
                 </td>
-                <td className={tableStyles.tableTd} data-label="Memory quota">
-                  <code className="tenant-admin-quota-project-table__mono">{row.memoryQuota}</code>
+                <td className={tableStyles.tableTd} data-label="Memory">
+                  <TenantAdminUsageMicroBar
+                    used={row.memUsedGiB}
+                    total={row.memAllocGiB}
+                    valueLabel={formatMemoryGiBPair(row.memUsedGiB, row.memAllocGiB)}
+                    ariaLabel={`${row.project} memory quota usage`}
+                  />
                 </td>
-                <td className={tableStyles.tableTd} data-label="GPU quota">
-                  <code className="tenant-admin-quota-project-table__mono">{row.gpuQuota}</code>
+                <td className={tableStyles.tableTd} data-label="GPU">
+                  <TenantAdminUsageMicroBar
+                    used={row.gpuUsed}
+                    total={row.gpuAlloc}
+                    valueLabel={`${row.gpuUsed} / ${row.gpuAlloc}`}
+                    ariaLabel={`${row.project} GPU quota usage`}
+                  />
                 </td>
-                <td className={tableStyles.tableTd} data-label="Storage quota">
-                  <code className="tenant-admin-quota-project-table__mono">{row.storageQuota}</code>
+                <td className={tableStyles.tableTd} data-label="Storage">
+                  <TenantAdminUsageMicroBar
+                    used={row.storUsedTb}
+                    total={row.storAllocTb}
+                    valueLabel={formatStorageTbPair(row.storUsedTb, row.storAllocTb)}
+                    ariaLabel={`${row.project} storage quota usage`}
+                  />
                 </td>
-                <td className={tableStyles.tableTd} data-label="Utilization">
-                  {row.utilization}
+                <td className={tableStyles.tableTd} data-label="Overall">
+                  <TenantAdminUsageMicroBar
+                    used={row.utilizationPct}
+                    total={100}
+                    valueLabel="All resources"
+                    ariaLabel={`${row.project} aggregate utilization`}
+                  />
                 </td>
                 <td
                   className={`${tableStyles.tableTd} ${tableStyles.tableAction} ${tableStyles.modifiers.action}`}

@@ -2553,7 +2553,7 @@ body {
 
 .tenant-admin-quota-project-table-wrap .tenant-admin-quota-project-table {
   width: 100%;
-  min-width: min(52rem, 100%);
+  min-width: min(58rem, 100%);
   table-layout: fixed;
 }
 
@@ -2602,11 +2602,6 @@ body {
   word-break: break-word;
 }
 
-.tenant-admin-quota-project-table .tenant-admin-quota-project-table__mono {
-  font-family: var(--pf-t--global--font--family--mono);
-  font-size: var(--pf-t--global--font--size--body--sm);
-}
-
 .provider-tenant-orgs-table-wrap {
   width: 100%;
   min-width: 0;
@@ -2649,6 +2644,7 @@ body {
   flex-direction: column;
   gap: 0.25rem;
   min-width: 0;
+  width: 100%;
 }
 
 .provider-tenant-orgs-usage__labels {
@@ -2667,6 +2663,11 @@ body {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.provider-tenant-orgs-usage__fraction--muted {
+  font-weight: var(--pf-t--global--font--weight--body--default);
+  color: var(--pf-t--global--text--color--subtle);
 }
 
 .provider-tenant-orgs-usage__pct {
@@ -2879,7 +2880,7 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
 
 .tenant-admin-users-table-wrap .tenant-admin-users-table {
   width: 100%;
-  min-width: min(64rem, 100%);
+  min-width: min(52rem, 100%);
 }
 
 .tenant-admin-users-table-wrap .tenant-admin-users-table th,
@@ -2887,10 +2888,10 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
   vertical-align: middle;
 }
 
-.tenant-admin-users-table .tenant-admin-users-table__th--resource,
-.tenant-admin-users-table .tenant-admin-users-table__td--resource {
-  min-width: 11rem;
-  max-width: 16rem;
+.tenant-admin-users-table-wrap .tenant-admin-users-table .tenant-admin-users-table__td--projects {
+  white-space: normal;
+  word-break: break-word;
+  max-width: 28rem;
 }
 
 .tenant-admin-users-table .pf-v6-c-table__thead .pf-v6-c-table__th.pf-v6-c-table__action {
@@ -2898,20 +2899,6 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
   --pf-v6-c-table--cell--PaddingBlockEnd: var(--pf-v6-c-table--cell--Padding--base);
   --pf-v6-c-table--cell--PaddingInlineStart: var(--pf-v6-c-table--cell--Padding--base);
   --pf-v6-c-table--cell--PaddingInlineEnd: var(--pf-v6-c-table--cell--Padding--base);
-}
-
-.tenant-admin-users-resource {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  font-size: var(--pf-t--global--font--size--body--sm);
-  line-height: 1.35;
-  color: var(--pf-t--global--text--color--regular);
-  min-width: 0;
-}
-
-.tenant-admin-users-resource__line {
-  white-space: nowrap;
 }
 
 /* Dashboard VM stats: one row, equal columns, full content width */
@@ -4026,7 +4013,107 @@ html[data-osac-theme='light']
 
 .tenant-admin-projects-table-wrap .tenant-admin-projects-table {
   width: 100%;
-  min-width: min(72rem, 100%);
+  min-width: min(80rem, 100%);
+  table-layout: fixed;
+}
+
+/* Column order matches colgroup: name, status, env, owner, members, vms, vCPU, memory, GPU, storage, actions */
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--name {
+  width: 18%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--status {
+  width: 7%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--env {
+  width: 9%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--owner {
+  width: 9%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--members {
+  width: 5%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--vms {
+  width: 5%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--vcpu {
+  width: 12%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--memory {
+  width: 13%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--gpu {
+  width: 7%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--storage {
+  width: 10%;
+}
+
+.tenant-admin-projects-table col.tenant-admin-projects-table__col--actions {
+  width: 5%;
+}
+
+.tenant-admin-projects-table th,
+.tenant-admin-projects-table td {
+  text-align: start;
+  vertical-align: middle;
+}
+
+.tenant-admin-projects-table .tenant-admin-projects-table__cell--project-name {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.tenant-admin-projects-table .tenant-admin-projects-table__cell--status {
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  vertical-align: middle;
+}
+
+.tenant-admin-projects-table .tenant-admin-projects-table__cell--environment {
+  box-sizing: border-box;
+  min-width: 7.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  vertical-align: middle;
+}
+
+.tenant-admin-projects-table .tenant-admin-projects-table__cell--owner {
+  box-sizing: border-box;
+  min-width: 9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  vertical-align: middle;
+}
+
+.tenant-admin-projects-table .tenant-admin-projects-table__cell--members,
+.tenant-admin-projects-table .tenant-admin-projects-table__cell--vms {
+  box-sizing: border-box;
+  min-width: 6rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  vertical-align: middle;
+}
+
+.tenant-admin-projects-table td:last-child {
+  text-align: end;
 }
 
 .tenant-admin-projects-table .tenant-admin-projects-table__mono {

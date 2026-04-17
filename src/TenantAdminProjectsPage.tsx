@@ -26,8 +26,30 @@ import {
   type TenantAdminProjectRow,
   type TenantAdminProjectStatus,
 } from './tenantAdminProjectsDemo'
+import {
+  TenantAdminUsageMicroBar,
+  formatMemoryGiBPair,
+  formatStorageTbPair,
+} from './TenantAdminUsageMicroBar'
 
 const ENVIRONMENT_OPTIONS = ['Production', 'Staging', 'Development', 'Sandbox'] as const
+
+function parseQuotaGiB(s: string): number {
+  const t = s.trim().toLowerCase()
+  const m = t.match(/([\d.]+)/)
+  const n = m ? parseFloat(m[1]) : 256
+  if (Number.isNaN(n)) return 256
+  if (t.includes('tib')) return Math.round(n * 1024)
+  return Math.round(n)
+}
+
+function parseQuotaTb(s: string): number {
+  const t = s.trim().toLowerCase()
+  const m = t.match(/([\d.]+)/)
+  const n = m ? parseFloat(m[1]) : 16
+  if (Number.isNaN(n)) return 16
+  return n
+}
 
 export type TenantAdminProjectsPageProps = {
   demoTenantId: DemoTenantId
@@ -47,23 +69,6 @@ function statusLabelColor(status: TenantAdminProjectStatus): 'green' | 'blue' | 
       return 'red'
     default:
       return 'green'
-  }
-}
-
-function environmentLabelColor(
-  env: string,
-): 'blue' | 'green' | 'grey' | 'orange' | 'purple' | 'teal' | 'yellow' {
-  switch (env) {
-    case 'Production':
-      return 'green'
-    case 'Staging':
-      return 'orange'
-    case 'Development':
-      return 'purple'
-    case 'Sandbox':
-      return 'teal'
-    default:
-      return 'grey'
   }
 }
 
@@ -112,12 +117,10 @@ export function TenantAdminProjectsPage({
 
   const handleSubmitCreate = useCallback(() => {
     const name = formName.trim() || 'Untitled project'
-    const vcpuCap = formVcpuQuota.trim() || '128'
-    const memCap = formMemoryQuota.trim() || '256 GiB'
-    const gpuCap = formGpuQuota.trim() || '0'
-    const storCap = formStorageQuota.trim()
-    const memoryUsage =
-      storCap.length > 0 ? `0 / ${memCap} · ${storCap}` : `0 / ${memCap}`
+    const vAlloc = Number.parseInt(formVcpuQuota.trim(), 10) || 128
+    const memAllocGiB = parseQuotaGiB(formMemoryQuota.trim() || '256 GiB')
+    const gpuAlloc = Number.parseInt(formGpuQuota.trim(), 10) || 0
+    const storAllocTb = parseQuotaTb(formStorageQuota.trim() || '16')
     const newRow: TenantAdminProjectRow = {
       id: `proj-${Date.now()}`,
       name,
@@ -125,9 +128,14 @@ export function TenantAdminProjectsPage({
       owner: formOwner.trim() || 'Unassigned',
       members: 1,
       vms: 0,
-      vcpuUsage: `0 / ${vcpuCap}`,
-      memoryUsage,
-      gpuUsage: `0 / ${gpuCap}`,
+      vcpuUsed: 0,
+      vcpuAlloc: vAlloc,
+      memUsedGiB: 0,
+      memAllocGiB: memAllocGiB,
+      gpuUsed: 0,
+      gpuAlloc,
+      storUsedTb: 0,
+      storAllocTb,
       status: 'Provisioning',
     }
     setRows((prev) => [newRow, ...prev])
@@ -257,21 +265,46 @@ export function TenantAdminProjectsPage({
           className={`${tableStyles.table} ${tableStyles.modifiers.striped} tenant-admin-projects-table`}
           aria-label="Projects"
         >
+          <colgroup>
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--name" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--status" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--env" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--owner" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--members" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--vms" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--vcpu" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--memory" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--gpu" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--storage" />
+            <col className="tenant-admin-projects-table__col tenant-admin-projects-table__col--actions" />
+          </colgroup>
           <thead className={tableStyles.tableThead}>
             <tr className={tableStyles.tableTr}>
-              <th className={tableStyles.tableTh} scope="col">
+              <th
+                className={`${tableStyles.tableTh} tenant-admin-projects-table__cell--project-name`}
+                scope="col"
+              >
                 Project name
               </th>
-              <th className={`${tableStyles.tableTh} ${tableStyles.modifiers.fitContent}`} scope="col">
+              <th className={`${tableStyles.tableTh} tenant-admin-projects-table__cell--status`} scope="col">
+                Status
+              </th>
+              <th
+                className={`${tableStyles.tableTh} tenant-admin-projects-table__cell--environment`}
+                scope="col"
+              >
                 Environment
               </th>
-              <th className={tableStyles.tableTh} scope="col">
+              <th className={`${tableStyles.tableTh} tenant-admin-projects-table__cell--owner`} scope="col">
                 Owner
               </th>
-              <th className={`${tableStyles.tableTh} ${tableStyles.modifiers.fitContent}`} scope="col">
+              <th
+                className={`${tableStyles.tableTh} tenant-admin-projects-table__cell--members`}
+                scope="col"
+              >
                 Members
               </th>
-              <th className={`${tableStyles.tableTh} ${tableStyles.modifiers.fitContent}`} scope="col">
+              <th className={`${tableStyles.tableTh} tenant-admin-projects-table__cell--vms`} scope="col">
                 VMs
               </th>
               <th className={tableStyles.tableTh} scope="col">
@@ -283,14 +316,10 @@ export function TenantAdminProjectsPage({
               <th className={tableStyles.tableTh} scope="col">
                 GPU usage
               </th>
-              <th className={`${tableStyles.tableTh} ${tableStyles.modifiers.fitContent}`} scope="col">
-                Status
+              <th className={tableStyles.tableTh} scope="col">
+                Storage usage
               </th>
-              <th
-                className={`${tableStyles.tableTh} ${tableStyles.tableAction} ${tableStyles.modifiers.fitContent}`}
-                aria-label="Actions"
-                scope="col"
-              >
+              <th className={`${tableStyles.tableTh} ${tableStyles.tableAction}`} aria-label="Actions" scope="col">
                 Actions
               </th>
             </tr>
@@ -298,35 +327,67 @@ export function TenantAdminProjectsPage({
           <tbody className={tableStyles.tableTbody}>
             {rows.map((row) => (
               <tr key={row.id} className={tableStyles.tableTr}>
-                <td className={tableStyles.tableTd} data-label="Project name">
+                <td
+                  className={`${tableStyles.tableTd} tenant-admin-projects-table__cell--project-name`}
+                  data-label="Project name"
+                >
                   <strong>{row.name}</strong>
                 </td>
-                <td className={tableStyles.tableTd} data-label="Environment">
-                  <Label color={environmentLabelColor(row.environment)}>{row.environment}</Label>
-                </td>
-                <td className={tableStyles.tableTd} data-label="Owner">
-                  {row.owner}
-                </td>
-                <td className={tableStyles.tableTd} data-label="Members">
-                  {row.members}
-                </td>
-                <td className={tableStyles.tableTd} data-label="VMs">
-                  {row.vms}
-                </td>
-                <td className={tableStyles.tableTd} data-label="vCPU usage">
-                  <code className="tenant-admin-projects-table__mono">{row.vcpuUsage}</code>
-                </td>
-                <td className={tableStyles.tableTd} data-label="Memory usage">
-                  <code className="tenant-admin-projects-table__mono">{row.memoryUsage}</code>
-                </td>
-                <td className={tableStyles.tableTd} data-label="GPU usage">
-                  <code className="tenant-admin-projects-table__mono">{row.gpuUsage}</code>
-                </td>
-                <td className={tableStyles.tableTd} data-label="Status">
+                <td className={`${tableStyles.tableTd} tenant-admin-projects-table__cell--status`} data-label="Status">
                   <Label color={statusLabelColor(row.status)}>{row.status}</Label>
                 </td>
                 <td
-                  className={`${tableStyles.tableTd} ${tableStyles.tableAction} ${tableStyles.modifiers.action} ${tableStyles.modifiers.fitContent}`}
+                  className={`${tableStyles.tableTd} tenant-admin-projects-table__cell--environment`}
+                  data-label="Environment"
+                >
+                  {row.environment}
+                </td>
+                <td className={`${tableStyles.tableTd} tenant-admin-projects-table__cell--owner`} data-label="Owner">
+                  {row.owner}
+                </td>
+                <td
+                  className={`${tableStyles.tableTd} tenant-admin-projects-table__cell--members`}
+                  data-label="Members"
+                >
+                  {row.members}
+                </td>
+                <td className={`${tableStyles.tableTd} tenant-admin-projects-table__cell--vms`} data-label="VMs">
+                  {row.vms}
+                </td>
+                <td className={tableStyles.tableTd} data-label="vCPU usage">
+                  <TenantAdminUsageMicroBar
+                    used={row.vcpuUsed}
+                    total={row.vcpuAlloc}
+                    valueLabel={`${row.vcpuUsed} / ${row.vcpuAlloc}`}
+                    ariaLabel={`${row.name} vCPU usage`}
+                  />
+                </td>
+                <td className={tableStyles.tableTd} data-label="Memory usage">
+                  <TenantAdminUsageMicroBar
+                    used={row.memUsedGiB}
+                    total={row.memAllocGiB}
+                    valueLabel={formatMemoryGiBPair(row.memUsedGiB, row.memAllocGiB)}
+                    ariaLabel={`${row.name} memory usage`}
+                  />
+                </td>
+                <td className={tableStyles.tableTd} data-label="GPU usage">
+                  <TenantAdminUsageMicroBar
+                    used={row.gpuUsed}
+                    total={row.gpuAlloc}
+                    valueLabel={`${row.gpuUsed} / ${row.gpuAlloc}`}
+                    ariaLabel={`${row.name} GPU usage`}
+                  />
+                </td>
+                <td className={tableStyles.tableTd} data-label="Storage usage">
+                  <TenantAdminUsageMicroBar
+                    used={row.storUsedTb}
+                    total={row.storAllocTb}
+                    valueLabel={formatStorageTbPair(row.storUsedTb, row.storAllocTb)}
+                    ariaLabel={`${row.name} storage usage`}
+                  />
+                </td>
+                <td
+                  className={`${tableStyles.tableTd} ${tableStyles.tableAction} ${tableStyles.modifiers.action}`}
                   data-label="Actions"
                   onClick={(e) => e.stopPropagation()}
                 >
