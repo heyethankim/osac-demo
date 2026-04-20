@@ -1,7 +1,7 @@
 import type { ComponentType, CSSProperties } from 'react'
 import { useMemo, useState } from 'react'
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon'
-import { ChartLineIcon } from '@patternfly/react-icons/dist/esm/icons/chart-line-icon'
+import { InfrastructureIcon } from '@patternfly/react-icons/dist/esm/icons/infrastructure-icon'
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
 import {
   Card,
@@ -69,7 +69,7 @@ const QUICK_ACTIONS: {
     title: 'View system health',
     hint: 'Check infrastructure topology and cross-region signals.',
     nav: 'system-infrastructure',
-    Icon: ChartLineIcon,
+    Icon: InfrastructureIcon,
     actionAria: 'Open system infrastructure',
   },
 ]

@@ -39,7 +39,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
     status: 'Active',
   },
   {
-    id: 'ns-jordan-user',
+    id: 'ns-chris-user',
     name: DEMO_TENANT_DISPLAY_USER.northstar,
     email: DEMO_TENANT_LOGIN_EMAIL_USER.northstar,
     role: 'User',
@@ -123,7 +123,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     status: 'Active',
   },
   {
-    id: 'ev-mchen-user',
+    id: 'ev-emerson-user',
     name: DEMO_TENANT_DISPLAY_USER.evergreen,
     email: DEMO_TENANT_LOGIN_EMAIL_USER.evergreen,
     role: 'User',
@@ -160,8 +160,8 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
   },
   {
     id: 'ev-5',
-    name: 'Emerson Cruz',
-    email: 'ecruz@bluestonefinancial.com',
+    name: 'Elena Ruiz',
+    email: 'eruiz@bluestonefinancial.com',
     role: 'Viewer',
     projects: '—',
     lastLogin: 'Mar 22, 2026',

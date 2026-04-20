@@ -5194,3 +5194,15 @@ html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg:fo
   letter-spacing: -0.02em;
   color: var(--pf-t--global--text--color--regular);
 }
+
+/* Bluestone mark (PNG): lift luminance on dark masthead / login so it matches other tenants’ legibility */
+html.pf-v6-theme-dark .evergreen-masthead-brand__logo-img,
+html.pf-v6-theme-dark .evergreen-login__brand-logo-img {
+  filter: brightness(1.42) contrast(1.08) saturate(1.05);
+  box-shadow: 0 1px 5px rgb(0 0 0 / 28%);
+}
+
+html.pf-v6-theme-light .evergreen-masthead-brand__logo-img,
+html.pf-v6-theme-light .evergreen-login__brand-logo-img {
+  filter: brightness(1.12) contrast(1.04);
+}

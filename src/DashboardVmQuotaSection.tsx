@@ -23,7 +23,7 @@ export type DashboardVmQuotaSectionProps = {
   compactTopSpacing?: boolean
   /**
    * Tenant user dashboard only: scope quota to that persona’s VMs and apply per-bank utilization shaping
-   * (Jordan Lee / Marcus Chen).
+   * (Chris Morgan / Emerson Cruz).
    */
   tenantUserPersona?: Extract<DemoTenantId, 'northstar' | 'evergreen'>
 }

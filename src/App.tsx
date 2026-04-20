@@ -66,6 +66,7 @@ import {
   type ProviderAdminDashboardNavTarget,
 } from './ProviderAdminDashboardPage'
 import { ProviderAdminTenantOrganizationsPage } from './ProviderAdminTenantOrganizationsPage'
+import { ProviderOnboardTenantModal } from './ProviderOnboardTenantModal'
 import {
   Button,
   Card,
@@ -366,6 +367,7 @@ function App() {
   const [tenantAdminStorageExpansionDemoNotice, setTenantAdminStorageExpansionDemoNotice] =
     useState(false)
   const [tenantAdminCreateProjectModalOpen, setTenantAdminCreateProjectModalOpen] = useState(false)
+  const [providerOnboardTenantModalOpen, setProviderOnboardTenantModalOpen] = useState(false)
   const [tenantAdminNetworkSegmentDemoNotice, setTenantAdminNetworkSegmentDemoNotice] =
     useState(false)
   const createVmLaunchRef = useRef<CreateVirtualMachineLaunchHandle>(null)
@@ -1213,7 +1215,23 @@ function App() {
                     Manage and monitor all tenant organizations.
                   </Content>
                 </div>
+                {showProviderMgmtTenantsPage ? (
+                  <div className="osac-page-toolbar-sticky__actions">
+                    <Button
+                      variant="primary"
+                      type="button"
+                      onClick={() => setProviderOnboardTenantModalOpen(true)}
+                      ouiaId="provider-onboard-tenant-open"
+                    >
+                      Onboard tenant
+                    </Button>
+                  </div>
+                ) : null}
               </div>
+              <ProviderOnboardTenantModal
+                isOpen={providerOnboardTenantModalOpen}
+                onClose={() => setProviderOnboardTenantModalOpen(false)}
+              />
               {showProviderDashboardPage ? (
                 <ProviderAdminDashboardPage onNavigate={navigateProviderAdminFromDashboard} />
               ) : showProviderMgmtTenantsPage ? (
