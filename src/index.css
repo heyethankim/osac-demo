@@ -2921,6 +2921,17 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
   }
 }
 
+/* Tenant admin dashboard: five KPI cards in one row (overrides 4-col + responsive wrap above). */
+.osac-dashboard-vm-stats-grid.osac-dashboard-vm-stats-grid--five-cols {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 64rem) {
+  .osac-dashboard-vm-stats-grid.osac-dashboard-vm-stats-grid--five-cols {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 .osac-dashboard-vm-stat-card.pf-v6-c-card {
   min-width: 0;
   height: 100%;

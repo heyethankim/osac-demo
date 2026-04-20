@@ -12,8 +12,9 @@ import { DashboardVmQuotaSection } from './DashboardVmQuotaSection'
 import type { DemoTenantId } from './demoTenant'
 import type { TenantVirtualMachine } from './TenantVirtualMachinesPage'
 import { buildTenantAdminRecentActivities } from './tenantAdminRecentActivitiesDemo'
+import { getTenantAdminProjectRows } from './tenantAdminProjectsDemo'
 
-export type TenantAdminDashboardNavTarget = 'users' | 'networks' | 'storage' | 'templates'
+export type TenantAdminDashboardNavTarget = 'projects' | 'users' | 'networks' | 'storage' | 'templates'
 
 export type TenantAdminDashboardPageProps = {
   demoTenantId: DemoTenantId
@@ -50,6 +51,10 @@ export function TenantAdminDashboardPage({
   onNavigateToTenantAdmin,
 }: TenantAdminDashboardPageProps) {
   const m = TENANT_DASHBOARD_METRICS[demoTenantId]
+  const activeProjectsCount = useMemo(
+    () => getTenantAdminProjectRows(demoTenantId).filter((p) => p.status === 'Active').length,
+    [demoTenantId],
+  )
   const recentActivities = useMemo(
     () => buildTenantAdminRecentActivities(demoTenantId).slice(0, 7),
     [demoTenantId],
@@ -57,11 +62,11 @@ export function TenantAdminDashboardPage({
 
   const cards = [
     {
-      title: 'Active users',
-      value: m.activeUsers,
-      hint: 'Accounts with sign-in access this period',
-      nav: 'users' as const,
-      navLabel: 'Users',
+      title: 'Active projects',
+      value: activeProjectsCount,
+      hint: 'Projects in Active health state',
+      nav: 'projects' as const,
+      navLabel: 'Projects',
     },
     {
       title: 'Network segments',
@@ -84,11 +89,18 @@ export function TenantAdminDashboardPage({
       nav: 'templates' as const,
       navLabel: 'VM templates',
     },
+    {
+      title: 'Active users',
+      value: m.activeUsers,
+      hint: 'Accounts with sign-in access this period',
+      nav: 'users' as const,
+      navLabel: 'Users',
+    },
   ] as const
 
   return (
     <div className="osac-tenant-admin-page">
-      <div className="osac-dashboard-vm-stats-grid">
+      <div className="osac-dashboard-vm-stats-grid osac-dashboard-vm-stats-grid--five-cols">
         {cards.map(({ title, value, hint, nav, navLabel }) => (
           <Card
             key={title}

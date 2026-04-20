@@ -491,6 +491,9 @@ function App() {
 
   const navigateTenantAdminFromDashboard = useCallback((target: TenantAdminDashboardNavTarget) => {
     switch (target) {
+      case 'projects':
+        setActiveItem(adminMgmtProjectsNavId)
+        break
       case 'users':
         setActiveItem(adminMgmtUsersNavId)
         break
