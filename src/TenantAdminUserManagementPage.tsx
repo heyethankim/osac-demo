@@ -12,6 +12,8 @@ import type { DemoTenantId } from './demoTenant'
 import {
   DEMO_TENANT_DISPLAY_ADMIN,
   DEMO_TENANT_DISPLAY_USER,
+  DEMO_TENANT_LOGIN_EMAIL_ADMIN,
+  DEMO_TENANT_LOGIN_EMAIL_OPERATOR_USER,
   DEMO_TENANT_LOGIN_EMAIL_USER,
 } from './demoTenant'
 
@@ -32,7 +34,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ns-1',
     name: DEMO_TENANT_DISPLAY_ADMIN.northstar,
-    email: 'jlee@northstarbank.com',
+    email: DEMO_TENANT_LOGIN_EMAIL_ADMIN.northstar,
     role: 'Admin',
     projects: 'All projects (tenant admin)',
     lastLogin: 'Active now',
@@ -120,6 +122,15 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
     role: 'Admin',
     projects: 'All projects (tenant admin)',
     lastLogin: 'Active now',
+    status: 'Active',
+  },
+  {
+    id: 'ev-marcus-user',
+    name: DEMO_TENANT_DISPLAY_ADMIN.evergreen,
+    email: DEMO_TENANT_LOGIN_EMAIL_OPERATOR_USER.evergreen,
+    role: 'User',
+    projects: 'All projects (operator)',
+    lastLogin: '8 min ago',
     status: 'Active',
   },
   {

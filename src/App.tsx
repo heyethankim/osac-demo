@@ -17,6 +17,7 @@ import { EvergreenFinancialGroupMastheadLogo } from './EvergreenFinancialGroupMa
 import { VertexaCloudMastheadLogo } from './VertexaCloudMastheadLogo'
 import { VertexaCloudLoginPage } from './VertexaCloudLoginPage'
 import {
+  type BankTenantUserEntry,
   type DemoShellRole,
   type DemoTenantId,
   DEMO_TENANT_LABEL,
@@ -301,16 +302,17 @@ function accountDropdownPersonaSwitchLabel(
 function mastheadAccountToggleContent(
   role: DemoShellRole,
   tenantId: DemoTenantId,
+  bankTenantUserEntry: BankTenantUserEntry | null,
 ): { node: ReactNode; ariaLabel: string } {
   if (role === 'providerAdmin') {
-    const name = demoAccountDisplayName(tenantId, role)
+    const name = demoAccountDisplayName(tenantId, role, null)
     return {
       node: name,
       ariaLabel: `Account menu, ${name}`,
     }
   }
   if (role === 'tenantAdmin') {
-    const name = demoAccountDisplayName(tenantId, role)
+    const name = demoAccountDisplayName(tenantId, role, null)
     return {
       node: (
         <span className="osac-masthead-account-toggle">
@@ -323,7 +325,7 @@ function mastheadAccountToggleContent(
       ariaLabel: `Account menu, ${name}, tenant administrator`,
     }
   }
-  const name = demoAccountDisplayName(tenantId, role)
+  const name = demoAccountDisplayName(tenantId, role, bankTenantUserEntry)
   return {
     node: (
       <span className="osac-masthead-account-toggle">
@@ -352,6 +354,8 @@ function App() {
   const [providerManagementNavExpanded, setProviderManagementNavExpanded] = useState(true)
   const [providerSystemNavExpanded, setProviderSystemNavExpanded] = useState(true)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  /** Bank tenants: Chris/Emerson (vmWorkspace) vs Priya/Marcus operator user (adminPortal). */
+  const [bankTenantUserEntry, setBankTenantUserEntry] = useState<BankTenantUserEntry | null>(null)
   const [vmListPowerFilterIntent, setVmListPowerFilterIntent] =
     useState<VmPowerState | null>(null)
   const [vmsCreatedFromTemplate, setVmsCreatedFromTemplate] = useState<
@@ -472,12 +476,14 @@ function App() {
   }, [demoShellRole])
 
   const handleSelectTenantUserBank = useCallback((tenantId: DemoTenantId) => {
+    setBankTenantUserEntry('vmWorkspace')
     setDemoShellRole('tenantUser')
     setSelectedDemoTenant(tenantId)
     setActiveItem(dashboardNavItemId)
   }, [])
 
   const handleSelectTenantAdminBank = useCallback((tenantId: DemoTenantId) => {
+    setBankTenantUserEntry(null)
     setDemoShellRole('tenantAdmin')
     setSelectedDemoTenant(tenantId)
     setActiveItem(adminDashboardNavId)
@@ -503,6 +509,7 @@ function App() {
   }, [])
 
   const handleSelectProviderAdmin = useCallback(() => {
+    setBankTenantUserEntry(null)
     setDemoShellRole('providerAdmin')
     setSelectedDemoTenant('vertexa')
     setActiveItem(providerDashboardNavId)
@@ -514,6 +521,7 @@ function App() {
     setRecentActivitiesPageOpen(false)
     setGlobalSearchQuery('')
     setVmListPowerFilterIntent(null)
+    setBankTenantUserEntry('adminPortal')
     setDemoShellRole('tenantUser')
     setActiveItem(dashboardNavItemId)
   }, [])
@@ -523,6 +531,7 @@ function App() {
     setRecentActivitiesPageOpen(false)
     setGlobalSearchQuery('')
     setVmListPowerFilterIntent(null)
+    setBankTenantUserEntry(null)
     setDemoShellRole('tenantAdmin')
     setActiveItem(adminDashboardNavId)
   }, [])
@@ -552,6 +561,7 @@ function App() {
     setGlobalSearchQuery('')
     setVmListPowerFilterIntent(null)
     setVmsCreatedFromTemplate([])
+    setBankTenantUserEntry(null)
     setSelectedDemoTenant(null)
     setDemoShellRole('tenantUser')
     setActiveItem(dashboardNavItemId)
@@ -606,15 +616,19 @@ function App() {
     setRecentActivitiesPageOpen(false)
   }, [activeItem])
 
+  const clearInstitutionLoginTransition = useCallback(() => {
+    if (loginTransitionTimerRef.current != null) {
+      clearTimeout(loginTransitionTimerRef.current)
+      loginTransitionTimerRef.current = null
+    }
+    setIsLandingPageLoading(false)
+  }, [])
+
   useEffect(
     () => () => {
-      if (loginTransitionTimerRef.current != null) {
-        clearTimeout(loginTransitionTimerRef.current)
-        loginTransitionTimerRef.current = null
-        setIsLandingPageLoading(false)
-      }
+      clearInstitutionLoginTransition()
     },
-    [],
+    [clearInstitutionLoginTransition],
   )
 
   useEffect(() => {
@@ -667,7 +681,10 @@ function App() {
           key="vx-login-provider"
           defaultUsername={demoLoginEmailForRole('vertexa', demoShellRole)}
           isLandingPageLoading={isLandingPageLoading}
-          onChooseAnotherInstitution={() => setSelectedDemoTenant(null)}
+          onChooseAnotherInstitution={() => {
+            clearInstitutionLoginTransition()
+            setSelectedDemoTenant(null)
+          }}
           onLoginSuccess={() => {
             setIsLandingPageLoading(true)
             if (loginTransitionTimerRef.current != null) {
@@ -689,8 +706,12 @@ function App() {
           key={`ns-login-${demoShellRole}`}
           defaultUsername={demoLoginEmailForRole('northstar', demoShellRole)}
           isLandingPageLoading={isLandingPageLoading}
-          onChooseAnotherInstitution={() => setSelectedDemoTenant(null)}
+          onChooseAnotherInstitution={() => {
+            clearInstitutionLoginTransition()
+            setSelectedDemoTenant(null)
+          }}
           onLoginSuccess={() => {
+            const roleForTransition = demoShellRoleRef.current
             setIsLandingPageLoading(true)
             if (loginTransitionTimerRef.current != null) {
               clearTimeout(loginTransitionTimerRef.current)
@@ -699,7 +720,7 @@ function App() {
               loginTransitionTimerRef.current = null
               setIsLandingPageLoading(false)
               setActiveItem(
-                demoShellRoleRef.current === 'tenantAdmin'
+                roleForTransition === 'tenantAdmin'
                   ? adminDashboardNavId
                   : dashboardNavItemId,
               )
@@ -714,8 +735,12 @@ function App() {
         key={`eg-login-${demoShellRole}`}
         defaultEmail={demoLoginEmailForRole('evergreen', demoShellRole)}
         isLandingPageLoading={isLandingPageLoading}
-        onChooseAnotherInstitution={() => setSelectedDemoTenant(null)}
+        onChooseAnotherInstitution={() => {
+          clearInstitutionLoginTransition()
+          setSelectedDemoTenant(null)
+        }}
         onLoginSuccess={() => {
+          const roleForTransition = demoShellRoleRef.current
           setIsLandingPageLoading(true)
           if (loginTransitionTimerRef.current != null) {
             clearTimeout(loginTransitionTimerRef.current)
@@ -724,7 +749,7 @@ function App() {
             loginTransitionTimerRef.current = null
             setIsLandingPageLoading(false)
             setActiveItem(
-              demoShellRoleRef.current === 'tenantAdmin'
+              roleForTransition === 'tenantAdmin'
                 ? adminDashboardNavId
                 : dashboardNavItemId,
             )
@@ -748,7 +773,11 @@ function App() {
   }
 
   const demoTenantId = selectedDemoTenant
-  const mastheadAccountToggle = mastheadAccountToggleContent(demoShellRole, demoTenantId)
+  const mastheadAccountToggle = mastheadAccountToggleContent(
+    demoShellRole,
+    demoTenantId,
+    bankTenantUserEntry,
+  )
   const showTenantPersonaSwitcher =
     demoTenantId === 'northstar' || demoTenantId === 'evergreen'
 
@@ -914,7 +943,7 @@ function App() {
               </ToolbarItem>
               <ToolbarItem>
                 <Dropdown
-                  key={demoMastheadAccountControlKey(demoTenantId, demoShellRole)}
+                  key={demoMastheadAccountControlKey(demoTenantId, demoShellRole, bankTenantUserEntry)}
                   isOpen={isUserMenuOpen}
                   onSelect={() => setIsUserMenuOpen(false)}
                   onOpenChange={setIsUserMenuOpen}
@@ -937,22 +966,24 @@ function App() {
                       <DropdownItem
                         value="switch-tenant-user"
                         onClick={switchSignedInShellToTenantUser}
-                        aria-label={`Switch to tenant user workspace as ${demoAccountDisplayName(demoTenantId, 'tenantUser')}`}
+                        aria-label={`Switch to tenant user workspace as ${demoAccountDisplayName(demoTenantId, 'tenantUser', 'adminPortal')}`}
                       >
                         {accountDropdownPersonaSwitchLabel(
-                          demoAccountDisplayName(demoTenantId, 'tenantUser'),
+                          demoAccountDisplayName(demoTenantId, 'tenantUser', 'adminPortal'),
                           'User',
                         )}
                       </DropdownItem>
                     ) : null}
-                    {showTenantPersonaSwitcher && demoShellRole === 'tenantUser' ? (
+                    {showTenantPersonaSwitcher &&
+                    demoShellRole === 'tenantUser' &&
+                    bankTenantUserEntry === 'adminPortal' ? (
                       <DropdownItem
                         value="switch-tenant-admin"
                         onClick={switchSignedInShellToTenantAdmin}
-                        aria-label={`Switch to tenant admin console as ${demoAccountDisplayName(demoTenantId, 'tenantAdmin')}`}
+                        aria-label={`Switch to tenant admin console as ${demoAccountDisplayName(demoTenantId, 'tenantAdmin', null)}`}
                       >
                         {accountDropdownPersonaSwitchLabel(
-                          demoAccountDisplayName(demoTenantId, 'tenantAdmin'),
+                          demoAccountDisplayName(demoTenantId, 'tenantAdmin', null),
                           'Admin',
                         )}
                       </DropdownItem>
@@ -968,6 +999,7 @@ function App() {
                         setIsLandingPageLoading(false)
                         setVmsCreatedFromTemplate([])
                         setSelectedDemoTenant(null)
+                        setBankTenantUserEntry(null)
                         setDemoShellRole('tenantUser')
                         setActiveItem(dashboardNavItemId)
                         setIsLoggedIn(false)
@@ -1421,7 +1453,7 @@ function App() {
               {activeItem === dashboardNavItemId ? (
                 <div className="osac-page-toolbar-sticky__lead">
                   <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
-                    {`Welcome ${demoAccountDisplayName(demoTenantId, 'tenantUser')}`}
+                    {`Welcome ${demoAccountDisplayName(demoTenantId, 'tenantUser', bankTenantUserEntry)}`}
                   </Title>
                   <Content
                     component="p"

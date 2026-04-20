@@ -25,7 +25,7 @@ const NORTHSTAR_PROJECTS: TenantAdminProjectRow[] = [
     id: 'ns-proj-1',
     name: 'wire-core-platform',
     environment: 'Production',
-    owner: 'Jordan Lee',
+    owner: 'Priya Nair',
     members: 14,
     vms: 38,
     vcpuUsed: 312,

@@ -367,7 +367,13 @@ body {
   color: #eb0000 !important;
   padding: 0 !important;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 400 !important;
+  font-style: normal !important;
+}
+
+.northstar-login__forgot-link.pf-v6-c-button.pf-m-link .pf-v6-c-button__text {
+  font-weight: 400 !important;
+  font-style: normal !important;
 }
 
 .northstar-login__forgot-link.pf-v6-c-button.pf-m-link:hover {

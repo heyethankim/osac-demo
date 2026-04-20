@@ -3,6 +3,12 @@ export type DemoTenantId = 'northstar' | 'evergreen' | 'vertexa'
 /** OSAC demo shell: VMaaS workspace, tenant admin, or provider platform console. */
 export type DemoShellRole = 'tenantUser' | 'tenantAdmin' | 'providerAdmin'
 
+/**
+ * When shell is tenant user for a bank: `vmWorkspace` = line-of-business user (Chris / Emerson) from the
+ * landing “Tenant user” path; `adminPortal` = same operator as admin (Priya / Marcus) after “Switch to user”.
+ */
+export type BankTenantUserEntry = 'vmWorkspace' | 'adminPortal'
+
 export const DEMO_VM_POWER_COUNTS: Record<
   DemoTenantId,
   { running: number; paused: number; stopped: number }
@@ -33,7 +39,7 @@ export const DEMO_TENANT_DISPLAY_USER: Record<DemoTenantId, string> = {
 
 /** Signed-in display name for tenant admin console (masthead and admin pages only; demo). */
 export const DEMO_TENANT_DISPLAY_ADMIN: Record<DemoTenantId, string> = {
-  northstar: 'Jordan Lee',
+  northstar: 'Priya Nair',
   evergreen: 'Marcus Chen',
   vertexa: 'Alex Johnson',
 }
@@ -53,8 +59,15 @@ export const DEMO_TENANT_LOGIN_EMAIL_USER: Record<DemoTenantId, string> = {
 
 /** Pre-filled login identifier on institution sign-in pages for tenant admin (demo). */
 export const DEMO_TENANT_LOGIN_EMAIL_ADMIN: Record<DemoTenantId, string> = {
-  northstar: 'jlee@northstarbank.com',
+  northstar: 'pnair@northstarbank.com',
   evergreen: 'marcus.chen@bluestonefinancial.com',
+  vertexa: DEMO_VERTEXA_PROVIDER_LOGIN_EMAIL,
+}
+
+/** Operator “user” account (Priya / Marcus) — tenant admin directory + switch-to-user from admin shell. */
+export const DEMO_TENANT_LOGIN_EMAIL_OPERATOR_USER: Record<DemoTenantId, string> = {
+  northstar: 'priya.nair.user@northstarbank.com',
+  evergreen: 'marcus.chen.user@bluestonefinancial.com',
   vertexa: DEMO_VERTEXA_PROVIDER_LOGIN_EMAIL,
 }
 
@@ -71,17 +84,33 @@ export function demoLoginEmailForRole(
 }
 
 /** Masthead, welcome line, and account menu: display name for the active demo shell role. */
-export function demoAccountDisplayName(tenantId: DemoTenantId, role: DemoShellRole): string {
+export function demoAccountDisplayName(
+  tenantId: DemoTenantId,
+  role: DemoShellRole,
+  bankTenantUserEntry: BankTenantUserEntry | null = null,
+): string {
   if (role === 'providerAdmin') {
     return DEMO_PROVIDER_ADMIN_DISPLAY_NAME
   }
   if (role === 'tenantAdmin') {
     return DEMO_TENANT_DISPLAY_ADMIN[tenantId]
   }
+  if (role === 'tenantUser') {
+    if (tenantId === 'northstar' || tenantId === 'evergreen') {
+      if (bankTenantUserEntry === 'adminPortal') {
+        return DEMO_TENANT_DISPLAY_ADMIN[tenantId]
+      }
+      return DEMO_TENANT_DISPLAY_USER[tenantId]
+    }
+  }
   return DEMO_TENANT_DISPLAY_USER[tenantId]
 }
 
 /** Stable key so the masthead account control remounts when persona or demo names change (avoids stale PF toggle text). */
-export function demoMastheadAccountControlKey(tenantId: DemoTenantId, role: DemoShellRole): string {
-  return `${role}:${tenantId}:${demoAccountDisplayName(tenantId, role)}`
+export function demoMastheadAccountControlKey(
+  tenantId: DemoTenantId,
+  role: DemoShellRole,
+  bankTenantUserEntry: BankTenantUserEntry | null = null,
+): string {
+  return `${role}:${tenantId}:${bankTenantUserEntry ?? 'na'}:${demoAccountDisplayName(tenantId, role, bankTenantUserEntry)}`
 }
