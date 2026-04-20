@@ -58,6 +58,10 @@ export function NorthstarBankLoginPage({
     }
   }, [])
 
+  useEffect(() => {
+    setUsername(defaultUsername)
+  }, [defaultUsername])
+
   return (
     <div className="northstar-login">
       <div className="northstar-login__bokeh" aria-hidden>

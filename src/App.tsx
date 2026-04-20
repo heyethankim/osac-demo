@@ -19,11 +19,10 @@ import { VertexaCloudLoginPage } from './VertexaCloudLoginPage'
 import {
   type DemoShellRole,
   type DemoTenantId,
-  DEMO_PROVIDER_ADMIN_DISPLAY_NAME,
-  DEMO_TENANT_DISPLAY_ADMIN,
-  DEMO_TENANT_DISPLAY_USER,
   DEMO_TENANT_LABEL,
+  demoAccountDisplayName,
   demoLoginEmailForRole,
+  demoMastheadAccountControlKey,
   DEMO_VM_POWER_COUNTS,
   demoVmPowerTotal,
 } from './demoTenant'
@@ -304,13 +303,14 @@ function mastheadAccountToggleContent(
   tenantId: DemoTenantId,
 ): { node: ReactNode; ariaLabel: string } {
   if (role === 'providerAdmin') {
+    const name = demoAccountDisplayName(tenantId, role)
     return {
-      node: DEMO_PROVIDER_ADMIN_DISPLAY_NAME,
-      ariaLabel: `Account menu, ${DEMO_PROVIDER_ADMIN_DISPLAY_NAME}`,
+      node: name,
+      ariaLabel: `Account menu, ${name}`,
     }
   }
   if (role === 'tenantAdmin') {
-    const name = DEMO_TENANT_DISPLAY_ADMIN[tenantId]
+    const name = demoAccountDisplayName(tenantId, role)
     return {
       node: (
         <span className="osac-masthead-account-toggle">
@@ -323,7 +323,7 @@ function mastheadAccountToggleContent(
       ariaLabel: `Account menu, ${name}, tenant administrator`,
     }
   }
-  const name = DEMO_TENANT_DISPLAY_USER[tenantId]
+  const name = demoAccountDisplayName(tenantId, role)
   return {
     node: (
       <span className="osac-masthead-account-toggle">
@@ -914,6 +914,7 @@ function App() {
               </ToolbarItem>
               <ToolbarItem>
                 <Dropdown
+                  key={demoMastheadAccountControlKey(demoTenantId, demoShellRole)}
                   isOpen={isUserMenuOpen}
                   onSelect={() => setIsUserMenuOpen(false)}
                   onOpenChange={setIsUserMenuOpen}
@@ -936,10 +937,10 @@ function App() {
                       <DropdownItem
                         value="switch-tenant-user"
                         onClick={switchSignedInShellToTenantUser}
-                        aria-label={`Switch to tenant user workspace as ${DEMO_TENANT_DISPLAY_USER[demoTenantId]}`}
+                        aria-label={`Switch to tenant user workspace as ${demoAccountDisplayName(demoTenantId, 'tenantUser')}`}
                       >
                         {accountDropdownPersonaSwitchLabel(
-                          DEMO_TENANT_DISPLAY_USER[demoTenantId],
+                          demoAccountDisplayName(demoTenantId, 'tenantUser'),
                           'User',
                         )}
                       </DropdownItem>
@@ -948,10 +949,10 @@ function App() {
                       <DropdownItem
                         value="switch-tenant-admin"
                         onClick={switchSignedInShellToTenantAdmin}
-                        aria-label={`Switch to tenant admin console as ${DEMO_TENANT_DISPLAY_ADMIN[demoTenantId]}`}
+                        aria-label={`Switch to tenant admin console as ${demoAccountDisplayName(demoTenantId, 'tenantAdmin')}`}
                       >
                         {accountDropdownPersonaSwitchLabel(
-                          DEMO_TENANT_DISPLAY_ADMIN[demoTenantId],
+                          demoAccountDisplayName(demoTenantId, 'tenantAdmin'),
                           'Admin',
                         )}
                       </DropdownItem>
@@ -1420,7 +1421,7 @@ function App() {
               {activeItem === dashboardNavItemId ? (
                 <div className="osac-page-toolbar-sticky__lead">
                   <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
-                    {`Welcome ${DEMO_TENANT_DISPLAY_USER[demoTenantId]}`}
+                    {`Welcome ${demoAccountDisplayName(demoTenantId, 'tenantUser')}`}
                   </Title>
                   <Content
                     component="p"

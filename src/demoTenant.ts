@@ -69,3 +69,19 @@ export function demoLoginEmailForRole(
     ? DEMO_TENANT_LOGIN_EMAIL_ADMIN[tenantId]
     : DEMO_TENANT_LOGIN_EMAIL_USER[tenantId]
 }
+
+/** Masthead, welcome line, and account menu: display name for the active demo shell role. */
+export function demoAccountDisplayName(tenantId: DemoTenantId, role: DemoShellRole): string {
+  if (role === 'providerAdmin') {
+    return DEMO_PROVIDER_ADMIN_DISPLAY_NAME
+  }
+  if (role === 'tenantAdmin') {
+    return DEMO_TENANT_DISPLAY_ADMIN[tenantId]
+  }
+  return DEMO_TENANT_DISPLAY_USER[tenantId]
+}
+
+/** Stable key so the masthead account control remounts when persona or demo names change (avoids stale PF toggle text). */
+export function demoMastheadAccountControlKey(tenantId: DemoTenantId, role: DemoShellRole): string {
+  return `${role}:${tenantId}:${demoAccountDisplayName(tenantId, role)}`
+}

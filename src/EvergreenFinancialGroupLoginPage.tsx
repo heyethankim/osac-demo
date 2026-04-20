@@ -60,6 +60,10 @@ export function EvergreenFinancialGroupLoginPage({
     }
   }, [])
 
+  useEffect(() => {
+    setEmail(defaultEmail)
+  }, [defaultEmail])
+
   return (
     <div className="evergreen-login">
       <div className="evergreen-login__bg" aria-hidden>
