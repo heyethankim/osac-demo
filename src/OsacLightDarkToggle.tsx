@@ -34,9 +34,7 @@ function OsacEllipsisHIcon() {
 export type OsacLightDarkToggleProps = {
   isDark: boolean
   onChange: (nextDark: boolean) => void
-  /** Landing: fixed bottom bar. Shell: inline in sidebar. */
-  variant: 'landing' | 'shell'
-  /** Shell only: first segment (⋯) opens role / institution landing; same segment styling as theme controls. */
+  /** First segment (⋯) opens role / institution landing; same segment styling as theme controls. */
   landingOnSelect?: () => void
   /** Accessible name for the ellipsis segment when `landingOnSelect` is set. */
   landingAriaLabel?: string
@@ -46,24 +44,17 @@ export type OsacLightDarkToggleProps = {
 export function OsacLightDarkToggle({
   isDark,
   onChange,
-  variant,
   landingOnSelect,
   landingAriaLabel = 'Choose institution and role',
   'aria-label': ariaLabel = 'Theme',
 }: OsacLightDarkToggleProps) {
-  const rootClass =
-    variant === 'landing'
-      ? 'osac-theme-toggle osac-theme-toggle--landing'
-      : `osac-theme-toggle osac-theme-toggle--shell${landingOnSelect ? ' osac-theme-toggle--shell-with-landing' : ''}`
+  const rootClass = `osac-theme-toggle osac-theme-toggle--shell${landingOnSelect ? ' osac-theme-toggle--shell-with-landing' : ''}`
 
-  const groupLabel =
-    landingOnSelect && variant === 'shell'
-      ? 'Workspace appearance and start'
-      : ariaLabel
+  const groupLabel = landingOnSelect ? 'Workspace appearance and start' : ariaLabel
 
   return (
     <div className={rootClass} role="group" aria-label={groupLabel}>
-      {landingOnSelect && variant === 'shell' ? (
+      {landingOnSelect ? (
         <button
           type="button"
           className="osac-theme-toggle__seg osac-theme-toggle__seg--landing"

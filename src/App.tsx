@@ -347,7 +347,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLandingPageLoading, setIsLandingPageLoading] = useState(false)
   const [activeItem, setActiveItem] = useState<string | number>('dashboard')
-  const [isDarkTheme, setIsDarkTheme] = useState(true)
+  const [isDarkTheme, setIsDarkTheme] = useState(false)
   const [adminManagementNavExpanded, setAdminManagementNavExpanded] = useState(true)
   const [adminInfraNavExpanded, setAdminInfraNavExpanded] = useState(true)
   const [adminOrgNavExpanded, setAdminOrgNavExpanded] = useState(true)
@@ -577,26 +577,8 @@ function App() {
   }, [isDarkTheme])
 
   useEffect(() => {
-    if (!isLoggedIn && !selectedDemoTenant) {
-      document.title = 'Welcome to OSAC'
-      return
-    }
-    if (!isLoggedIn && selectedDemoTenant === 'northstar') {
-      document.title = 'Northstar Bank - Smart banking starts here.'
-      return
-    }
-    if (!isLoggedIn && selectedDemoTenant === 'evergreen') {
-      document.title = 'Bluestone Financial Group - Sign in'
-      return
-    }
-    if (!isLoggedIn && selectedDemoTenant === 'vertexa') {
-      document.title = 'Vertexa Cloud Solutions - Sign in'
-      return
-    }
-    if (selectedDemoTenant) {
-      document.title = `${DEMO_TENANT_LABEL[selectedDemoTenant]} - Cloud workspace`
-    }
-  }, [isLoggedIn, selectedDemoTenant])
+    document.title = 'Red Hat OSAC Prototypes'
+  }, [])
 
   /** Northstar sign-in defaults to dark; Bluestone defaults to light (login + shell until user toggles). */
   useEffect(() => {
@@ -607,6 +589,17 @@ function App() {
       setIsDarkTheme(false)
     }
   }, [isLoggedIn, selectedDemoTenant])
+
+  /**
+   * Role landing (no tenant): always light theme on `documentElement`, regardless of prior
+   * Provider / Tenant admin / Tenant user shell appearance.
+   */
+  useEffect(() => {
+    if (vmConsoleDemo) return
+    if (!selectedDemoTenant) {
+      setIsDarkTheme(false)
+    }
+  }, [selectedDemoTenant, vmConsoleDemo])
 
   useEffect(() => {
     if (activeItem !== virtualMachinesNavItemId) {
@@ -673,8 +666,6 @@ function App() {
           onSelectProviderAdmin={handleSelectProviderAdmin}
           onSelectTenantUserBank={handleSelectTenantUserBank}
           onSelectTenantAdminBank={handleSelectTenantAdminBank}
-          isLandingDark={isDarkTheme}
-          onLandingThemeChange={setIsDarkTheme}
         />
       )
     }
@@ -769,8 +760,6 @@ function App() {
         onSelectProviderAdmin={handleSelectProviderAdmin}
         onSelectTenantUserBank={handleSelectTenantUserBank}
         onSelectTenantAdminBank={handleSelectTenantAdminBank}
-        isLandingDark={isDarkTheme}
-        onLandingThemeChange={setIsDarkTheme}
       />
     )
   }
@@ -1127,7 +1116,6 @@ function App() {
           </Nav>
           <div className="osac-shell-sidebar-footer">
             <OsacLightDarkToggle
-              variant="shell"
               isDark={isDarkTheme}
               onChange={setIsDarkTheme}
               landingOnSelect={goToLandingHome}

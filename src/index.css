@@ -4498,39 +4498,36 @@ html[data-osac-theme='light']
 
 /* OSAC role landing — Provider / Tenant admin / Tenant user (VMaaS banks) */
 .osac-role-landing {
-  /* Dark gray CTAs + landing theme toggle selected (readable on light & dark landing backgrounds) */
-  --osac-landing-cta: #4a4d54;
-  --osac-landing-cta-hover: #5e6168;
-  --osac-landing-cta-active: #3d4046;
-  --osac-landing-cta-text: #f7f7f7;
+  /* Outer card: very low contrast; column dividers: subtle */
+  --osac-landing-card-border: rgb(252 252 252);
+  --osac-landing-divider: rgb(238 238 238);
   min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--pf-t--global--spacer--2xl) var(--pf-t--global--spacer--lg)
-    calc(var(--pf-t--global--spacer--3xl) + 2rem);
+  padding-block: var(--pf-t--global--spacer--2xl) var(--pf-t--global--spacer--3xl);
+  padding-inline: var(--pf-t--global--spacer--3xl);
   box-sizing: border-box;
+  background-color: #fff;
 }
 
 .osac-role-landing--dark {
-  color: #f8f5f2;
-  background:
-    radial-gradient(ellipse 85% 65% at 92% 6%, rgb(130 90 150 / 22%) 0%, transparent 42%),
-    radial-gradient(ellipse 75% 55% at 6% 88%, rgb(200 150 95 / 16%) 0%, transparent 46%),
-    radial-gradient(ellipse 60% 45% at 48% 102%, rgb(55 105 155 / 22%) 0%, transparent 52%),
-    linear-gradient(168deg, #252830 0%, #1c2029 38%, #1a1d26 100%);
+  color: #2c2825;
+  background: #fff;
 }
 
 .osac-role-landing--light {
   color: #2c2825;
-  background:
-    radial-gradient(ellipse 90% 70% at 95% 4%, rgb(255 218 196 / 55%) 0%, transparent 44%),
-    radial-gradient(ellipse 75% 55% at 0% 96%, rgb(200 220 245 / 35%) 0%, transparent 48%),
-    linear-gradient(185deg, #fdfaf6 0%, #f5f1eb 40%, #efeae3 100%);
+  background: #fff;
+}
+
+/* Avoid PatternFly dark theme body fill showing around the landing block */
+html:has(.osac-role-landing) body {
+  background-color: #fff;
 }
 
 .osac-role-landing__wrap {
-  width: min(72rem, 100%);
+  width: min(92rem, 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -4542,15 +4539,22 @@ html[data-osac-theme='light']
   max-width: 36rem;
 }
 
+.osac-role-landing__brand-logo {
+  display: block;
+  margin-inline: auto;
+  margin-bottom: var(--pf-t--global--spacer--lg);
+  height: 3.25rem;
+  width: auto;
+}
+
 .osac-role-landing__title.pf-v6-c-title {
   margin: 0;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .osac-role-landing--dark .osac-role-landing__title.pf-v6-c-title {
-  color: #fffefb;
-  text-shadow: 0 1px 24px rgb(0 0 0 / 18%);
+  color: #2a2623;
 }
 
 .osac-role-landing--light .osac-role-landing__title.pf-v6-c-title {
@@ -4564,95 +4568,144 @@ html[data-osac-theme='light']
 }
 
 .osac-role-landing--dark .osac-role-landing__lede {
-  color: rgb(248 242 235 / 78%);
+  color: rgb(74 66 60 / 78%);
 }
 
 .osac-role-landing--light .osac-role-landing__lede {
   color: rgb(74 66 60 / 78%);
 }
 
-.osac-role-landing__grid {
+.osac-role-landing__combined-card.pf-v6-c-card {
+  border-radius: var(--pf-t--global--border--radius--large);
+  width: 100%;
+}
+
+.osac-role-landing--dark .osac-role-landing__combined-card.pf-v6-c-card,
+.osac-role-landing--light .osac-role-landing__combined-card.pf-v6-c-card {
+  background: #fff;
+  border: 1px solid var(--osac-landing-card-border);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 90%) inset,
+    0 8px 28px rgb(0 0 0 / 3%),
+    0 1px 4px rgb(0 0 0 / 2%);
+}
+
+.osac-role-landing__combined-card-body.pf-v6-c-card__body {
+  padding: var(--pf-t--global--spacer--lg);
+}
+
+.osac-role-landing__roles {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--pf-t--global--spacer--lg);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
   align-items: stretch;
   width: 100%;
 }
 
-@media (max-width: 992px) {
-  .osac-role-landing__grid {
-    grid-template-columns: 1fr;
-    max-width: 24rem;
-  }
-}
-
-.osac-role-landing__card.pf-v6-c-card {
-  border-radius: var(--pf-t--global--border--radius--large);
-  height: 100%;
-}
-
-.osac-role-landing--dark .osac-role-landing__card.pf-v6-c-card {
-  background: linear-gradient(165deg, rgb(44 48 58) 0%, rgb(38 42 52) 55%, rgb(34 38 48) 100%);
-  border: 1px solid rgb(255 232 214 / 14%);
-  box-shadow:
-    0 14px 42px rgb(0 0 0 / 32%),
-    0 0 0 1px rgb(255 255 255 / 5%) inset;
-}
-
-.osac-role-landing--light .osac-role-landing__card.pf-v6-c-card {
-  background: linear-gradient(180deg, #fffefb 0%, #faf7f2 100%);
-  border: 1px solid rgb(220 205 190 / 45%);
-  box-shadow:
-    0 10px 36px rgb(85 55 40 / 7%),
-    0 2px 10px rgb(0 0 0 / 5%);
-}
-
-.osac-role-landing__card-body.pf-v6-c-card__body {
+.osac-role-landing__role-block {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--pf-t--global--spacer--md);
+  gap: var(--pf-t--global--spacer--lg);
+  min-width: 0;
   height: 100%;
+  padding-inline: var(--pf-t--global--spacer--lg);
 }
 
+.osac-role-landing__role-block:not(:last-child) {
+  border-inline-end: 1px solid var(--osac-landing-divider);
+}
+
+@media (max-width: 1200px) {
+  .osac-role-landing__roles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .osac-role-landing__role-block:not(:last-child) {
+    border-inline-end: none;
+  }
+
+  .osac-role-landing__role-block:nth-child(1) {
+    border-inline-end: 1px solid var(--osac-landing-divider);
+    border-block-end: 1px solid var(--osac-landing-divider);
+    padding-block-end: var(--pf-t--global--spacer--xl);
+    margin-block-end: var(--pf-t--global--spacer--lg);
+  }
+
+  .osac-role-landing__role-block:nth-child(2) {
+    border-block-end: 1px solid var(--osac-landing-divider);
+    padding-block-end: var(--pf-t--global--spacer--xl);
+    margin-block-end: var(--pf-t--global--spacer--lg);
+  }
+
+  .osac-role-landing__role-block:nth-child(3) {
+    border-inline-end: 1px solid var(--osac-landing-divider);
+  }
+}
+
+@media (max-width: 992px) {
+  .osac-role-landing__roles {
+    grid-template-columns: 1fr;
+    max-width: 24rem;
+    margin-inline: auto;
+  }
+
+  .osac-role-landing__role-block:nth-child(1),
+  .osac-role-landing__role-block:nth-child(2) {
+    margin-block-end: 0;
+    padding-block-end: 0;
+    border-block-end: none;
+  }
+
+  .osac-role-landing__role-block:nth-child(1),
+  .osac-role-landing__role-block:nth-child(2),
+  .osac-role-landing__role-block:nth-child(3) {
+    border-inline-end: none;
+  }
+
+  .osac-role-landing__role-block:not(:last-child) {
+    border-inline-end: none;
+    border-block-end: 1px solid var(--osac-landing-divider);
+    padding-block-end: var(--pf-t--global--spacer--xl);
+    margin-block-end: var(--pf-t--global--spacer--lg);
+  }
+
+  .osac-role-landing__role-block:last-child {
+    padding-block-end: 0;
+    margin-block-end: 0;
+  }
+}
+
+/* Role icons — neutral grayscale */
 .osac-role-landing__icon-wrap {
-  width: 3rem;
-  height: 3rem;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-}
-
-.osac-role-landing--dark .osac-role-landing__icon-wrap {
-  background: linear-gradient(150deg, rgb(52 58 72) 0%, rgb(38 44 56) 100%);
-  color: #fff8f0;
-  border: 1px solid rgb(210 200 230 / 22%);
-  box-shadow: 0 4px 14px rgb(0 0 0 / 22%);
-}
-
-.osac-role-landing--light .osac-role-landing__icon-wrap {
-  background: linear-gradient(155deg, #4c5568 0%, #3c4352 100%);
-  color: #fffefb;
-  border: 1px solid rgb(255 255 255 / 18%);
-  box-shadow: 0 4px 12px rgb(40 35 55 / 12%);
+  background: rgb(244 244 244);
+  color: rgb(88 88 88);
+  border: 1px solid rgb(232 232 232);
 }
 
 .osac-role-landing__icon-svg {
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.25rem;
+  height: 1.25rem;
   display: block;
 }
 
 .osac-role-landing__card-title.pf-v6-c-title {
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: var(--pf-t--global--font--size--heading--xs);
+  line-height: 1.35;
 }
 
 .osac-role-landing--dark .osac-role-landing__card-title.pf-v6-c-title {
-  color: #fffefb;
+  color: #2a2623;
 }
 
 .osac-role-landing--light .osac-role-landing__card-title.pf-v6-c-title {
@@ -4662,14 +4715,14 @@ html[data-osac-theme='light']
 .osac-role-landing__card-copy {
   margin: 0;
   flex: 1 1 auto;
-  max-width: 28rem;
+  max-width: 22rem;
   margin-inline: auto;
-  font-size: var(--pf-t--global--font--size--body--default);
-  line-height: 1.55;
+  font-size: var(--pf-t--global--font--size--body--sm);
+  line-height: 1.5;
 }
 
 .osac-role-landing--dark .osac-role-landing__card-copy {
-  color: rgb(236 228 218 / 76%);
+  color: rgb(88 76 68 / 82%);
 }
 
 .osac-role-landing--light .osac-role-landing__card-copy {
@@ -4685,49 +4738,19 @@ html[data-osac-theme='light']
   margin-top: auto;
 }
 
-.osac-role-landing__enter.pf-v6-c-button.pf-m-primary {
+/* Invisible duplicate row so single “Enter” columns align with tenant primary buttons */
+.osac-role-landing__action-spacer-slot {
+  visibility: hidden;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+/* Full-width landing actions — PatternFly default button chrome */
+.osac-role-landing__action.pf-v6-c-button {
   width: 100%;
-  border-radius: 999px;
-  background-color: var(--osac-landing-cta) !important;
-  border-color: var(--osac-landing-cta) !important;
-  color: var(--osac-landing-cta-text) !important;
-  font-weight: 600;
 }
 
-.osac-role-landing__enter.pf-v6-c-button.pf-m-primary:hover:not(:disabled) {
-  background-color: var(--osac-landing-cta-hover) !important;
-  border-color: var(--osac-landing-cta-hover) !important;
-  color: var(--osac-landing-cta-text) !important;
-}
-
-.osac-role-landing__enter.pf-v6-c-button.pf-m-primary:focus-visible {
-  outline: 2px solid var(--osac-landing-cta-text);
-  outline-offset: 2px;
-}
-
-.osac-role-landing--light .osac-role-landing__enter.pf-v6-c-button.pf-m-primary:focus-visible {
-  outline-color: var(--osac-landing-cta);
-}
-
-.osac-role-landing__enter.pf-v6-c-button.pf-m-primary:active:not(:disabled) {
-  background-color: var(--osac-landing-cta-active) !important;
-  border-color: var(--osac-landing-cta-active) !important;
-}
-
-.osac-role-landing__enter.pf-v6-c-button.pf-m-primary:disabled {
-  background-color: rgb(18 18 18 / 28%) !important;
-  border-color: rgb(18 18 18 / 22%) !important;
-  color: rgb(247 247 247 / 45%) !important;
-  cursor: not-allowed;
-}
-
-.osac-role-landing--light .osac-role-landing__enter.pf-v6-c-button.pf-m-primary:disabled {
-  background-color: rgb(18 18 18 / 18%) !important;
-  border-color: rgb(18 18 18 / 16%) !important;
-  color: rgb(247 247 247 / 55%) !important;
-}
-
-/* OSAC light/dark theme toggle — landing (fixed) + app shell sidebar (same control as landing) */
+/* OSAC light/dark theme toggle — app shell sidebar */
 .osac-theme-toggle {
   --osac-theme-toggle-cta: #121212;
   --osac-theme-toggle-cta-hover: #2e2e2e;
@@ -4739,20 +4762,6 @@ html[data-osac-theme='light']
   box-shadow:
     0 6px 22px rgb(0 0 0 / 28%),
     0 0 0 1px rgb(255 255 255 / 6%) inset;
-}
-
-.osac-theme-toggle--landing {
-  position: fixed;
-  bottom: var(--pf-t--global--spacer--lg);
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.osac-role-landing--light .osac-theme-toggle--landing {
-  border-color: rgb(210 190 175 / 45%);
-  box-shadow:
-    0 6px 20px rgb(70 45 35 / 8%),
-    0 0 0 1px rgb(255 255 255 / 70%) inset;
 }
 
 .osac-theme-toggle--shell {
@@ -4811,25 +4820,6 @@ html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg:ho
   background: linear-gradient(180deg, #fff 0%, #ebe4dc 100%);
 }
 
-.osac-role-landing--dark .osac-theme-toggle--landing .osac-theme-toggle__seg {
-  background: rgb(38 42 52);
-  color: rgb(255 240 230 / 58%);
-}
-
-.osac-role-landing--light .osac-theme-toggle--landing .osac-theme-toggle__seg {
-  background: linear-gradient(180deg, #fffefb 0%, #f2ebe4 100%);
-  color: rgb(72 62 55 / 55%);
-}
-
-.osac-role-landing--dark .osac-theme-toggle--landing .osac-theme-toggle__seg:hover:not(.osac-theme-toggle__seg--active) {
-  color: rgb(255 245 235 / 88%);
-}
-
-.osac-role-landing--light .osac-theme-toggle--landing .osac-theme-toggle__seg:hover:not(.osac-theme-toggle__seg--active) {
-  color: rgb(42 38 35 / 88%);
-  background: linear-gradient(180deg, #fff 0%, #ebe4dc 100%);
-}
-
 .osac-theme-toggle__seg--active {
   background: var(--osac-theme-toggle-cta);
   color: var(--osac-theme-toggle-cta-text);
@@ -4850,10 +4840,6 @@ html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg:fo
   outline-color: var(--osac-theme-toggle-cta);
 }
 
-.osac-role-landing--light .osac-theme-toggle--landing .osac-theme-toggle__seg:focus-visible {
-  outline-color: var(--osac-theme-toggle-cta);
-}
-
 .osac-theme-toggle__seg--active:focus-visible {
   outline-color: rgb(247 247 247 / 95%);
 }
@@ -4862,13 +4848,6 @@ html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg:fo
   width: 1.25rem;
   height: 1.25rem;
   display: block;
-}
-
-/* Landing sun/moon toggle: match card button gray (shell toggle keeps its own tokens) */
-.osac-role-landing .osac-theme-toggle.osac-theme-toggle--landing {
-  --osac-theme-toggle-cta: var(--osac-landing-cta);
-  --osac-theme-toggle-cta-hover: var(--osac-landing-cta-hover);
-  --osac-theme-toggle-cta-text: var(--osac-landing-cta-text);
 }
 
 /* Bluestone Financial Group — split-card sign-in (demo tenant id: evergreen) */

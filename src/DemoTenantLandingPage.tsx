@@ -1,14 +1,15 @@
 import { Button, Card, CardBody, Content, Title } from '@patternfly/react-core'
+import { CogIcon } from '@patternfly/react-icons/dist/esm/icons/cog-icon'
 import type { DemoTenantId } from './demoTenant'
 import { DEMO_TENANT_LABEL } from './demoTenant'
-import { OsacLightDarkToggle } from './OsacLightDarkToggle'
+import redHatHatLogoUrl from './assets/Logo-RedHat-Hat-Color-RGB.svg?url'
+
+const ENCLAVE_INFRA_DEMO_URL = 'https://heyethankim.github.io/enclave-demo/'
 
 export type DemoTenantLandingPageProps = {
   onSelectProviderAdmin: () => void
   onSelectTenantUserBank: (tenantId: DemoTenantId) => void
   onSelectTenantAdminBank: (tenantId: DemoTenantId) => void
-  isLandingDark: boolean
-  onLandingThemeChange: (dark: boolean) => void
 }
 
 function OsacRoleIconCrown() {
@@ -48,112 +49,178 @@ export function DemoTenantLandingPage({
   onSelectProviderAdmin,
   onSelectTenantUserBank,
   onSelectTenantAdminBank,
-  isLandingDark,
-  onLandingThemeChange,
 }: DemoTenantLandingPageProps) {
-  const rootClass = `osac-role-landing${isLandingDark ? ' osac-role-landing--dark' : ' osac-role-landing--light'}`
+  const rootClass = 'osac-role-landing osac-role-landing--light'
 
   return (
     <div className={rootClass}>
       <div className="osac-role-landing__wrap">
         <header className="osac-role-landing__header">
+          <img
+            src={redHatHatLogoUrl}
+            alt="Red Hat"
+            width={192}
+            height={145}
+            className="osac-role-landing__brand-logo"
+          />
           <Title headingLevel="h1" size="4xl" className="osac-role-landing__title">
-            Welcome to OSAC
+            Red Hat OSAC Prototypes
           </Title>
           <Content component="p" className="osac-role-landing__lede">
             Select your role to access the customized interface.
           </Content>
         </header>
 
-        <div className="osac-role-landing__grid">
-          <Card className="osac-role-landing__card" component="article">
-            <CardBody className="osac-role-landing__card-body">
-              <div className="osac-role-landing__icon-wrap" aria-hidden>
-                <OsacRoleIconCrown />
-              </div>
-              <Title headingLevel="h2" size="xl" className="osac-role-landing__card-title">
-                Provider Admin
-              </Title>
-              <Content component="p" className="osac-role-landing__card-copy">
-                Manage platform services, tenants, and global policies for the OSAC environment.
-              </Content>
-              <Button
-                variant="primary"
-                className="osac-role-landing__enter"
-                onClick={onSelectProviderAdmin}
+        <Card className="osac-role-landing__combined-card" component="article">
+          <CardBody className="osac-role-landing__combined-card-body">
+            <div className="osac-role-landing__roles">
+              <section
+                className="osac-role-landing__role-block"
+                aria-labelledby="osac-landing-role-infra-admin-title"
               >
-                Enter
-              </Button>
-            </CardBody>
-          </Card>
+                <div className="osac-role-landing__icon-wrap" aria-hidden>
+                  <CogIcon className="osac-role-landing__icon-svg" />
+                </div>
+                <Title
+                  id="osac-landing-role-infra-admin-title"
+                  headingLevel="h2"
+                  size="lg"
+                  className="osac-role-landing__card-title"
+                >
+                  Infra Admin
+                </Title>
+                <Content component="p" className="osac-role-landing__card-copy">
+                  Bootstrap the physical environment, manage bare-metal resources, and ensure the
+                  foundational Red Hat stack is &quot;Cloud-Ready.&quot;
+                </Content>
+                <div className="osac-role-landing__tenant-user-actions">
+                  <Button
+                    variant="primary"
+                    component="a"
+                    href={ENCLAVE_INFRA_DEMO_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="osac-role-landing__action"
+                    aria-label="Enter Infra Admin demo — opens Open Sovereign AI Cloud setup wizard in a new tab"
+                  >
+                    Enter
+                  </Button>
+                  <div className="osac-role-landing__action-spacer-slot" aria-hidden>
+                    <Button variant="secondary" className="osac-role-landing__action" isDisabled>
+                      {DEMO_TENANT_LABEL.evergreen}
+                    </Button>
+                  </div>
+                </div>
+              </section>
 
-          <Card className="osac-role-landing__card" component="article">
-            <CardBody className="osac-role-landing__card-body">
-              <div className="osac-role-landing__icon-wrap" aria-hidden>
-                <OsacRoleIconUsers />
-              </div>
-              <Title headingLevel="h2" size="xl" className="osac-role-landing__card-title">
-                Tenant Admin
-              </Title>
-              <Content component="p" className="osac-role-landing__card-copy">
-                Configure organization resources, users, quotas, and shared services.
-              </Content>
-              <div className="osac-role-landing__tenant-user-actions">
-                <Button
-                  variant="primary"
-                  className="osac-role-landing__enter"
-                  onClick={() => onSelectTenantAdminBank('northstar')}
+              <section
+                className="osac-role-landing__role-block"
+                aria-labelledby="osac-landing-role-provider-title"
+              >
+                <div className="osac-role-landing__icon-wrap" aria-hidden>
+                  <OsacRoleIconCrown />
+                </div>
+                <Title
+                  id="osac-landing-role-provider-title"
+                  headingLevel="h2"
+                  size="lg"
+                  className="osac-role-landing__card-title"
                 >
-                  {DEMO_TENANT_LABEL.northstar}
-                </Button>
-                <Button
-                  variant="primary"
-                  className="osac-role-landing__enter"
-                  onClick={() => onSelectTenantAdminBank('evergreen')}
-                >
-                  {DEMO_TENANT_LABEL.evergreen}
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
+                  Provider Admin
+                </Title>
+                <Content component="p" className="osac-role-landing__card-copy">
+                  Manage platform services, tenants, and global policies for the OSAC environment.
+                </Content>
+                <div className="osac-role-landing__tenant-user-actions">
+                  <Button
+                    variant="primary"
+                    className="osac-role-landing__action"
+                    onClick={onSelectProviderAdmin}
+                  >
+                    Enter
+                  </Button>
+                  <div className="osac-role-landing__action-spacer-slot" aria-hidden>
+                    <Button variant="secondary" className="osac-role-landing__action" isDisabled>
+                      {DEMO_TENANT_LABEL.evergreen}
+                    </Button>
+                  </div>
+                </div>
+              </section>
 
-          <Card className="osac-role-landing__card" component="article">
-            <CardBody className="osac-role-landing__card-body">
-              <div className="osac-role-landing__icon-wrap" aria-hidden>
-                <OsacRoleIconUser />
-              </div>
-              <Title headingLevel="h2" size="xl" className="osac-role-landing__card-title">
-                Tenant User
-              </Title>
-              <Content component="p" className="osac-role-landing__card-copy">
-                Access the VM-as-a-Service workspace to create and manage your virtual machines.
-              </Content>
-              <div className="osac-role-landing__tenant-user-actions">
-                <Button
-                  variant="primary"
-                  className="osac-role-landing__enter"
-                  onClick={() => onSelectTenantUserBank('northstar')}
+              <section
+                className="osac-role-landing__role-block"
+                aria-labelledby="osac-landing-role-tenant-admin-title"
+              >
+                <div className="osac-role-landing__icon-wrap" aria-hidden>
+                  <OsacRoleIconUsers />
+                </div>
+                <Title
+                  id="osac-landing-role-tenant-admin-title"
+                  headingLevel="h2"
+                  size="lg"
+                  className="osac-role-landing__card-title"
                 >
-                  {DEMO_TENANT_LABEL.northstar}
-                </Button>
-                <Button
-                  variant="primary"
-                  className="osac-role-landing__enter"
-                  onClick={() => onSelectTenantUserBank('evergreen')}
-                >
-                  {DEMO_TENANT_LABEL.evergreen}
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
-        </div>
+                  Tenant Admin
+                </Title>
+                <Content component="p" className="osac-role-landing__card-copy">
+                  Configure organization resources, users, quotas, and shared services.
+                </Content>
+                <div className="osac-role-landing__tenant-user-actions">
+                  <Button
+                    variant="primary"
+                    className="osac-role-landing__action"
+                    onClick={() => onSelectTenantAdminBank('northstar')}
+                  >
+                    {DEMO_TENANT_LABEL.northstar}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="osac-role-landing__action"
+                    onClick={() => onSelectTenantAdminBank('evergreen')}
+                  >
+                    {DEMO_TENANT_LABEL.evergreen}
+                  </Button>
+                </div>
+              </section>
 
-        <OsacLightDarkToggle
-          variant="landing"
-          isDark={isLandingDark}
-          onChange={onLandingThemeChange}
-          aria-label="Landing page theme"
-        />
+              <section
+                className="osac-role-landing__role-block"
+                aria-labelledby="osac-landing-role-tenant-user-title"
+              >
+                <div className="osac-role-landing__icon-wrap" aria-hidden>
+                  <OsacRoleIconUser />
+                </div>
+                <Title
+                  id="osac-landing-role-tenant-user-title"
+                  headingLevel="h2"
+                  size="lg"
+                  className="osac-role-landing__card-title"
+                >
+                  Tenant User
+                </Title>
+                <Content component="p" className="osac-role-landing__card-copy">
+                  Access the VM-as-a-Service workspace to create and manage your virtual machines.
+                </Content>
+                <div className="osac-role-landing__tenant-user-actions">
+                  <Button
+                    variant="primary"
+                    className="osac-role-landing__action"
+                    onClick={() => onSelectTenantUserBank('northstar')}
+                  >
+                    {DEMO_TENANT_LABEL.northstar}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    className="osac-role-landing__action"
+                    onClick={() => onSelectTenantUserBank('evergreen')}
+                  >
+                    {DEMO_TENANT_LABEL.evergreen}
+                  </Button>
+                </div>
+              </section>
+            </div>
+          </CardBody>
+        </Card>
       </div>
     </div>
   )
