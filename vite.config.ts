@@ -17,8 +17,8 @@ export default defineConfig({
   server: {
     host: '127.0.0.1',
     port: 5181,
-    /** Fail fast if 5181 is taken so the URL stays predictable. */
-    strictPort: true,
+    /** Prefer 5181; if something else is using it, Vite picks the next free port (see terminal “Local:”). */
+    strictPort: false,
     /** Open the real system browser — Cursor’s Simple Browser does not run Vite; you need this URL live. */
     open: true,
   },

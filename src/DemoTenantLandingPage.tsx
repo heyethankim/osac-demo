@@ -67,7 +67,7 @@ export function DemoTenantLandingPage({
             Red Hat OSAC Prototypes
           </Title>
           <Content component="p" className="osac-role-landing__lede">
-            Select your role to access the customized interface.
+            Select a role to access the customized interface.
           </Content>
         </header>
 
@@ -221,6 +221,63 @@ export function DemoTenantLandingPage({
             </div>
           </CardBody>
         </Card>
+
+        <footer className="osac-role-landing__footer">
+          <div className="osac-role-landing__footer-issues">
+            <Button
+              variant="link"
+              component="a"
+              isInline
+              href="https://redhat.atlassian.net/browse/HPUX-1516"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              HPUX-1516
+            </Button>
+            <span className="osac-role-landing__footer-issues-sep" aria-hidden>
+              ,
+            </span>
+            <Button
+              variant="link"
+              component="a"
+              isInline
+              className="osac-role-landing__footer-issue-link-after-comma"
+              href="https://redhat.atlassian.net/browse/HPUX-1517"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              HPUX-1517
+            </Button>
+          </div>
+          <Content component="p" className="osac-role-landing__footer-meta">
+            Created by{' '}
+            <Button
+              variant="link"
+              component="a"
+              isInline
+              href="https://redhat.enterprise.slack.com/archives/D021Q4YKTBR"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ethan Kim
+            </Button>
+            {' & '}
+            <Button
+              variant="link"
+              component="a"
+              isInline
+              href="https://redhat.enterprise.slack.com/archives/D06FNMKMQCQ"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Kyle Baker
+            </Button>
+            {' - OpenShift UXD'}
+          </Content>
+          <Content component="p" className="osac-role-landing__footer-updated">
+            Last updated: April 24, 2026
+          </Content>
+        </footer>
       </div>
     </div>
   )

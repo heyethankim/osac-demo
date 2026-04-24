@@ -6,7 +6,7 @@ import App from './App.tsx'
 
 if (import.meta.env.DEV) {
   console.info(
-    '%c[04-osac-demo]%c If UI edits never show up: run the dev server from this repo, port 5181. Try: npm run dev:fresh',
+    '%c[04-osac-demo]%c Dev server prefers http://127.0.0.1:5181/ — if the port is busy, check the terminal for the “Local” URL. Try: npm run dev:fresh',
     'font-weight:bold',
     '',
   )
