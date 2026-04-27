@@ -24,30 +24,18 @@ import {
   DrawerPanelBody,
   DrawerPanelContent,
   Divider,
-  FormGroup,
   Gallery,
   GalleryItem,
   SearchInput,
   Sidebar,
   SidebarContent,
   SidebarPanel,
-  Switch,
   Tab,
   TabContentBody,
   Tabs,
   TabTitleText,
   Title,
 } from '@patternfly/react-core'
-import {
-  TEMPLATE_CATALOG_DETAIL_DEMO_HOSTNAME,
-  TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS,
-  TEMPLATE_REVIEW_INITIAL_RUN_CAPTION,
-  TEMPLATE_REVIEW_METADATA_CAPTION,
-  TEMPLATE_REVIEW_NETWORK_CAPTION,
-  TEMPLATE_REVIEW_SCHEDULING_CAPTION,
-  TEMPLATE_REVIEW_SSH_CAPTION,
-  TEMPLATE_REVIEW_STORAGE_CAPTION,
-} from './templateProvisionReviewCopy'
 
 type CatalogCardIconProps = Pick<
   React.SVGProps<SVGSVGElement>,
@@ -90,12 +78,38 @@ export type TenantVmTemplate = {
    * High performance, and Machine learning all appear in the grid. Drawer uses `workload`.
    */
   cardWorkloadDisplay?: string
+  /** Demo: randomized per page load for gallery + drawer (network placement). */
+  cardNetworkDisplay?: string
+  /** Demo: randomized per page load for gallery + drawer (identity / join mode). */
+  cardAccessDisplay?: string
 }
 
 export const CATALOG_TEMPLATE_DETAIL_DEFAULTS = {
   diskSize: '80 GiB',
   networkType: 'Masquerade',
 } as const
+
+/** Fallbacks when a template is not from the shuffled `TENANT_VM_TEMPLATES` list. */
+export const CATALOG_TEMPLATE_CARD_NETWORK_DEFAULT = 'Private subnet'
+export const CATALOG_TEMPLATE_CARD_ACCESS_DEFAULT = 'Domain-joined (AD)'
+
+/** Random network line for template cards (one pick per template per page load). */
+export const CARD_CATALOG_NETWORK_DISPLAY_LABELS = [
+  'Private subnet',
+  'Shared service network',
+  'DMZ segment',
+  'Isolated VLAN',
+  'Transit / peering subnet',
+] as const
+
+/** Random access line for template cards (one pick per template per page load). */
+export const CARD_CATALOG_ACCESS_DISPLAY_LABELS = [
+  'Domain-joined (AD)',
+  'Standalone (workgroup)',
+  'Federated SSO (OIDC)',
+  'Certificate-based access',
+  'Kerberos constrained delegation',
+] as const
 
 export const CATALOG_ICON_TILE_BG =
   'var(--pf-t--global--background--color--secondary--default)'
@@ -286,12 +300,26 @@ function assignRandomCardWorkloadLabels(templates: TenantVmTemplate[]): TenantVm
   return templates.map((t, i) => ({ ...t, cardWorkloadDisplay: picks[i] }))
 }
 
-const TENANT_VM_TEMPLATES = assignRandomCardWorkloadLabels(
-  shuffleCatalogTemplates(TENANT_VM_TEMPLATES_SOURCE),
+function assignRandomCardNetworkAndAccessLabels(
+  templates: TenantVmTemplate[],
+): TenantVmTemplate[] {
+  const nets = CARD_CATALOG_NETWORK_DISPLAY_LABELS
+  const accs = CARD_CATALOG_ACCESS_DISPLAY_LABELS
+  return templates.map((t) => ({
+    ...t,
+    cardNetworkDisplay: nets[Math.floor(Math.random() * nets.length)],
+    cardAccessDisplay: accs[Math.floor(Math.random() * accs.length)],
+  }))
+}
+
+const TENANT_VM_TEMPLATES = assignRandomCardNetworkAndAccessLabels(
+  assignRandomCardWorkloadLabels(
+    shuffleCatalogTemplates(TENANT_VM_TEMPLATES_SOURCE),
+  ),
 )
 
 export function getTenantVmTemplateById(id: string): TenantVmTemplate | undefined {
-  return TENANT_VM_TEMPLATES_SOURCE.find((t) => t.id === id)
+  return TENANT_VM_TEMPLATES.find((t) => t.id === id)
 }
 
 type OsFilters = { rhel: boolean; windows: boolean; linux: boolean }
@@ -509,6 +537,14 @@ export function CatalogTemplateCardBodyContent({
         }}
       >
         {specRow(
+          'Network',
+          template.cardNetworkDisplay ?? CATALOG_TEMPLATE_CARD_NETWORK_DEFAULT,
+        )}
+        {specRow(
+          'Access',
+          template.cardAccessDisplay ?? CATALOG_TEMPLATE_CARD_ACCESS_DEFAULT,
+        )}
+        {specRow(
           'Workload',
           template.cardWorkloadDisplay ?? CATALOG_WORKLOAD_LABEL[template.workload],
         )}
@@ -568,7 +604,7 @@ export function TenantVmTemplatesCatalog({
   const [wlExpanded, setWlExpanded] = useState(true)
   const [search, setSearch] = useState('')
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null)
-  const [templateDetailTab, setTemplateDetailTab] = useState<string | number>('overview')
+  const [templateDetailTab, setTemplateDetailTab] = useState<string | number>('details')
 
   const selectedTemplate = useMemo(
     () => (selectedTemplateId ? getTenantVmTemplateById(selectedTemplateId) : null),
@@ -580,7 +616,7 @@ export function TenantVmTemplatesCatalog({
   }
 
   useEffect(() => {
-    setTemplateDetailTab('overview')
+    setTemplateDetailTab('details')
   }, [selectedTemplateId])
 
   useEffect(() => {
@@ -612,6 +648,8 @@ export function TenantVmTemplatesCatalog({
         item.bootSourcePvc,
         item.cardWorkloadDisplay ?? CATALOG_WORKLOAD_LABEL[item.workload],
         CATALOG_WORKLOAD_LABEL[item.workload],
+        item.cardNetworkDisplay ?? CATALOG_TEMPLATE_CARD_NETWORK_DEFAULT,
+        item.cardAccessDisplay ?? CATALOG_TEMPLATE_CARD_ACCESS_DEFAULT,
         item.cpu,
         item.memory,
       ]
@@ -632,9 +670,9 @@ export function TenantVmTemplatesCatalog({
       colorVariant={DrawerColorVariant.default}
       widths={{
         default: 'width_100',
-        lg: 'width_66',
-        xl: 'width_66',
-        '2xl': 'width_66',
+        lg: 'width_50',
+        xl: 'width_50',
+        '2xl': 'width_50',
       }}
       focusTrap={
         selectedTemplate
@@ -725,165 +763,58 @@ export function TenantVmTemplatesCatalog({
                 mountOnEnter
                 className="tenant-vm-template-drawer-tabs"
               >
-                <Tab eventKey="overview" title={<TabTitleText>Overview</TabTitleText>}>
+                <Tab eventKey="details" title={<TabTitleText>Details</TabTitleText>}>
                   <TabContentBody>
                     <div className="tenant-vm-template-detail-stack">
-                      <DescriptionList
-                        isCompact
-                        aria-label="Template instance overview"
-                      >
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>Guest operating system</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {selectedTemplate.os.map((o) => CATALOG_OS_LABEL[o]).join(', ')}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>CPU</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {selectedTemplate.cpu}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>Memory</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {selectedTemplate.memory}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>Storage</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {selectedTemplate.diskSize ??
-                              CATALOG_TEMPLATE_DETAIL_DEFAULTS.diskSize}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>Workload</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {CATALOG_WORKLOAD_LABEL[selectedTemplate.workload]}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>Hostname</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {TEMPLATE_CATALOG_DETAIL_DEMO_HOSTNAME}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                      </DescriptionList>
-                      <div className="tenant-vm-template-detail-stack__switches">
-                        <FormGroup label="Headless mode" fieldId="template-drawer-headless">
-                          <Switch
-                            id="template-drawer-headless"
-                            aria-label="Headless mode"
-                            isChecked={TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.headlessMode}
-                            isDisabled
-                          />
-                        </FormGroup>
-                        <FormGroup
-                          label="Guest system log access"
-                          fieldId="template-drawer-guest-log"
-                        >
-                          <Switch
-                            id="template-drawer-guest-log"
-                            aria-label="Guest system log access"
-                            isChecked={TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.guestLogAccess}
-                            isDisabled
-                          />
-                        </FormGroup>
-                        <FormGroup
-                          label="Deletion protection"
-                          fieldId="template-drawer-deletion-protection"
-                        >
-                          <Switch
-                            id="template-drawer-deletion-protection"
-                            aria-label="Deletion protection"
-                            isChecked={
-                              TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.deletionProtection
-                            }
-                            isDisabled
-                          />
-                        </FormGroup>
-                      </div>
+                    <DescriptionList
+                      isCompact
+                      aria-label="Template details"
+                    >
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>Guest operating system</DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {selectedTemplate.os.map((o) => CATALOG_OS_LABEL[o]).join(', ')}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>CPU</DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {selectedTemplate.cpu}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>Memory</DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {selectedTemplate.memory}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>Storage</DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {selectedTemplate.diskSize ??
+                            CATALOG_TEMPLATE_DETAIL_DEFAULTS.diskSize}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>Network</DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {selectedTemplate.cardNetworkDisplay ??
+                            CATALOG_TEMPLATE_CARD_NETWORK_DEFAULT}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>Workload</DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {selectedTemplate.cardWorkloadDisplay ??
+                            CATALOG_WORKLOAD_LABEL[selectedTemplate.workload]}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                    </DescriptionList>
                     </div>
                   </TabContentBody>
                 </Tab>
-                <Tab eventKey="storage" title={<TabTitleText>Storage</TabTitleText>}>
-                  <TabContentBody>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_STORAGE_CAPTION}
-                    </Content>
-                  </TabContentBody>
-                </Tab>
-                <Tab eventKey="network" title={<TabTitleText>Network</TabTitleText>}>
-                  <TabContentBody>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_NETWORK_CAPTION}
-                    </Content>
-                  </TabContentBody>
-                </Tab>
-                <Tab eventKey="ssh" title={<TabTitleText>SSH</TabTitleText>}>
-                  <TabContentBody>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_SSH_CAPTION}
-                    </Content>
-                  </TabContentBody>
-                </Tab>
-                <Tab eventKey="scheduling" title={<TabTitleText>Scheduling</TabTitleText>}>
-                  <TabContentBody>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_SCHEDULING_CAPTION}
-                    </Content>
-                  </TabContentBody>
-                </Tab>
-                <Tab eventKey="initial-run" title={<TabTitleText>Initial run</TabTitleText>}>
-                  <TabContentBody>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_INITIAL_RUN_CAPTION}
-                    </Content>
-                  </TabContentBody>
-                </Tab>
-                <Tab eventKey="metadata" title={<TabTitleText>Metadata</TabTitleText>}>
-                  <TabContentBody>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_METADATA_CAPTION}
-                    </Content>
-                  </TabContentBody>
+                <Tab eventKey="parameters" title={<TabTitleText>Parameters</TabTitleText>}>
+                  <TabContentBody>{null}</TabContentBody>
                 </Tab>
               </Tabs>
             </div>

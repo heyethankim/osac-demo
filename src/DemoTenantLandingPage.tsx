@@ -2,6 +2,7 @@ import { Button, Card, CardBody, Content, Title } from '@patternfly/react-core'
 import { CogIcon } from '@patternfly/react-icons/dist/esm/icons/cog-icon'
 import type { DemoTenantId } from './demoTenant'
 import { DEMO_TENANT_LABEL } from './demoTenant'
+import { OSAC_LANDING_LAST_UPDATED } from './osacLastUpdated'
 import redHatHatLogoUrl from './assets/Logo-RedHat-Hat-Color-RGB.svg?url'
 
 const ENCLAVE_INFRA_DEMO_URL = 'https://heyethankim.github.io/enclave-demo/'
@@ -275,7 +276,7 @@ export function DemoTenantLandingPage({
             {' - OpenShift UXD'}
           </Content>
           <Content component="p" className="osac-role-landing__footer-updated">
-            Last updated: April 24, 2026
+            Last updated: {OSAC_LANDING_LAST_UPDATED}
           </Content>
         </footer>
       </div>

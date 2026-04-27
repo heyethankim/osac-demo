@@ -3796,15 +3796,14 @@ html[data-osac-theme='light']
 }
 
 /*
- * Template drawer: ~48rem fits seven tab labels without PF scroll arrows on typical
- * desktop; narrower than full 56rem to trim empty space past the single-column body.
+ * Template drawer: width sized for Details / Parameters + description column (~28rem content).
  */
 .tenant-vm-template-drawer-panel.pf-v6-c-drawer__panel {
   display: flex;
   flex-direction: column;
   max-height: min(100dvh, 100vh);
   min-height: 0;
-  max-width: min(48rem, 100%);
+  max-width: min(36rem, 100%);
   /* Rounded “window” on the edge toward the page (inline start when panel is position end) */
   border-start-start-radius: var(--pf-t--global--border--radius--large);
   border-end-start-radius: var(--pf-t--global--border--radius--large);
@@ -3885,12 +3884,12 @@ html[data-osac-theme='light']
   margin-block-start: var(--pf-t--global--spacer--lg);
 }
 
-/* Template drawer Overview tab: one column — spec list, then switches under Hostname */
+/* Template drawer Details / Parameters tabs: single column uses drawer width */
 .tenant-vm-template-detail-stack {
   display: flex;
   flex-direction: column;
   gap: var(--pf-t--global--spacer--lg);
-  max-width: min(28rem, 100%);
+  max-width: 100%;
   min-width: 0;
 }
 
