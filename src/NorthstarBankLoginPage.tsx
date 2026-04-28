@@ -75,8 +75,8 @@ export function NorthstarBankLoginPage({
       <div className="northstar-login__shell">
         <aside className="northstar-login__brand">
           <div className="northstar-login__brand-top">
-            <div className="northstar-login__logo" aria-label="Northstar Bank">
-              <span className="northstar-login__logo-line1">Northstar</span>
+            <div className="northstar-login__logo" aria-label="North Summit Bank">
+              <span className="northstar-login__logo-line1">North Summit</span>
               <span className="northstar-login__logo-line2">
                 <span className="northstar-login__logo-ring" aria-hidden>
                   <svg viewBox="0 0 48 48" className="northstar-login__logo-star">
@@ -96,9 +96,9 @@ export function NorthstarBankLoginPage({
           <div className="northstar-login__brand-bottom">
             <p className="northstar-login__support">
               For support, contact{' '}
-              <a href="mailto:support@northstarbank.com">support@northstarbank.com</a>
+              <a href="mailto:support@northsummitbank.com">support@northsummitbank.com</a>
             </p>
-            <p className="northstar-login__copyright">© 2026 Northstar Bank. All rights reserved.</p>
+            <p className="northstar-login__copyright">© 2026 North Summit Bank. All rights reserved.</p>
           </div>
         </aside>
 

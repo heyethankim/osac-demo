@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core'
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon'
 import tableStyles from '@patternfly/react-styles/css/components/Table/table'
-import { DEMO_TENANT_LABEL } from './demoTenant'
+import { DEMO_TENANT_PROVIDER_ORG_LABEL } from './demoTenant'
 import { NorthstarBankMastheadLogo } from './NorthstarBankMastheadLogo'
 import { EvergreenFinancialGroupMastheadLogo } from './EvergreenFinancialGroupMastheadLogo'
 import {
@@ -43,7 +43,7 @@ export type ProviderTenantOrgRow = {
 export const PROVIDER_TENANT_ORG_ROWS: ProviderTenantOrgRow[] = [
   {
     id: 'northstar',
-    organization: DEMO_TENANT_LABEL.northstar,
+    organization: DEMO_TENANT_PROVIDER_ORG_LABEL.northstar,
     users: 48,
     vms: 142,
     vcpu: { used: 310, allocated: 500 },
@@ -54,7 +54,7 @@ export const PROVIDER_TENANT_ORG_ROWS: ProviderTenantOrgRow[] = [
   },
   {
     id: 'bluestone',
-    organization: DEMO_TENANT_LABEL.evergreen,
+    organization: DEMO_TENANT_PROVIDER_ORG_LABEL.evergreen,
     users: 36,
     vms: 98,
     vcpu: { used: 220, allocated: 500 },
@@ -182,8 +182,8 @@ function orgLogoText(organization: string) {
 }
 
 function orgBrandLogo(row: ProviderTenantOrgRow): ReactNode {
-  if (row.id === 'northstar') return <NorthstarBankMastheadLogo />
-  if (row.id === 'bluestone') return <EvergreenFinancialGroupMastheadLogo />
+  if (row.id === 'northstar') return <NorthstarBankMastheadLogo brandPresentation="providerOrg" />
+  if (row.id === 'bluestone') return <EvergreenFinancialGroupMastheadLogo brandPresentation="providerOrg" />
   if (row.id === 'summit-peak')
     return (
       <SummitPeakLogo className="provider-tenant-org-generated-mark provider-tenant-org-generated-mark--summit" />

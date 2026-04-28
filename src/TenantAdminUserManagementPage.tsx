@@ -52,7 +52,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ns-2',
     name: 'Taylor Kim',
-    email: 'tkim@northstarbank.com',
+    email: 'tkim@northsummitbank.com',
     role: 'User',
     projects: 'wire-core-platform, branch-sdwan-pilot',
     lastLogin: '18 min ago',
@@ -61,7 +61,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ns-3',
     name: 'Jamie Ortiz',
-    email: 'jortiz@northstarbank.com',
+    email: 'jortiz@northsummitbank.com',
     role: 'Viewer',
     projects: 'wire-core-platform (read-only)',
     lastLogin: 'Yesterday',
@@ -70,7 +70,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ns-4',
     name: 'Avery Collins',
-    email: 'acollins@northstarbank.com',
+    email: 'acollins@northsummitbank.com',
     role: 'User',
     projects: 'fraud-analytics-lab',
     lastLogin: '3 hr ago',
@@ -79,7 +79,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ns-5',
     name: 'Rio Nakamura',
-    email: 'rnakamura@northstarbank.com',
+    email: 'rnakamura@northsummitbank.com',
     role: 'Viewer',
     projects: 'legacy-core-readonly (read-only)',
     lastLogin: 'Mar 28, 2026',
@@ -88,7 +88,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ns-6',
     name: 'Casey Wu',
-    email: 'cwu@northstarbank.com',
+    email: 'cwu@northsummitbank.com',
     role: 'User',
     projects: 'wire-core-platform, legacy-core-readonly',
     lastLogin: '2 days ago',
@@ -97,7 +97,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ns-7',
     name: 'Dana Frost',
-    email: 'dfrost@northstarbank.com',
+    email: 'dfrost@northsummitbank.com',
     role: 'User',
     projects: 'branch-sdwan-pilot',
     lastLogin: 'Apr 2, 2026',
@@ -106,7 +106,7 @@ const NORTHSTAR_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ns-8',
     name: 'Morgan Blake',
-    email: 'mblake@northstarbank.com',
+    email: 'mblake@northsummitbank.com',
     role: 'Viewer',
     projects: '—',
     lastLogin: 'Mar 15, 2026',
@@ -118,7 +118,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ev-1',
     name: DEMO_TENANT_DISPLAY_ADMIN.evergreen,
-    email: 'mchen@bluestonefinancial.com',
+    email: 'mchen@bluesolacefinancial.com',
     role: 'Admin',
     projects: 'All projects (tenant admin)',
     lastLogin: 'Active now',
@@ -145,7 +145,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ev-2',
     name: 'Sasha Patel',
-    email: 'spatel@bluestonefinancial.com',
+    email: 'spatel@bluesolacefinancial.com',
     role: 'User',
     projects: 'payments-modernization, mobile-api-next',
     lastLogin: '42 min ago',
@@ -154,7 +154,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ev-3',
     name: 'Devon Hayes',
-    email: 'dhayes@bluestonefinancial.com',
+    email: 'dhayes@bluesolacefinancial.com',
     role: 'Viewer',
     projects: 'risk-data-mesh (read-only)',
     lastLogin: 'Yesterday',
@@ -163,7 +163,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ev-4',
     name: 'Riley Kim',
-    email: 'rkim@bluestonefinancial.com',
+    email: 'rkim@bluesolacefinancial.com',
     role: 'User',
     projects: 'mobile-api-next',
     lastLogin: '5 hr ago',
@@ -172,7 +172,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ev-5',
     name: 'Elena Ruiz',
-    email: 'eruiz@bluestonefinancial.com',
+    email: 'eruiz@bluesolacefinancial.com',
     role: 'Viewer',
     projects: '—',
     lastLogin: 'Mar 22, 2026',
@@ -181,7 +181,7 @@ const EVERGREEN_USER_ROWS: TenantAdminUserRow[] = [
   {
     id: 'ev-6',
     name: 'Quinn Brooks',
-    email: 'qbrooks@bluestonefinancial.com',
+    email: 'qbrooks@bluesolacefinancial.com',
     role: 'User',
     projects: 'risk-data-mesh, mobile-api-next',
     lastLogin: 'Apr 1, 2026',

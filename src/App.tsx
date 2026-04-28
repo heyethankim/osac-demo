@@ -594,7 +594,7 @@ function App() {
     document.title = 'Red Hat OSAC Prototypes'
   }, [])
 
-  /** Northstar sign-in defaults to dark; Bluestone defaults to light (login + shell until user toggles). */
+  /** North Summit Bank (tenant id northstar) sign-in defaults to dark; BlueSolace (evergreen) defaults to light (login + shell until user toggles). */
   useEffect(() => {
     if (isLoggedIn) return
     if (selectedDemoTenant === 'northstar' || selectedDemoTenant === 'vertexa') {

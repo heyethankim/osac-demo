@@ -1,9 +1,20 @@
+export type NorthstarBankMastheadLogoProps = {
+  /**
+   * Tenant shell uses the in-app demo institution name; provider org cards keep the platform directory label.
+   */
+  brandPresentation?: 'tenantShell' | 'providerOrg'
+}
+
 /**
- * Northstar Bank masthead mark — same star-in-ring + wordmark language as the sign-in screen.
+ * Bank masthead mark — star-in-ring + wordmark (tenant shell: North Summit; provider directory: Northstar).
  */
-export function NorthstarBankMastheadLogo() {
+export function NorthstarBankMastheadLogo({
+  brandPresentation = 'tenantShell',
+}: NorthstarBankMastheadLogoProps) {
+  const line1 = brandPresentation === 'providerOrg' ? 'Northstar' : 'North Summit'
+  const ariaLabel = brandPresentation === 'providerOrg' ? 'Northstar Bank' : 'North Summit Bank'
   return (
-    <div className="northstar-masthead-brand" role="img" aria-label="Northstar Bank">
+    <div className="northstar-masthead-brand" role="img" aria-label={ariaLabel}>
       <span className="northstar-masthead-brand__mark" aria-hidden>
         <span className="northstar-masthead-brand__ring">
           <svg viewBox="0 0 48 48" className="northstar-masthead-brand__star">
@@ -15,7 +26,7 @@ export function NorthstarBankMastheadLogo() {
         </span>
       </span>
       <span className="northstar-masthead-brand__text">
-        <span className="northstar-masthead-brand__line1">Northstar</span>
+        <span className="northstar-masthead-brand__line1">{line1}</span>
         <span className="northstar-masthead-brand__line2">Bank</span>
       </span>
     </div>

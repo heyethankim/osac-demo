@@ -289,7 +289,7 @@ const NORTHSTAR_TENANT_VM_SEEDS: VmSeed[] = [
     memory: '16 GiB',
     storage: '120 GiB',
     networkSummary: 'Default pod network · 10.128.4.12',
-    hubName: 'Northstar interconnect · east-01',
+    hubName: 'North Summit interconnect · east-01',
     createdAtMs: Date.UTC(2025, 11, 3),
   },
   {
@@ -476,7 +476,7 @@ const GEN_NETWORK_SUMMARY = [
 ] as const
 
 const GEN_HUB_NAME = [
-  'Northstar interconnect · central',
+  'North Summit interconnect · central',
   'Regional hub · us-east',
   'Edge aggregation hub',
   'Tenant default hub',
@@ -512,7 +512,7 @@ const EVERGREEN_TENANT_VM_SEEDS: VmSeed[] = [
     memory: '24 GiB',
     storage: '160 GiB',
     networkSummary: 'PCI-scoped VLAN · dual NIC · 10.77.3.21',
-    hubName: 'Bluestone core interconnect · ord-02',
+    hubName: 'BlueSolace core interconnect · ord-02',
     createdAtMs: Date.UTC(2025, 11, 18),
   },
   {
@@ -672,7 +672,7 @@ const EFG_GEN_NETWORK_SUMMARY = [
 ] as const
 
 const EFG_GEN_HUB_NAME = [
-  'Bluestone interconnect · central',
+  'BlueSolace interconnect · central',
   'Treasury wire hub · east',
   'Retail channel hub',
   'Tenant default hub',
@@ -899,7 +899,7 @@ export function buildTenantVirtualMachinesForTenant(
     .map((vm) => ({ ...vm, owner }))
 }
 
-/** Northstar demo inventory — static export for legacy imports. */
+/** North Summit Bank (tenant id `northstar`) demo inventory — static export for legacy imports. */
 export const TENANT_VIRTUAL_MACHINES: TenantVirtualMachine[] =
   buildTenantVirtualMachinesForTenant('northstar')
 

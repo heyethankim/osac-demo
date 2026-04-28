@@ -64,7 +64,7 @@ function aggregateFleet(vms: readonly TenantVirtualMachine[]): {
 
 export type BuildDashboardVmQuotaMetricsOptions = {
   /**
-   * Tenant **user** dashboard (Northstar / Evergreen): aggregate only that persona’s VMs
+   * Tenant **user** dashboard (North Summit / BlueSolace): aggregate only that persona’s VMs
    * (Chris Morgan vs Emerson Cruz) and tune limit vs used so the story reads differently per bank.
    */
   tenantUserPersona?: Extract<DemoTenantId, 'northstar' | 'evergreen'>

@@ -5191,7 +5191,7 @@ html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg:fo
   display: block;
 }
 
-/* Bluestone Financial Group — split-card sign-in (demo tenant id: evergreen) */
+/* BlueSolace Financial Group (tenant id: evergreen) — split-card sign-in */
 .evergreen-login {
   position: relative;
   min-height: 100dvh;
@@ -5532,7 +5532,7 @@ html:not(.pf-v6-theme-dark) .osac-theme-toggle--shell .osac-theme-toggle__seg:fo
   color: var(--pf-t--global--text--color--regular);
 }
 
-/* Bluestone mark (PNG): lift luminance on dark masthead / login so it matches other tenants’ legibility */
+/* Evergreen tenant mark (PNG): lift luminance on dark masthead / login so it matches other tenants’ legibility */
 html.pf-v6-theme-dark .evergreen-masthead-brand__logo-img,
 html.pf-v6-theme-dark .evergreen-login__brand-logo-img {
   filter: brightness(1.42) contrast(1.08) saturate(1.05);

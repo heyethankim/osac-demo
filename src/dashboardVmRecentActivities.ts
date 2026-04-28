@@ -32,8 +32,8 @@ export function buildDemoVmRecentActivities(
     tenantId === 'vertexa'
       ? 'Global template baseline pushed to all registered tenant organizations'
       : tenantId === 'northstar'
-        ? 'Catalog refreshed from Northstar golden images (RHEL 9.4, Windows Server 2022)'
-        : 'Catalog refreshed from Bluestone golden images (RHEL 9.4, Windows Server 2022)'
+        ? 'Catalog refreshed from North Summit golden images (RHEL 9.4, Windows Server 2022)'
+        : 'Catalog refreshed from BlueSolace golden images (RHEL 9.4, Windows Server 2022)'
   const evt =
     tenantId === 'vertexa' ? 'evt-vtx' : tenantId === 'northstar' ? 'evt-ns' : 'evt-efg'
 

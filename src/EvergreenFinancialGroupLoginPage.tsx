@@ -76,12 +76,12 @@ export function EvergreenFinancialGroupLoginPage({
         <Card className="evergreen-login__split-card" isCompact={false}>
           <CardBody className="evergreen-login__split-body">
             <div className="evergreen-login__left">
-              <div className="evergreen-login__brand" aria-label="Bluestone Financial Group">
+              <div className="evergreen-login__brand" aria-label="BlueSolace Financial Group">
                 <span className="evergreen-login__brand-mark" aria-hidden>
                   <BluestoneMarkIcon className="evergreen-login__brand-logo-img" />
                 </span>
                 <span className="evergreen-login__brand-wordstack">
-                  <span className="evergreen-login__brand-word">Bluestone</span>
+                  <span className="evergreen-login__brand-word">BlueSolace</span>
                   <span className="evergreen-login__brand-subword">Financial Group</span>
                 </span>
               </div>

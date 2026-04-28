@@ -24,7 +24,17 @@ export function demoVmPowerTotal(tenantId: DemoTenantId): number {
   return c.running + c.paused + c.stopped
 }
 
+/** Tenant admin / user shell, landing CTAs, and in-tenant copy (demo). */
 export const DEMO_TENANT_LABEL: Record<DemoTenantId, string> = {
+  northstar: 'North Summit Bank',
+  evergreen: 'BlueSolace Financial Group',
+  vertexa: 'Vertexa Cloud Solutions',
+}
+
+/**
+ * Provider-console org directory: legacy contracted customer names where the tenant shell uses a demo rebrand.
+ */
+export const DEMO_TENANT_PROVIDER_ORG_LABEL: Record<DemoTenantId, string> = {
   northstar: 'Northstar Bank',
   evergreen: 'Bluestone Financial Group',
   vertexa: 'Vertexa Cloud Solutions',
@@ -52,22 +62,22 @@ export const DEMO_PROVIDER_ADMIN_DISPLAY_NAME = 'Alex Johnson'
 
 /** Pre-filled login identifier on institution sign-in pages for tenant user (demo). */
 export const DEMO_TENANT_LOGIN_EMAIL_USER: Record<DemoTenantId, string> = {
-  northstar: 'cmorgan@northstarbank.com',
-  evergreen: 'ecruz@bluestonefinancial.com',
+  northstar: 'cmorgan@northsummitbank.com',
+  evergreen: 'ecruz@bluesolacefinancial.com',
   vertexa: DEMO_VERTEXA_PROVIDER_LOGIN_EMAIL,
 }
 
 /** Pre-filled login identifier on institution sign-in pages for tenant admin (demo). */
 export const DEMO_TENANT_LOGIN_EMAIL_ADMIN: Record<DemoTenantId, string> = {
-  northstar: 'pnair@northstarbank.com',
-  evergreen: 'marcus.chen@bluestonefinancial.com',
+  northstar: 'pnair@northsummitbank.com',
+  evergreen: 'marcus.chen@bluesolacefinancial.com',
   vertexa: DEMO_VERTEXA_PROVIDER_LOGIN_EMAIL,
 }
 
 /** Operator “user” account (Priya / Marcus) — tenant admin directory + switch-to-user from admin shell. */
 export const DEMO_TENANT_LOGIN_EMAIL_OPERATOR_USER: Record<DemoTenantId, string> = {
-  northstar: 'priya.nair.user@northstarbank.com',
-  evergreen: 'marcus.chen.user@bluestonefinancial.com',
+  northstar: 'priya.nair.user@northsummitbank.com',
+  evergreen: 'marcus.chen.user@bluesolacefinancial.com',
   vertexa: DEMO_VERTEXA_PROVIDER_LOGIN_EMAIL,
 }
 
