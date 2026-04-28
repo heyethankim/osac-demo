@@ -75,6 +75,14 @@ const QUICK_ACTIONS: {
   },
 ]
 
+type ProviderKpiCard = {
+  title: string
+  value: number
+  hint: string
+  nav: ProviderAdminDashboardNavTarget | null
+  aria?: string
+}
+
 /** Provider admin — platform overview (demo). */
 export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboardPageProps) {
   const [tenantOrgStatusFilter, setTenantOrgStatusFilter] =
@@ -85,7 +93,7 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
   const totalUsers = 84
   const globalTemplates = 22
 
-  const kpiCards = [
+  const kpiCards: ProviderKpiCard[] = [
     {
       title: 'Active organization',
       value: activeOrganizations,
@@ -97,8 +105,7 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
       title: 'Total VMs',
       value: totalVms,
       hint: 'Aggregate powered fleet across registered tenant workspaces.',
-      nav: 'resource-allocation' as const,
-      aria: 'Open Resource allocation',
+      nav: null,
     },
     {
       title: 'Total users',
@@ -124,14 +131,18 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
             key={title}
             component="article"
             isFullHeight
-            isClickable
+            isClickable={nav !== null}
             className="tenant-admin-dashboard-kpi-card"
           >
             <CardHeader
-              selectableActions={{
-                onClickAction: () => onNavigate(nav),
-                selectableActionAriaLabel: `${title}, ${value}. ${aria}`,
-              }}
+              selectableActions={
+                nav
+                  ? {
+                      onClickAction: () => onNavigate(nav),
+                      selectableActionAriaLabel: `${title}, ${value}. ${aria}`,
+                    }
+                  : undefined
+              }
             >
               <CardTitle component="h2">{title}</CardTitle>
             </CardHeader>

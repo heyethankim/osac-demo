@@ -15,6 +15,7 @@ const OSAC_LANDING_LAST_UPDATED_LABEL = new Date().toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric',
   year: 'numeric',
+  timeZone: 'America/New_York',
 })
 
 // https://vite.dev/config/
