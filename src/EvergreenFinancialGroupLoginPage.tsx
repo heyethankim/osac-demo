@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon'
 import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon'
 import {
@@ -45,7 +45,7 @@ export function EvergreenFinancialGroupLoginPage({
       placeholder="Password"
       value={password}
       onChange={(_e, v) => setPassword(v)}
-      autoComplete="current-password"
+      autoComplete="off"
       validated="default"
       aria-label="Password"
       isDisabled={isLandingPageLoading}
@@ -64,6 +64,10 @@ export function EvergreenFinancialGroupLoginPage({
   useEffect(() => {
     setEmail(defaultEmail)
   }, [defaultEmail])
+
+  useLayoutEffect(() => {
+    setPassword(DEMO_LOGIN_PREFILLED_PASSWORD)
+  }, [])
 
   return (
     <div className="evergreen-login">
@@ -93,6 +97,7 @@ export function EvergreenFinancialGroupLoginPage({
               <p className="evergreen-login__subhead">Welcome back! Please login to your account.</p>
 
               <Form
+                autoComplete="off"
                 className="evergreen-login__form"
                 onSubmit={(e) => {
                   e.preventDefault()

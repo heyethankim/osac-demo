@@ -117,9 +117,9 @@ export function demoAccountDisplayName(
 }
 
 /**
- * Pre-fills demo sign-in password fields on every host (dev + GitHub Pages). Inputs use
- * `type="password"`, so the browser shows **obscured bullets**, not the literal characters.
- * This is not a real credential — **Login** does not validate the value.
+ * Pre-fills demo sign-in password fields on every host (dev + GitHub Pages). Login pages use
+ * `type="password"` (obscured bullets) plus `autoComplete="off"` and a post-mount reapply so
+ * password managers do not wipe this placeholder. **Login** does not validate the value.
  */
 export const DEMO_LOGIN_PREFILLED_PASSWORD = '*****************'
 

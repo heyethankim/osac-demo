@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { EyeIcon } from '@patternfly/react-icons/dist/esm/icons/eye-icon'
 import { EyeSlashIcon } from '@patternfly/react-icons/dist/esm/icons/eye-slash-icon'
 import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon'
@@ -148,7 +148,7 @@ export function VertexaCloudLoginPage({
       placeholder="Password"
       value={password}
       onChange={(_e, v) => setPassword(v)}
-      autoComplete="current-password"
+      autoComplete="off"
       validated="default"
       aria-label="Password"
       isDisabled={isLandingPageLoading}
@@ -163,6 +163,10 @@ export function VertexaCloudLoginPage({
       document.documentElement.style.overflow = ''
       document.body.style.overflow = ''
     }
+  }, [])
+
+  useLayoutEffect(() => {
+    setPassword(DEMO_LOGIN_PREFILLED_PASSWORD)
   }, [])
 
   return (
@@ -185,6 +189,7 @@ export function VertexaCloudLoginPage({
 
         <div className="vertexa-login__surface">
           <Form
+            autoComplete="off"
             className="vertexa-login__form"
             onSubmit={(e) => {
               e.preventDefault()
