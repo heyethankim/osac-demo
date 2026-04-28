@@ -302,7 +302,7 @@ function accountDropdownPersonaSwitchLabel(
   )
 }
 
-/** Masthead account toggle: tenant shells show role as PF Label pills; provider admin shows name only. */
+/** Masthead account toggle: all signed-in shells show PF role pill (User/Admin). */
 function mastheadAccountToggleContent(
   role: DemoShellRole,
   tenantId: DemoTenantId,
@@ -311,8 +311,15 @@ function mastheadAccountToggleContent(
   if (role === 'providerAdmin') {
     const name = demoAccountDisplayName(tenantId, role, null)
     return {
-      node: name,
-      ariaLabel: `Account menu, ${name}`,
+      node: (
+        <span className="osac-masthead-account-toggle">
+          <span className="osac-masthead-account-toggle__name">{name}</span>
+          <Label color="grey" className="osac-masthead-account-toggle__role-label">
+            Admin
+          </Label>
+        </span>
+      ),
+      ariaLabel: `Account menu, ${name}, provider administrator`,
     }
   }
   if (role === 'tenantAdmin') {
@@ -843,7 +850,10 @@ function App() {
   ) : undefined
 
   const showTenantTrustStrip =
-    isLoggedIn && (demoShellRole === 'tenantUser' || demoShellRole === 'tenantAdmin')
+    isLoggedIn &&
+    (demoShellRole === 'tenantUser' ||
+      demoShellRole === 'tenantAdmin' ||
+      demoShellRole === 'providerAdmin')
 
   const masthead = (
     <Masthead>
