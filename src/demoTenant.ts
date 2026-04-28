@@ -117,10 +117,11 @@ export function demoAccountDisplayName(
 }
 
 /**
- * Demo sign-in does not validate password — keep the field empty on every host (e.g. GitHub Pages)
- * so viewers do not see a fake masked “password” blob. Click **Login** to continue.
+ * Pre-fills demo sign-in password fields on every host (dev + GitHub Pages). Inputs use
+ * `type="password"`, so the browser shows **obscured bullets**, not the literal characters.
+ * This is not a real credential — **Login** does not validate the value.
  */
-export const DEMO_LOGIN_PREFILLED_PASSWORD = ''
+export const DEMO_LOGIN_PREFILLED_PASSWORD = '*****************'
 
 /** Stable key so the masthead account control remounts when persona or demo names change (avoids stale PF toggle text). */
 export function demoMastheadAccountControlKey(
