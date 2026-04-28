@@ -2986,24 +2986,32 @@ body {
   min-width: min(72rem, 100%);
 }
 
-/* Provider admin: three KPI-style shortcut cards below tenant org preview (dashboard main column) */
+/* Provider admin: compact pill actions below tenant org preview. */
 .provider-admin-dashboard-action-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--pf-t--global--spacer--md);
+  gap: var(--pf-t--global--spacer--lg);
   width: 100%;
   min-width: 0;
 }
 
-.provider-admin-dashboard-action-card__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: var(--pf-t--global--border--radius--medium);
-  background: color-mix(in srgb, var(--pf-t--global--color--brand--default) 16%, transparent);
-  color: var(--pf-t--global--color--brand--default);
+.provider-admin-dashboard-action-item {
+  min-width: 0;
+}
+
+.provider-admin-dashboard-action-pill.pf-v6-c-button {
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: 999px;
+  border-color: color-mix(in srgb, var(--pf-t--global--color--brand--default) 45%, #ffffff);
+  color: var(--pf-t--global--text--color--regular);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+}
+
+.provider-admin-dashboard-action-pill__hint {
+  margin: var(--pf-t--global--spacer--sm) 0 0;
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--body--default);
 }
 
 .provider-resource-allocation-page {
@@ -3088,8 +3096,8 @@ body {
   font-weight: var(--pf-t--global--font--weight--body--bold);
 }
 
-html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
-  background: color-mix(in srgb, var(--pf-t--global--color--brand--default) 26%, transparent);
+html.pf-v6-theme-dark .provider-admin-dashboard-action-pill.pf-v6-c-button {
+  border-color: color-mix(in srgb, var(--pf-t--global--color--brand--default) 55%, #1f2937);
 }
 
 @media (max-width: 64rem) {

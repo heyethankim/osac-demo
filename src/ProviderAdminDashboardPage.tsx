@@ -4,6 +4,7 @@ import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon
 import { InfrastructureIcon } from '@patternfly/react-icons/dist/esm/icons/infrastructure-icon'
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
 import {
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -89,7 +90,7 @@ type ProviderDashboardTenantOrgView = 'recent' | ProviderTenantOrgStatusFilter
 /** Provider admin — platform overview (demo). */
 export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboardPageProps) {
   const [tenantOrgView, setTenantOrgView] = useState<ProviderDashboardTenantOrgView>('recent')
-  const recentActivities = useMemo(() => buildProviderAdminRecentActivities().slice(0, 5), [])
+  const recentActivities = useMemo(() => buildProviderAdminRecentActivities().slice(0, 4), [])
   const activeOrganizations = useMemo(
     () => PROVIDER_TENANT_ORG_ROWS.filter((row) => row.status === 'Active').length,
     [],
@@ -231,39 +232,19 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
               role="group"
               aria-label="Platform shortcuts"
             >
-              {QUICK_ACTIONS.map(({ title, hint, nav, Icon, actionAria }) => (
-                <Card
-                  key={title}
-                  component="article"
-                  isFullHeight
-                  isClickable
-                  className="tenant-admin-dashboard-kpi-card"
-                >
-                  <CardHeader
-                    selectableActions={{
-                      onClickAction: () => onNavigate(nav),
-                      selectableActionAriaLabel: `${title}. ${actionAria}`,
-                    }}
+              {QUICK_ACTIONS.map(({ title, nav, Icon, actionAria }) => (
+                <div key={title} className="provider-admin-dashboard-action-item">
+                  <Button
+                    variant="secondary"
+                    className="provider-admin-dashboard-action-pill"
+                    onClick={() => onNavigate(nav)}
+                    aria-label={actionAria}
+                    icon={<Icon style={{ width: '1rem', height: '1rem' }} />}
+                    iconPosition="start"
                   >
-                    <CardTitle component="h2" className="osac-dashboard-clickable-kpi-value">
-                      {title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardBody style={KPI_CARD_BODY_STYLE}>
-                    <div className="provider-admin-dashboard-action-card__icon" aria-hidden>
-                      <Icon style={{ width: '2rem', height: '2rem' }} />
-                    </div>
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 'var(--pf-t--global--spacer--sm) 0 0',
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {hint}
-                    </Content>
-                  </CardBody>
-                </Card>
+                    {title}
+                  </Button>
+                </div>
               ))}
             </div>
           </div>
