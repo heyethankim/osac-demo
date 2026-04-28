@@ -1,17 +1,11 @@
 import { Button, Card, CardBody, Content, Title } from '@patternfly/react-core'
 import { CogIcon } from '@patternfly/react-icons/dist/esm/icons/cog-icon'
-import type { DemoTenantId } from './demoTenant'
 import { DEMO_TENANT_LABEL } from './demoTenant'
 import { OSAC_LANDING_LAST_UPDATED } from './osacLastUpdated'
+import { buildOsacLandingEntryUrl } from './osacLandingEntry'
 import redHatHatLogoUrl from './assets/Logo-RedHat-Hat-Color-RGB.svg?url'
 
 const ENCLAVE_INFRA_DEMO_URL = 'https://heyethankim.github.io/enclave-demo/'
-
-export type DemoTenantLandingPageProps = {
-  onSelectProviderAdmin: () => void
-  onSelectTenantUserBank: (tenantId: DemoTenantId) => void
-  onSelectTenantAdminBank: (tenantId: DemoTenantId) => void
-}
 
 function OsacRoleIconCrown() {
   return (
@@ -46,11 +40,7 @@ function OsacRoleIconUser() {
   )
 }
 
-export function DemoTenantLandingPage({
-  onSelectProviderAdmin,
-  onSelectTenantUserBank,
-  onSelectTenantAdminBank,
-}: DemoTenantLandingPageProps) {
+export function DemoTenantLandingPage() {
   const rootClass = 'osac-role-landing osac-role-landing--light'
 
   return (
@@ -91,8 +81,7 @@ export function DemoTenantLandingPage({
                   Infra Admin
                 </Title>
                 <Content component="p" className="osac-role-landing__card-copy">
-                  Bootstrap the physical environment, manage bare-metal resources, and ensure the
-                  foundational Red Hat stack is &quot;Cloud-Ready.&quot;
+                  Bootstrap the environment, manage bare metal, and make Red Hat cloud-ready.
                 </Content>
                 <div className="osac-role-landing__tenant-user-actions">
                   <Button
@@ -135,8 +124,12 @@ export function DemoTenantLandingPage({
                 <div className="osac-role-landing__tenant-user-actions">
                   <Button
                     variant="primary"
+                    component="a"
+                    href={buildOsacLandingEntryUrl({ kind: 'provider' })}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="osac-role-landing__action"
-                    onClick={onSelectProviderAdmin}
+                    aria-label="Enter Provider Admin demo — opens sign-in in a new tab"
                   >
                     Enter
                   </Button>
@@ -169,15 +162,23 @@ export function DemoTenantLandingPage({
                 <div className="osac-role-landing__tenant-user-actions">
                   <Button
                     variant="primary"
+                    component="a"
+                    href={buildOsacLandingEntryUrl({ kind: 'tenant-admin', tenant: 'northstar' })}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="osac-role-landing__action"
-                    onClick={() => onSelectTenantAdminBank('northstar')}
+                    aria-label={`Enter Tenant Admin for ${DEMO_TENANT_LABEL.northstar} — opens sign-in in a new tab`}
                   >
                     {DEMO_TENANT_LABEL.northstar}
                   </Button>
                   <Button
                     variant="secondary"
+                    component="a"
+                    href={buildOsacLandingEntryUrl({ kind: 'tenant-admin', tenant: 'evergreen' })}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="osac-role-landing__action"
-                    onClick={() => onSelectTenantAdminBank('evergreen')}
+                    aria-label={`Enter Tenant Admin for ${DEMO_TENANT_LABEL.evergreen} — opens sign-in in a new tab`}
                   >
                     {DEMO_TENANT_LABEL.evergreen}
                   </Button>
@@ -205,15 +206,23 @@ export function DemoTenantLandingPage({
                 <div className="osac-role-landing__tenant-user-actions">
                   <Button
                     variant="primary"
+                    component="a"
+                    href={buildOsacLandingEntryUrl({ kind: 'tenant-user', tenant: 'northstar' })}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="osac-role-landing__action"
-                    onClick={() => onSelectTenantUserBank('northstar')}
+                    aria-label={`Enter Tenant User workspace for ${DEMO_TENANT_LABEL.northstar} — opens sign-in in a new tab`}
                   >
                     {DEMO_TENANT_LABEL.northstar}
                   </Button>
                   <Button
                     variant="secondary"
+                    component="a"
+                    href={buildOsacLandingEntryUrl({ kind: 'tenant-user', tenant: 'evergreen' })}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="osac-role-landing__action"
-                    onClick={() => onSelectTenantUserBank('evergreen')}
+                    aria-label={`Enter Tenant User workspace for ${DEMO_TENANT_LABEL.evergreen} — opens sign-in in a new tab`}
                   >
                     {DEMO_TENANT_LABEL.evergreen}
                   </Button>

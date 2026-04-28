@@ -28,6 +28,10 @@ import {
   demoVmPowerTotal,
 } from './demoTenant'
 import { DemoTenantLandingPage } from './DemoTenantLandingPage'
+import {
+  readInitialSessionFromLandingEntry,
+  stripOsacLandingEntryParamsFromUrl,
+} from './osacLandingEntry'
 import { OsacLightDarkToggle } from './OsacLightDarkToggle'
 import { EvergreenFinancialGroupLoginPage } from './EvergreenFinancialGroupLoginPage'
 import {
@@ -287,6 +291,29 @@ function readVmConsoleDemoQuery(): {
   }
 }
 
+const initialAppRouteBootstrap = ((): {
+  vmConsoleDemo: ReturnType<typeof readVmConsoleDemoQuery>
+  session: ReturnType<typeof readInitialSessionFromLandingEntry>
+} => {
+  const emptySession = (): ReturnType<typeof readInitialSessionFromLandingEntry> => ({
+    selectedDemoTenant: null,
+    demoShellRole: 'tenantUser',
+    bankTenantUserEntry: null,
+    hadLandingEntryQuery: false,
+  })
+  if (typeof window === 'undefined') {
+    return { vmConsoleDemo: null, session: emptySession() }
+  }
+  const vm = readVmConsoleDemoQuery()
+  if (vm) {
+    return { vmConsoleDemo: vm, session: emptySession() }
+  }
+  return {
+    vmConsoleDemo: null,
+    session: readInitialSessionFromLandingEntry(),
+  }
+})()
+
 /** Persona switch row in account dropdown — same name + grey role pill as masthead. */
 function accountDropdownPersonaSwitchLabel(
   displayName: string,
@@ -351,9 +378,13 @@ function mastheadAccountToggleContent(
 }
 
 function App() {
-  const [vmConsoleDemo, setVmConsoleDemo] = useState(readVmConsoleDemoQuery)
-  const [selectedDemoTenant, setSelectedDemoTenant] = useState<DemoTenantId | null>(null)
-  const [demoShellRole, setDemoShellRole] = useState<DemoShellRole>('tenantUser')
+  const [vmConsoleDemo, setVmConsoleDemo] = useState(() => initialAppRouteBootstrap.vmConsoleDemo)
+  const [selectedDemoTenant, setSelectedDemoTenant] = useState<DemoTenantId | null>(
+    () => initialAppRouteBootstrap.session.selectedDemoTenant,
+  )
+  const [demoShellRole, setDemoShellRole] = useState<DemoShellRole>(
+    () => initialAppRouteBootstrap.session.demoShellRole,
+  )
   const demoShellRoleRef = useRef<DemoShellRole>('tenantUser')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLandingPageLoading, setIsLandingPageLoading] = useState(false)
@@ -366,7 +397,9 @@ function App() {
   const [providerSystemNavExpanded, setProviderSystemNavExpanded] = useState(true)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   /** Bank tenants: Chris/Emerson (vmWorkspace) vs Priya/Marcus operator user (adminPortal). */
-  const [bankTenantUserEntry, setBankTenantUserEntry] = useState<BankTenantUserEntry | null>(null)
+  const [bankTenantUserEntry, setBankTenantUserEntry] = useState<BankTenantUserEntry | null>(
+    () => initialAppRouteBootstrap.session.bankTenantUserEntry,
+  )
   const [vmListPowerFilterIntent, setVmListPowerFilterIntent] =
     useState<VmPowerState | null>(null)
   const [vmsCreatedFromTemplate, setVmsCreatedFromTemplate] = useState<
@@ -486,20 +519,6 @@ function App() {
     return shellNavRows
   }, [demoShellRole])
 
-  const handleSelectTenantUserBank = useCallback((tenantId: DemoTenantId) => {
-    setBankTenantUserEntry('vmWorkspace')
-    setDemoShellRole('tenantUser')
-    setSelectedDemoTenant(tenantId)
-    setActiveItem(dashboardNavItemId)
-  }, [])
-
-  const handleSelectTenantAdminBank = useCallback((tenantId: DemoTenantId) => {
-    setBankTenantUserEntry(null)
-    setDemoShellRole('tenantAdmin')
-    setSelectedDemoTenant(tenantId)
-    setActiveItem(adminDashboardNavId)
-  }, [])
-
   const navigateTenantAdminFromDashboard = useCallback((target: TenantAdminDashboardNavTarget) => {
     switch (target) {
       case 'projects':
@@ -520,13 +539,6 @@ function App() {
       default:
         break
     }
-  }, [])
-
-  const handleSelectProviderAdmin = useCallback(() => {
-    setBankTenantUserEntry(null)
-    setDemoShellRole('providerAdmin')
-    setSelectedDemoTenant('vertexa')
-    setActiveItem(providerDashboardNavId)
   }, [])
 
   /** Bank tenants only: switch shell between tenant admin and tenant user without re-signing in. */
@@ -590,11 +602,19 @@ function App() {
     root.dataset.osacTheme = isDarkTheme ? 'dark' : 'light'
   }, [isDarkTheme])
 
+  useLayoutEffect(() => {
+    if (initialAppRouteBootstrap.session.hadLandingEntryQuery) {
+      stripOsacLandingEntryParamsFromUrl()
+    }
+  }, [])
+
   useEffect(() => {
     document.title = 'Red Hat OSAC Prototypes'
   }, [])
 
-  /** North Summit Bank (tenant id northstar) sign-in defaults to dark; BlueSolace (evergreen) defaults to light (login + shell until user toggles). */
+  /**
+   * Pre-login: institution pick + sign-in screens. North Summit / Vertexa login use dark; BlueSolace login uses light.
+   */
   useEffect(() => {
     if (isLoggedIn) return
     if (selectedDemoTenant === 'northstar' || selectedDemoTenant === 'vertexa') {
@@ -603,6 +623,25 @@ function App() {
       setIsDarkTheme(false)
     }
   }, [isLoggedIn, selectedDemoTenant])
+
+  /**
+   * Logged-in bank tenants: each visit to the tenant user or tenant admin dashboard applies that institution’s
+   * default appearance (North Summit → dark, BlueSolace → light). Other pages keep the user’s toggle.
+   */
+  useEffect(() => {
+    if (!isLoggedIn) return
+    const tid = selectedDemoTenant
+    if (tid !== 'northstar' && tid !== 'evergreen') return
+
+    const onTenantUserDashboard =
+      demoShellRole === 'tenantUser' && activeItem === dashboardNavItemId
+    const onTenantAdminDashboard =
+      demoShellRole === 'tenantAdmin' && activeItem === adminDashboardNavId
+
+    if (!onTenantUserDashboard && !onTenantAdminDashboard) return
+
+    setIsDarkTheme(tid === 'northstar')
+  }, [isLoggedIn, selectedDemoTenant, demoShellRole, activeItem])
 
   /**
    * Role landing (no tenant): always light theme on `documentElement`, regardless of prior
@@ -676,11 +715,7 @@ function App() {
   if (!isLoggedIn) {
     if (!selectedDemoTenant) {
       return (
-        <DemoTenantLandingPage
-          onSelectProviderAdmin={handleSelectProviderAdmin}
-          onSelectTenantUserBank={handleSelectTenantUserBank}
-          onSelectTenantAdminBank={handleSelectTenantAdminBank}
-        />
+        <DemoTenantLandingPage />
       )
     }
     if (selectedDemoTenant === 'vertexa') {
@@ -769,13 +804,7 @@ function App() {
   }
 
   if (!selectedDemoTenant) {
-    return (
-      <DemoTenantLandingPage
-        onSelectProviderAdmin={handleSelectProviderAdmin}
-        onSelectTenantUserBank={handleSelectTenantUserBank}
-        onSelectTenantAdminBank={handleSelectTenantAdminBank}
-      />
-    )
+    return <DemoTenantLandingPage />
   }
 
   const demoTenantId = selectedDemoTenant
