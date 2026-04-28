@@ -14,6 +14,7 @@ import {
   TextInput,
   Title,
 } from '@patternfly/react-core'
+import { DEMO_LOGIN_PREFILLED_PASSWORD } from './demoTenant'
 
 export type NorthstarBankLoginPageProps = {
   onLoginSuccess: () => void
@@ -30,7 +31,7 @@ export function NorthstarBankLoginPage({
   onChooseAnotherInstitution,
 }: NorthstarBankLoginPageProps) {
   const [username, setUsername] = useState(defaultUsername)
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState(DEMO_LOGIN_PREFILLED_PASSWORD)
   const [passwordHidden, setPasswordHidden] = useState(true)
   const [rememberMe, setRememberMe] = useState(false)
 

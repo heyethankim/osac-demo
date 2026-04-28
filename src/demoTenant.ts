@@ -116,6 +116,13 @@ export function demoAccountDisplayName(
   return DEMO_TENANT_DISPLAY_USER[tenantId]
 }
 
+/**
+ * Prefilled on demo sign-in password fields **only when running the Vite dev server** (`npm run dev`,
+ * localhost). Production builds (`vite build`, e.g. GitHub Pages) use an empty initial password.
+ * When set, the value is masked as bullets; click **Login** to continue.
+ */
+export const DEMO_LOGIN_PREFILLED_PASSWORD = import.meta.env.DEV ? '*************' : ''
+
 /** Stable key so the masthead account control remounts when persona or demo names change (avoids stale PF toggle text). */
 export function demoMastheadAccountControlKey(
   tenantId: DemoTenantId,

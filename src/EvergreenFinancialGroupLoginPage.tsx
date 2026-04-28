@@ -14,6 +14,7 @@ import {
   TextInput,
 } from '@patternfly/react-core'
 import { BluestoneMarkIcon } from './BluestoneMarkIcon'
+import { DEMO_LOGIN_PREFILLED_PASSWORD } from './demoTenant'
 
 const BLUESTONE_LOGIN_ILLUSTRATION_SRC = `${import.meta.env.BASE_URL}bluestone-login-illustration.png`
 
@@ -32,7 +33,7 @@ export function EvergreenFinancialGroupLoginPage({
   onChooseAnotherInstitution,
 }: EvergreenFinancialGroupLoginPageProps) {
   const [email, setEmail] = useState(defaultEmail)
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState(DEMO_LOGIN_PREFILLED_PASSWORD)
   const [passwordHidden, setPasswordHidden] = useState(true)
   const [rememberMe, setRememberMe] = useState(false)
 

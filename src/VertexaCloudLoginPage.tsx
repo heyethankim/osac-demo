@@ -12,6 +12,7 @@ import {
   TextInput,
   Title,
 } from '@patternfly/react-core'
+import { DEMO_LOGIN_PREFILLED_PASSWORD } from './demoTenant'
 
 /**
  * Reference-style mesh: long continuous strokes, sweeping from corners toward center,
@@ -136,7 +137,7 @@ export function VertexaCloudLoginPage({
   onChooseAnotherInstitution,
 }: VertexaCloudLoginPageProps) {
   const [username, setUsername] = useState(defaultUsername)
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState(DEMO_LOGIN_PREFILLED_PASSWORD)
   const [passwordHidden, setPasswordHidden] = useState(true)
 
   const passwordInput = (

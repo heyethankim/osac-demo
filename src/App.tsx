@@ -594,6 +594,9 @@ function App() {
     setSelectedDemoTenant(null)
     setDemoShellRole('tenantUser')
     setActiveItem(dashboardNavItemId)
+    setIsLandingPageLoading(false)
+    /** Full session reset so every persona path shows sign-in again after “Back to welcome”. */
+    setIsLoggedIn(false)
   }, [])
 
   useLayoutEffect(() => {
@@ -803,6 +806,7 @@ function App() {
     )
   }
 
+  /** Invariant when logged in: tenant is set (see `goToLandingHome` + log out). Kept for type narrowing. */
   if (!selectedDemoTenant) {
     return <DemoTenantLandingPage />
   }
