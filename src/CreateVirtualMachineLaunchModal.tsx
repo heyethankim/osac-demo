@@ -105,7 +105,6 @@ const WIZARD_STEP_INDEX_CLONE_SOURCE = 6
 
 const TEMPLATE_REVIEW_SECTIONS_INITIAL: Record<
   | 'details'
-  | 'parameters'
   | 'storage'
   | 'network'
   | 'ssh'
@@ -115,7 +114,6 @@ const TEMPLATE_REVIEW_SECTIONS_INITIAL: Record<
   boolean
 > = {
   details: true,
-  parameters: true,
   storage: true,
   network: true,
   ssh: true,
@@ -1741,6 +1739,14 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                     Review template details and optional parameters before you finish.
                   </Content>
                 </div>
+                <FormGroup label="Virtual machine name" fieldId="create-vm-template-vm-name">
+                  <TextInput
+                    id="create-vm-template-vm-name"
+                    value={templateVmName}
+                    onChange={(_e, v) => setTemplateVmName(v)}
+                    aria-label="Virtual machine name"
+                  />
+                </FormGroup>
                 <Form
                   style={{
                     display: 'flex',
@@ -1748,14 +1754,6 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                     gap: 'var(--pf-t--global--spacer--md)',
                   }}
                 >
-                  <FormGroup label="Virtual machine name" fieldId="create-vm-template-vm-name">
-                    <TextInput
-                      id="create-vm-template-vm-name"
-                      value={templateVmName}
-                      onChange={(_e, v) => setTemplateVmName(v)}
-                      aria-label="Virtual machine name"
-                    />
-                  </FormGroup>
                   <Tabs
                     id="create-vm-template-customization-tabs"
                     activeKey={templateCustomizationActiveTab}
@@ -1915,6 +1913,17 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                     gap: 'var(--pf-t--global--spacer--sm)',
                   }}
                 >
+                  <DescriptionList
+                    isCompact
+                    style={{ marginBlockEnd: 'var(--pf-t--global--spacer--xs)' }}
+                  >
+                    <DescriptionListGroup>
+                      <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
+                      <DescriptionListDescription>
+                        {templateVmName.trim() || '—'}
+                      </DescriptionListDescription>
+                    </DescriptionListGroup>
+                  </DescriptionList>
                   <ExpandableSection
                     toggleText="Details"
                     isExpanded={templateReviewSectionsExpanded.details}
@@ -1989,26 +1998,6 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                         </DescriptionListGroup>
                       </DescriptionList>
                     )}
-                  </ExpandableSection>
-                  <ExpandableSection
-                    toggleText="Parameters"
-                    isExpanded={templateReviewSectionsExpanded.parameters}
-                    isIndented
-                    onToggle={(_e, expanded) =>
-                      setTemplateReviewSectionsExpanded((s) => ({
-                        ...s,
-                        parameters: expanded,
-                      }))
-                    }
-                  >
-                    <DescriptionList isCompact>
-                      <DescriptionListGroup>
-                        <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
-                        <DescriptionListDescription>
-                          {templateVmName.trim() || '—'}
-                        </DescriptionListDescription>
-                      </DescriptionListGroup>
-                    </DescriptionList>
                   </ExpandableSection>
                 </div>
               )}
