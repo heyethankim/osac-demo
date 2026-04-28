@@ -1,5 +1,5 @@
 import type { ComponentType, CSSProperties } from 'react'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon'
 import { InfrastructureIcon } from '@patternfly/react-icons/dist/esm/icons/infrastructure-icon'
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
@@ -9,17 +9,14 @@ import {
   CardHeader,
   CardTitle,
   Content,
-  FormSelect,
-  FormSelectOption,
   Label,
   Title,
 } from '@patternfly/react-core'
 import { demoVmPowerTotal } from './demoTenant'
 import { buildProviderAdminRecentActivities } from './providerAdminRecentActivitiesDemo'
 import {
-  ProviderTenantOrganizationsTable,
-  PROVIDER_TENANT_ORG_STATUS_FILTER_OPTIONS,
-  type ProviderTenantOrgStatusFilter,
+  ProviderTenantOrganizationsCards,
+  PROVIDER_TENANT_ORG_ROWS,
 } from './ProviderTenantOrganizationsTable'
 
 export type ProviderAdminDashboardNavTarget =
@@ -85,10 +82,11 @@ type ProviderKpiCard = {
 
 /** Provider admin — platform overview (demo). */
 export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboardPageProps) {
-  const [tenantOrgStatusFilter, setTenantOrgStatusFilter] =
-    useState<ProviderTenantOrgStatusFilter>('all')
   const recentActivities = useMemo(() => buildProviderAdminRecentActivities().slice(0, 5), [])
-  const activeOrganizations = 2
+  const activeOrganizations = useMemo(
+    () => PROVIDER_TENANT_ORG_ROWS.filter((row) => row.status === 'Active').length,
+    [],
+  )
   const totalVms = demoVmPowerTotal('northstar') + demoVmPowerTotal('evergreen')
   const totalUsers = 84
   const globalTemplates = 22
@@ -167,7 +165,7 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
       </div>
 
       <section
-        className="osac-dashboard-utilization-section"
+        className="osac-dashboard-utilization-section provider-admin-dashboard-utilization-section"
         aria-label="Tenant organizations, platform shortcuts, and recent activities"
       >
         <div className="osac-dashboard-utilization-layout">
@@ -176,46 +174,19 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
               className="provider-admin-tenant-orgs-card"
               component="section"
               aria-labelledby="provider-admin-dashboard-tenant-orgs-title"
-              isClickable
             >
-              <CardHeader
-                className="provider-admin-tenant-orgs-card__header"
-                selectableActions={{
-                  onClickAction: () => onNavigate('tenant-organizations'),
-                  selectableActionAriaLabel:
-                    'Tenant organizations preview. Open full tenant organizations directory',
-                }}
-              >
+              <CardHeader className="provider-admin-tenant-orgs-card__header">
                 <div className="provider-admin-tenant-orgs-card__header-row">
-                  <CardTitle component="h2" id="provider-admin-dashboard-tenant-orgs-title">
+                  <Title headingLevel="h2" size="xl" id="provider-admin-dashboard-tenant-orgs-title" style={{ margin: 0 }}>
                     Tenant organizations
-                  </CardTitle>
-                  <div
-                    className="provider-admin-tenant-orgs-card__filter"
-                    role="presentation"
-                    onClick={(e) => e.stopPropagation()}
-                    onPointerDown={(e) => e.stopPropagation()}
-                  >
-                    <FormSelect
-                      className="provider-admin-tenant-orgs-card__status-select"
-                      id="provider-admin-tenant-orgs-status-filter"
-                      value={tenantOrgStatusFilter}
-                      onChange={(_, value) => setTenantOrgStatusFilter(value as ProviderTenantOrgStatusFilter)}
-                      aria-label="Filter tenant organizations by status"
-                    >
-                      {PROVIDER_TENANT_ORG_STATUS_FILTER_OPTIONS.map((opt) => (
-                        <FormSelectOption key={opt.value} value={opt.value} label={opt.label} />
-                      ))}
-                    </FormSelect>
-                  </div>
+                  </Title>
                 </div>
               </CardHeader>
               <CardBody className="provider-admin-tenant-orgs-card__body">
-                <ProviderTenantOrganizationsTable
-                  wrapClassName="provider-admin-tenant-orgs-card__table-wrap"
-                  statusFilter={tenantOrgStatusFilter}
-                  showActions={false}
-                  showUsersAndVmsColumns={false}
+                <ProviderTenantOrganizationsCards
+                  wrapClassName="provider-admin-tenant-orgs-card__cards-wrap"
+                  statusFilter="Active"
+                  hiddenOrgIds={['union-harbor']}
                 />
               </CardBody>
             </Card>

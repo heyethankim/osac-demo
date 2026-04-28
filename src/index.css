@@ -2771,9 +2771,17 @@ body {
 .provider-admin-tenant-orgs-card.pf-v6-c-card {
   width: 100%;
   min-width: 0;
+  --pf-v6-c-card--BorderWidth: 0;
+  --pf-v6-c-card--BorderColor: transparent;
+  --pf-v6-c-card--BoxShadow: none;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
 }
 
 .provider-admin-tenant-orgs-card__header.pf-v6-c-card__header {
+  padding-inline: 0;
+  padding-top: 0;
   padding-bottom: var(--pf-t--global--spacer--sm);
 }
 
@@ -2805,15 +2813,172 @@ body {
 
 .provider-admin-tenant-orgs-card__body.pf-v6-c-card__body {
   min-width: 0;
+  padding-inline: 0;
+  padding-bottom: 0;
   padding-top: var(--pf-t--global--spacer--sm);
 }
 
-.provider-admin-tenant-orgs-card__table-wrap {
+.provider-admin-tenant-orgs-card__cards-wrap {
   margin-top: 0;
 }
 
-.provider-admin-tenant-orgs-card__table-wrap .provider-tenant-orgs-table {
-  min-width: min(56rem, 100%);
+.provider-tenant-org-cards-wrap {
+  width: 100%;
+  min-width: 0;
+}
+
+.provider-tenant-org-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-tenant-org-cards__empty {
+  margin: 0;
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.provider-tenant-org-preview-card.pf-v6-c-card {
+  min-width: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+.provider-tenant-org-preview-card__body.pf-v6-c-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+  min-width: 0;
+}
+
+.provider-tenant-org-preview-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--md);
+  min-width: 0;
+}
+
+.provider-tenant-org-preview-card__brand {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+}
+
+.provider-tenant-org-preview-card__logo {
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: 999px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  font-size: var(--pf-t--global--font--size--body--sm);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  background: color-mix(in srgb, var(--pf-t--global--color--brand--default) 16%, transparent);
+  color: var(--pf-t--global--color--brand--default);
+}
+
+.provider-tenant-org-preview-card__logo .northstar-masthead-brand__text,
+.provider-tenant-org-preview-card__logo .evergreen-masthead-brand__text {
+  display: none;
+}
+
+.provider-tenant-org-preview-card__logo .northstar-masthead-brand,
+.provider-tenant-org-preview-card__logo .evergreen-masthead-brand {
+  width: 2rem;
+  height: 2rem;
+}
+
+.provider-tenant-org-preview-card__logo .northstar-masthead-brand__ring {
+  background: #fff;
+}
+
+.provider-tenant-org-preview-card__logo .northstar-masthead-brand__mark,
+.provider-tenant-org-preview-card__logo .evergreen-masthead-brand__mark {
+  width: 2rem;
+  height: 2rem;
+}
+
+.provider-tenant-org-generated-mark {
+  width: 2rem;
+  height: 2rem;
+  display: block;
+  object-fit: contain;
+  border-radius: var(--pf-t--global--border--radius--medium);
+}
+
+.provider-tenant-org-generated-mark--summit {
+  width: 2.6rem;
+  height: 2.6rem;
+  object-fit: cover;
+}
+
+.provider-tenant-org-generated-mark--lighthouse {
+  width: 2.6rem;
+  height: 2.6rem;
+  object-fit: cover;
+}
+
+.provider-tenant-org-preview-card__title-wrap {
+  min-width: 0;
+}
+
+.provider-tenant-org-preview-card__title {
+  display: block;
+  margin: 0;
+  font-size: var(--pf-t--global--font--size--body--default);
+  line-height: var(--pf-t--global--font--line-height--body);
+}
+
+.provider-tenant-org-preview-card__subtitle {
+  display: block;
+  margin-top: 0.125rem;
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+.provider-tenant-org-preview-card__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.provider-tenant-org-preview-card__stat {
+  min-width: 0;
+}
+
+.provider-tenant-org-preview-card__stat-label {
+  display: block;
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+.provider-tenant-org-preview-card__stat-value {
+  display: block;
+  margin-top: 0.125rem;
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.provider-tenant-org-preview-card__bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.provider-tenant-org-preview-card__bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 4.5rem) minmax(0, 1fr);
+  gap: var(--pf-t--global--spacer--sm);
+  align-items: center;
+}
+
+.provider-tenant-org-preview-card__bar-label {
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--body--sm);
 }
 
 /* Full tenant organizations page (no dashboard card wrapper): room for Users + VMs columns. */
@@ -2841,11 +3006,95 @@ body {
   color: var(--pf-t--global--color--brand--default);
 }
 
+.provider-resource-allocation-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-resource-allocation-page__cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-resource-allocation-card {
+  min-width: 0;
+}
+
+.provider-resource-allocation-card__values {
+  display: flex;
+  align-items: baseline;
+  gap: var(--pf-t--global--spacer--xs);
+  margin-bottom: var(--pf-t--global--spacer--sm);
+  flex-wrap: wrap;
+}
+
+.provider-resource-allocation-card__used {
+  font-size: var(--pf-t--global--font--size--heading--md);
+  line-height: var(--pf-t--global--font--line-height--heading--md);
+}
+
+.provider-resource-allocation-card__of {
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+.provider-resource-allocation-card__pct {
+  margin-left: auto;
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.provider-resource-allocation-bar {
+  height: var(--pf-t--global--spacer--sm);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  background-color: var(--pf-t--global--color--nonstatus--gray--default);
+  border: var(--pf-t--global--border--width--high-contrast--regular) solid
+    var(--pf-t--global--border--color--high-contrast);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.provider-resource-allocation-bar__fill {
+  height: 100%;
+  background-color: var(--pf-t--global--color--brand--default);
+  transition: width var(--pf-t--global--motion--duration--slide-in--default)
+    var(--pf-t--global--motion--timing-function--default);
+}
+
+.provider-resource-allocation-consumers-card {
+  min-width: 0;
+}
+
+.provider-resource-allocation-consumers-table-wrap {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.provider-resource-allocation-consumers-table {
+  width: 100%;
+  min-width: min(56rem, 100%);
+}
+
+.provider-resource-allocation-consumers-table__metric,
+.provider-resource-allocation-consumers-table__utilization {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.provider-resource-allocation-consumers-table__utilization {
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+}
+
 html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
   background: color-mix(in srgb, var(--pf-t--global--color--brand--default) 26%, transparent);
 }
 
 @media (max-width: 64rem) {
+  .provider-tenant-org-cards-grid,
+  .provider-resource-allocation-page__cards,
   .provider-admin-dashboard-action-cards {
     grid-template-columns: 1fr;
   }
@@ -2946,6 +3195,11 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-card__icon {
   display: flex;
   flex-direction: column;
   gap: var(--pf-t--global--spacer--lg);
+}
+
+/* Provider dashboard: remove extra gap above Tenant organizations block. */
+.provider-admin-dashboard-utilization-section {
+  margin-top: 0;
 }
 
 .osac-dashboard-utilization-layout {

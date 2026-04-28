@@ -1,5 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import {
+  Card,
+  CardBody,
+  Content,
   Dropdown,
   DropdownItem,
   DropdownList,
@@ -9,6 +12,13 @@ import {
 import { EllipsisVIcon } from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon'
 import tableStyles from '@patternfly/react-styles/css/components/Table/table'
 import { DEMO_TENANT_LABEL } from './demoTenant'
+import { NorthstarBankMastheadLogo } from './NorthstarBankMastheadLogo'
+import { EvergreenFinancialGroupMastheadLogo } from './EvergreenFinancialGroupMastheadLogo'
+import {
+  LighthouseCapitalLogo,
+  SummitPeakLogo,
+  UnionHarborLogo,
+} from './ProviderTenantOrgGeneratedLogos'
 
 export type UsageMetric = {
   used: number
@@ -63,6 +73,39 @@ export const PROVIDER_TENANT_ORG_ROWS: ProviderTenantOrgRow[] = [
     gpu: { used: 0, allocated: 4, suffix: ' devices' },
     storage: { used: 0, allocated: 120, suffix: ' TB' },
     status: 'Inactive',
+  },
+  {
+    id: 'summit-peak',
+    organization: 'Summit Peak Bank',
+    users: 29,
+    vms: 76,
+    vcpu: { used: 172, allocated: 380 },
+    ram: { used: 1344, allocated: 2400, suffix: ' GiB' },
+    gpu: { used: 1, allocated: 6, suffix: ' devices' },
+    storage: { used: 74, allocated: 150, suffix: ' TB' },
+    status: 'Active',
+  },
+  {
+    id: 'lighthouse-capital',
+    organization: 'Lighthouse Capital Group',
+    users: 34,
+    vms: 88,
+    vcpu: { used: 201, allocated: 420 },
+    ram: { used: 1508, allocated: 2600, suffix: ' GiB' },
+    gpu: { used: 2, allocated: 6, suffix: ' devices' },
+    storage: { used: 82, allocated: 160, suffix: ' TB' },
+    status: 'Active',
+  },
+  {
+    id: 'union-harbor',
+    organization: 'Union Harbor Trust',
+    users: 22,
+    vms: 61,
+    vcpu: { used: 144, allocated: 320 },
+    ram: { used: 1120, allocated: 2100, suffix: ' GiB' },
+    gpu: { used: 1, allocated: 4, suffix: ' devices' },
+    storage: { used: 59, allocated: 130, suffix: ' TB' },
+    status: 'Active',
   },
   {
     id: 'ridgeworth',
@@ -122,6 +165,37 @@ function statusLabelColor(status: ProviderTenantOrgRow['status']) {
   }
 }
 
+function overallUtilizationPercent(row: ProviderTenantOrgRow) {
+  const metrics = [row.vcpu, row.ram, row.storage]
+  const sum = metrics.reduce((acc, metric) => acc + usagePercent(metric), 0)
+  return Math.round(sum / metrics.length)
+}
+
+function tenantSequenceLabel(rowId: string) {
+  const index = PROVIDER_TENANT_ORG_ROWS.findIndex((row) => row.id === rowId)
+  return `tenant-${String(index + 1).padStart(3, '0')}`
+}
+
+function orgLogoText(organization: string) {
+  const parts = organization.split(/\s+/).filter(Boolean)
+  return (parts[0]?.[0] ?? 'T') + (parts[1]?.[0] ?? parts[0]?.[1] ?? 'O')
+}
+
+function orgBrandLogo(row: ProviderTenantOrgRow): ReactNode {
+  if (row.id === 'northstar') return <NorthstarBankMastheadLogo />
+  if (row.id === 'bluestone') return <EvergreenFinancialGroupMastheadLogo />
+  if (row.id === 'summit-peak')
+    return (
+      <SummitPeakLogo className="provider-tenant-org-generated-mark provider-tenant-org-generated-mark--summit" />
+    )
+  if (row.id === 'lighthouse-capital')
+    return (
+      <LighthouseCapitalLogo className="provider-tenant-org-generated-mark provider-tenant-org-generated-mark--lighthouse" />
+    )
+  if (row.id === 'union-harbor') return <UnionHarborLogo className="provider-tenant-org-generated-mark" />
+  return orgLogoText(row.organization)
+}
+
 export type ProviderTenantOrgStatusFilter = 'all' | ProviderTenantOrgRow['status']
 
 export type ProviderTenantOrganizationsTableProps = {
@@ -135,6 +209,15 @@ export type ProviderTenantOrganizationsTableProps = {
   showUsersAndVmsColumns?: boolean
 }
 
+export type ProviderTenantOrganizationsCardsProps = {
+  /** Extra class on the wrapper (e.g. dashboard card body). */
+  wrapClassName?: string
+  /** When set (e.g. dashboard filter), filter card list by tenant status. */
+  statusFilter?: ProviderTenantOrgStatusFilter
+  /** Optional tenant ids to hide from the dashboard card list. */
+  hiddenOrgIds?: string[]
+}
+
 export const PROVIDER_TENANT_ORG_STATUS_FILTER_OPTIONS: {
   value: ProviderTenantOrgStatusFilter
   label: string
@@ -145,6 +228,106 @@ export const PROVIDER_TENANT_ORG_STATUS_FILTER_OPTIONS: {
   { value: 'Maintenance', label: 'Maintenance' },
   { value: 'Suspended', label: 'Suspended' },
 ]
+
+/** Provider dashboard preview: tenant organizations as cards with usage bars (demo). */
+export function ProviderTenantOrganizationsCards({
+  wrapClassName,
+  statusFilter,
+  hiddenOrgIds = [],
+}: ProviderTenantOrganizationsCardsProps) {
+  const rowsToShow = useMemo(() => {
+    const rows =
+      statusFilter === undefined || statusFilter === 'all'
+        ? PROVIDER_TENANT_ORG_ROWS
+        : PROVIDER_TENANT_ORG_ROWS.filter((r) => r.status === statusFilter)
+    if (hiddenOrgIds.length === 0) return rows
+    return rows.filter((r) => !hiddenOrgIds.includes(r.id))
+  }, [statusFilter, hiddenOrgIds])
+
+  const wrapClass = ['provider-tenant-org-cards-wrap', wrapClassName].filter(Boolean).join(' ')
+
+  if (rowsToShow.length === 0) {
+    return (
+      <div className={wrapClass}>
+        <Content component="p" className="provider-tenant-org-cards__empty">
+          No organizations match the selected status.
+        </Content>
+      </div>
+    )
+  }
+
+  return (
+    <div className={wrapClass}>
+      <div className="provider-tenant-org-cards-grid" role="list" aria-label="Tenant organizations">
+        {rowsToShow.map((row) => {
+          const utilization = overallUtilizationPercent(row)
+          return (
+            <Card
+              key={row.id}
+              component="article"
+              className="provider-tenant-org-preview-card"
+              role="listitem"
+              isFullHeight
+            >
+              <CardBody className="provider-tenant-org-preview-card__body">
+                <div className="provider-tenant-org-preview-card__top">
+                  <div className="provider-tenant-org-preview-card__brand">
+                    <span className="provider-tenant-org-preview-card__logo" aria-hidden>
+                      {orgBrandLogo(row)}
+                    </span>
+                    <div className="provider-tenant-org-preview-card__title-wrap">
+                      <strong className="provider-tenant-org-preview-card__title">{row.organization}</strong>
+                      <span className="provider-tenant-org-preview-card__subtitle">
+                        {tenantSequenceLabel(row.id)}
+                      </span>
+                    </div>
+                  </div>
+                  <Label color={statusLabelColor(row.status)} isCompact>
+                    {row.status}
+                  </Label>
+                </div>
+
+                <div className="provider-tenant-org-preview-card__stats">
+                  <div className="provider-tenant-org-preview-card__stat">
+                    <span className="provider-tenant-org-preview-card__stat-label">Used VMs</span>
+                    <span className="provider-tenant-org-preview-card__stat-value">
+                      {row.vms.toLocaleString('en-US')}
+                    </span>
+                  </div>
+                  <div className="provider-tenant-org-preview-card__stat">
+                    <span className="provider-tenant-org-preview-card__stat-label">Users</span>
+                    <span className="provider-tenant-org-preview-card__stat-value">
+                      {row.users.toLocaleString('en-US')}
+                    </span>
+                  </div>
+                  <div className="provider-tenant-org-preview-card__stat">
+                    <span className="provider-tenant-org-preview-card__stat-label">Utilization</span>
+                    <span className="provider-tenant-org-preview-card__stat-value">{utilization}%</span>
+                  </div>
+                </div>
+
+                <div className="provider-tenant-org-preview-card__bars">
+                  <div className="provider-tenant-org-preview-card__bar-row">
+                    <span className="provider-tenant-org-preview-card__bar-label">vCPU</span>
+                    <TenantOrgUsageBar metric={row.vcpu} />
+                  </div>
+                  <div className="provider-tenant-org-preview-card__bar-row">
+                    <span className="provider-tenant-org-preview-card__bar-label">Memory</span>
+                    <TenantOrgUsageBar metric={row.ram} />
+                  </div>
+                  <div className="provider-tenant-org-preview-card__bar-row">
+                    <span className="provider-tenant-org-preview-card__bar-label">Storage</span>
+                    <TenantOrgUsageBar metric={row.storage} />
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 /** PatternFly table: tenant orgs with usage bars and optional row actions (demo). */
 export function ProviderTenantOrganizationsTable({

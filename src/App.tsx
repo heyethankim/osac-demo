@@ -67,6 +67,7 @@ import {
 } from './ProviderAdminDashboardPage'
 import { ProviderAdminTenantOrganizationsPage } from './ProviderAdminTenantOrganizationsPage'
 import { ProviderAdminUserManagementPage } from './ProviderAdminUserManagementPage'
+import { ProviderAdminResourceAllocationPage } from './ProviderAdminResourceAllocationPage'
 import { ProviderOnboardTenantModal } from './ProviderOnboardTenantModal'
 import {
   Button,
@@ -1246,6 +1247,8 @@ function App() {
                   >
                     {showProviderMgmtUsersPage
                       ? 'Manage provider users and tenant access assignments.'
+                      : showProviderMgmtAllocPage
+                        ? 'Capacity pools, region quotas, and fair-share limits across tenants.'
                       : 'Manage and monitor all tenant organizations.'}
                   </Content>
                 </div>
@@ -1279,11 +1282,7 @@ function App() {
               ) : showProviderMgmtUsersPage ? (
                 <ProviderAdminUserManagementPage />
               ) : showProviderMgmtAllocPage ? (
-                <TenantAdminPlaceholderPage
-                  demoTenantId={demoTenantId}
-                  title="Resource allocation"
-                  lede="Capacity pools, region quotas, and fair-share limits across tenants."
-                />
+                <ProviderAdminResourceAllocationPage />
               ) : showProviderSystemSecurityPage ? (
                 <TenantAdminPlaceholderPage
                   demoTenantId={demoTenantId}
