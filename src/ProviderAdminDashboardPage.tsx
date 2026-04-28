@@ -24,6 +24,7 @@ import {
 
 export type ProviderAdminDashboardNavTarget =
   | 'tenant-organizations'
+  | 'users'
   | 'global-templates'
   | 'resource-allocation'
   | 'system-infrastructure'
@@ -103,8 +104,8 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
       title: 'Total users',
       value: totalUsers,
       hint: 'Unique identities with access across all tenants (demo aggregate).',
-      nav: 'tenant-organizations' as const,
-      aria: 'Open Tenant organizations',
+      nav: 'users' as const,
+      aria: 'Open Users',
     },
     {
       title: 'Global templates',

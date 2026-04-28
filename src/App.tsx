@@ -66,6 +66,7 @@ import {
   type ProviderAdminDashboardNavTarget,
 } from './ProviderAdminDashboardPage'
 import { ProviderAdminTenantOrganizationsPage } from './ProviderAdminTenantOrganizationsPage'
+import { ProviderAdminUserManagementPage } from './ProviderAdminUserManagementPage'
 import { ProviderOnboardTenantModal } from './ProviderOnboardTenantModal'
 import {
   Button,
@@ -172,6 +173,7 @@ const providerDashboardNavId = 'provider-dashboard'
 const providerManagementGroupId = 'nav-provider-management'
 const providerSystemGroupId = 'nav-provider-system'
 const providerMgmtTenantsNavId = 'provider-mgmt-tenant-orgs'
+const providerMgmtUsersNavId = 'provider-mgmt-users'
 const providerMgmtAllocNavId = 'provider-mgmt-resource-allocation'
 const providerMgmtGlobalTemplatesNavId = 'provider-mgmt-global-templates'
 const providerSystemInfraNavId = 'provider-system-infrastructure'
@@ -188,6 +190,7 @@ const providerAdminNavRows: ShellNavRow[] = [
       { id: providerMgmtTenantsNavId, label: 'Tenant organizations' },
       { id: providerMgmtAllocNavId, label: 'Resource allocation' },
       { id: providerMgmtGlobalTemplatesNavId, label: 'Global templates' },
+      { id: providerMgmtUsersNavId, label: 'Users' },
     ],
   },
   {
@@ -544,6 +547,9 @@ function App() {
       case 'tenant-organizations':
         setActiveItem(providerMgmtTenantsNavId)
         break
+      case 'users':
+        setActiveItem(providerMgmtUsersNavId)
+        break
       case 'global-templates':
         setActiveItem(providerMgmtGlobalTemplatesNavId)
         break
@@ -777,6 +783,8 @@ function App() {
     demoShellRole === 'providerAdmin' && activeItem === providerDashboardNavId
   const showProviderMgmtTenantsPage =
     demoShellRole === 'providerAdmin' && activeItem === providerMgmtTenantsNavId
+  const showProviderMgmtUsersPage =
+    demoShellRole === 'providerAdmin' && activeItem === providerMgmtUsersNavId
   const showProviderMgmtAllocPage =
     demoShellRole === 'providerAdmin' && activeItem === providerMgmtAllocNavId
   const showProviderMgmtTemplatesPage =
@@ -1236,7 +1244,9 @@ function App() {
                       fontSize: 'var(--pf-t--global--font--size--body--default)',
                     }}
                   >
-                    Manage and monitor all tenant organizations.
+                    {showProviderMgmtUsersPage
+                      ? 'Manage provider users and tenant access assignments.'
+                      : 'Manage and monitor all tenant organizations.'}
                   </Content>
                 </div>
                 {showProviderMgmtTenantsPage ? (
@@ -1250,6 +1260,12 @@ function App() {
                       Onboard tenant
                     </Button>
                   </div>
+                ) : showProviderMgmtUsersPage ? (
+                  <div className="osac-page-toolbar-sticky__actions">
+                    <Button variant="primary" type="button" onClick={() => {}}>
+                      Add user
+                    </Button>
+                  </div>
                 ) : null}
               </div>
               <ProviderOnboardTenantModal
@@ -1260,6 +1276,8 @@ function App() {
                 <ProviderAdminDashboardPage onNavigate={navigateProviderAdminFromDashboard} />
               ) : showProviderMgmtTenantsPage ? (
                 <ProviderAdminTenantOrganizationsPage />
+              ) : showProviderMgmtUsersPage ? (
+                <ProviderAdminUserManagementPage />
               ) : showProviderMgmtAllocPage ? (
                 <TenantAdminPlaceholderPage
                   demoTenantId={demoTenantId}
