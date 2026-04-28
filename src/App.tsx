@@ -1330,8 +1330,8 @@ function App() {
                 <TenantAdminPlaceholderPage
                   demoTenantId={demoTenantId}
                   title="Security & Compliance"
-                  lede="Platform-wide policies, encryption standards, and audit exports."
                   omitFeatureCard
+                  omitIntro
                 />
               ) : showProviderSystemSettingsPage ? (
                 <TenantAdminPlaceholderPage
