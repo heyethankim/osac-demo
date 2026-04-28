@@ -4912,6 +4912,18 @@ html:has(.osac-role-landing) body {
   }
 }
 
+/* Two-column band only (993px–1200px): extra gap so the vertical divider clears the icon in the next column */
+@media (min-width: 993px) and (max-width: 1200px) {
+  .osac-role-landing__roles {
+    column-gap: var(--pf-t--global--spacer--2xl);
+    row-gap: var(--pf-t--global--spacer--2xl);
+  }
+
+  .osac-role-landing__role-block {
+    padding-inline: clamp(var(--pf-t--global--spacer--2xl), 6vw, 4rem);
+  }
+}
+
 @media (max-width: 992px) {
   .osac-role-landing__roles {
     grid-template-columns: 1fr;
@@ -4922,7 +4934,12 @@ html:has(.osac-role-landing) body {
   }
 
   .osac-role-landing__role-block {
-    padding-inline: clamp(var(--pf-t--global--spacer--xl), 6vw, var(--pf-t--global--spacer--3xl));
+    padding-inline: clamp(var(--pf-t--global--spacer--2xl), 8vw, 4rem);
+  }
+
+  /* Horizontal rule sits above this block — keep the icon stack away from the divider */
+  .osac-role-landing__role-block:not(:first-child) {
+    padding-block-start: var(--pf-t--global--spacer--2xl);
   }
 
   .osac-role-landing__role-block:nth-child(1),
@@ -4941,8 +4958,8 @@ html:has(.osac-role-landing) body {
   .osac-role-landing__role-block:not(:last-child) {
     border-inline-end: none;
     border-block-end: 1px solid var(--osac-landing-divider);
-    padding-block-end: var(--pf-t--global--spacer--2xl);
-    margin-block-end: var(--pf-t--global--spacer--xl);
+    padding-block-end: var(--pf-t--global--spacer--3xl);
+    margin-block-end: var(--pf-t--global--spacer--lg);
   }
 
   .osac-role-landing__role-block:last-child {
@@ -4954,17 +4971,21 @@ html:has(.osac-role-landing) body {
 /* Very narrow viewports: outer + card padding so dividers stay off the icon */
 @media (max-width: 576px) {
   .osac-role-landing {
-    padding-inline: var(--pf-t--global--spacer--md);
+    padding-inline: var(--pf-t--global--spacer--sm);
+    padding-block: var(--pf-t--global--spacer--xl) var(--pf-t--global--spacer--2xl);
   }
 
   .osac-role-landing__combined-card-body.pf-v6-c-card__body {
-    padding-inline: var(--pf-t--global--spacer--md);
-    padding-block: var(--pf-t--global--spacer--md);
+    padding-inline: var(--pf-t--global--spacer--sm);
+    padding-block: var(--pf-t--global--spacer--lg);
   }
 
   .osac-role-landing__role-block {
-    padding-inline: clamp(1.25rem, 7vw, 2.75rem);
-    padding-block-start: var(--pf-t--global--spacer--sm);
+    padding-inline: clamp(1.5rem, 10vw, 3.25rem);
+  }
+
+  .osac-role-landing__role-block:not(:first-child) {
+    padding-block-start: var(--pf-t--global--spacer--3xl);
   }
 }
 
