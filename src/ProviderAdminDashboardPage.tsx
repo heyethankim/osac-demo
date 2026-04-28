@@ -1,8 +1,8 @@
 import type { ComponentType, CSSProperties } from 'react'
 import { useMemo, useState } from 'react'
-import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon'
-import { InfrastructureIcon } from '@patternfly/react-icons/dist/esm/icons/infrastructure-icon'
-import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
+import { CloneIcon } from '@patternfly/react-icons/dist/esm/icons/clone-icon'
+import { CogIcon } from '@patternfly/react-icons/dist/esm/icons/cog-icon'
+import { UserIcon } from '@patternfly/react-icons/dist/esm/icons/user-icon'
 import {
   Card,
   CardBody,
@@ -57,21 +57,21 @@ const QUICK_ACTIONS: {
     title: 'Onboard new tenant',
     hint: 'Register an institution and open their admin workspace.',
     nav: 'tenant-organizations',
-    Icon: PlusCircleIcon,
+    Icon: UserIcon,
     actionAria: 'Start onboarding a new tenant',
   },
   {
     title: 'Deploy global template',
     hint: 'Publish or refresh a platform-wide image or service definition.',
     nav: 'global-templates',
-    Icon: CatalogIcon,
+    Icon: CloneIcon,
     actionAria: 'Open global templates',
   },
   {
     title: 'View system health',
     hint: 'Check infrastructure topology and cross-region signals.',
     nav: 'system-infrastructure',
-    Icon: InfrastructureIcon,
+    Icon: CogIcon,
     actionAria: 'Open system infrastructure',
   },
 ]
