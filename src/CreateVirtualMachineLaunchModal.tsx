@@ -13,7 +13,6 @@ import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon
 import { CloneIcon } from '@patternfly/react-icons/dist/esm/icons/clone-icon'
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
 import { FilterIcon } from '@patternfly/react-icons/dist/esm/icons/filter-icon'
-import { PencilAltIcon } from '@patternfly/react-icons/dist/esm/icons/pencil-alt-icon'
 import { RedhatIcon } from '@patternfly/react-icons/dist/esm/icons/redhat-icon'
 import { WindowsIcon } from '@patternfly/react-icons/dist/esm/icons/windows-icon'
 import { LinuxTuxIcon } from './LinuxTuxIcon'
@@ -103,8 +102,6 @@ export type DeploymentMethod = 'new' | 'template' | 'clone'
 const WIZARD_STEP_INDEX_TEMPLATE_FROM_CATALOG = 5
 /** 1-based Wizard `startIndex` for the clone Source step when opening “Clone” from a VM action. */
 const WIZARD_STEP_INDEX_CLONE_SOURCE = 6
-
-const TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME = 'rhel-ai-infer-01'
 
 const TEMPLATE_REVIEW_SECTIONS_INITIAL: Record<
   | 'details'
@@ -425,15 +422,6 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
   const [templateCustomizationActiveTab, setTemplateCustomizationActiveTab] = useState<
     string | number
   >('details')
-  const [templateHeadlessMode, setTemplateHeadlessMode] = useState(
-    TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.headlessMode,
-  )
-  const [templateGuestLogAccess, setTemplateGuestLogAccess] = useState(
-    TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.guestLogAccess,
-  )
-  const [templateDeletionProtection, setTemplateDeletionProtection] = useState(
-    TEMPLATE_REVIEW_DETAILS_SWITCH_DEFAULTS.deletionProtection,
-  )
   const [cloneSourceVmId, setCloneSourceVmId] = useState('')
   const [cloneNewName, setCloneNewName] = useState('')
   const [templateStepSearch, setTemplateStepSearch] = useState('')
@@ -540,9 +528,6 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
       setSelectedTemplateId('')
       setTemplateVmName('')
       setTemplateCustomizationActiveTab('details')
-      setTemplateHeadlessMode(false)
-      setTemplateGuestLogAccess(true)
-      setTemplateDeletionProtection(true)
       setTemplateReviewSectionsExpanded({ ...TEMPLATE_REVIEW_SECTIONS_INITIAL })
     }
   }, [filteredWizardTemplates, selectedTemplateId])
@@ -568,9 +553,6 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
     setSelectedTemplateId('')
     setTemplateVmName('')
     setTemplateCustomizationActiveTab('details')
-    setTemplateHeadlessMode(false)
-    setTemplateGuestLogAccess(true)
-    setTemplateDeletionProtection(true)
     setTemplateReviewSectionsExpanded({ ...TEMPLATE_REVIEW_SECTIONS_INITIAL })
     setCloneSourceVmId('')
     setCloneNewName('')
@@ -1856,124 +1838,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                       </TabContentBody>
                     </Tab>
                     <Tab eventKey="parameters" title={<TabTitleText>Parameters</TabTitleText>}>
-                      <TabContentBody>
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 'var(--pf-t--global--spacer--md)',
-                          }}
-                        >
-                          <FormGroup
-                            label="Hostname"
-                            fieldId="create-vm-template-detail-hostname-display"
-                          >
-                            <div
-                              id="create-vm-template-detail-hostname-display"
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 'var(--pf-t--global--spacer--sm)',
-                              }}
-                            >
-                              <span>{TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME}</span>
-                              <PencilAltIcon
-                                style={{
-                                  color: 'var(--pf-t--global--text--color--subtle)',
-                                }}
-                                aria-hidden
-                              />
-                            </div>
-                          </FormGroup>
-                          <FormGroup label="Headless mode" fieldId="create-vm-template-headless">
-                            <Switch
-                              id="create-vm-template-headless"
-                              aria-label="Headless mode"
-                              isChecked={templateHeadlessMode}
-                              onChange={(_e, checked) => setTemplateHeadlessMode(checked)}
-                            />
-                          </FormGroup>
-                          <FormGroup
-                            label="Guest system log access"
-                            fieldId="create-vm-template-guest-log"
-                          >
-                            <Switch
-                              id="create-vm-template-guest-log"
-                              aria-label="Guest system log access"
-                              isChecked={templateGuestLogAccess}
-                              onChange={(_e, checked) => setTemplateGuestLogAccess(checked)}
-                            />
-                          </FormGroup>
-                          <FormGroup
-                            label="Deletion protection"
-                            fieldId="create-vm-template-deletion-protection"
-                          >
-                            <Switch
-                              id="create-vm-template-deletion-protection"
-                              aria-label="Deletion protection"
-                              isChecked={templateDeletionProtection}
-                              onChange={(_e, checked) =>
-                                setTemplateDeletionProtection(checked)
-                              }
-                            />
-                          </FormGroup>
-                          <Divider />
-                          <Content
-                            component="p"
-                            style={{
-                              margin: 0,
-                              color: 'var(--pf-t--global--text--color--subtle)',
-                            }}
-                          >
-                            Storage volumes and disks can be configured here.
-                          </Content>
-                          <Content
-                            component="p"
-                            style={{
-                              margin: 0,
-                              color: 'var(--pf-t--global--text--color--subtle)',
-                            }}
-                          >
-                            Network interfaces and policies can be configured here.
-                          </Content>
-                          <Content
-                            component="p"
-                            style={{
-                              margin: 0,
-                              color: 'var(--pf-t--global--text--color--subtle)',
-                            }}
-                          >
-                            SSH keys and access can be configured here.
-                          </Content>
-                          <Content
-                            component="p"
-                            style={{
-                              margin: 0,
-                              color: 'var(--pf-t--global--text--color--subtle)',
-                            }}
-                          >
-                            Node selectors and scheduling rules can be configured here.
-                          </Content>
-                          <Content
-                            component="p"
-                            style={{
-                              margin: 0,
-                              color: 'var(--pf-t--global--text--color--subtle)',
-                            }}
-                          >
-                            First-boot scripts and cloud-init can be configured here.
-                          </Content>
-                          <Content
-                            component="p"
-                            style={{
-                              margin: 0,
-                              color: 'var(--pf-t--global--text--color--subtle)',
-                            }}
-                          >
-                            Labels and annotations can be configured here.
-                          </Content>
-                        </div>
-                      </TabContentBody>
+                      <TabContentBody>{null}</TabContentBody>
                     </Tab>
                   </Tabs>
                 </Form>
@@ -2136,113 +2001,14 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                       }))
                     }
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 'var(--pf-t--global--spacer--md)',
-                      }}
-                    >
-                      <DescriptionList isCompact>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {templateVmName.trim() || '—'}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>Hostname</DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                      </DescriptionList>
-                      <FormGroup label="Headless mode" fieldId="create-vm-review-headless">
-                        <Switch
-                          id="create-vm-review-headless"
-                          aria-label="Headless mode"
-                          isChecked={templateHeadlessMode}
-                          isDisabled
-                        />
-                      </FormGroup>
-                      <FormGroup
-                        label="Guest system log access"
-                        fieldId="create-vm-review-guest-log"
-                      >
-                        <Switch
-                          id="create-vm-review-guest-log"
-                          aria-label="Guest system log access"
-                          isChecked={templateGuestLogAccess}
-                          isDisabled
-                        />
-                      </FormGroup>
-                      <FormGroup
-                        label="Deletion protection"
-                        fieldId="create-vm-review-deletion-protection"
-                      >
-                        <Switch
-                          id="create-vm-review-deletion-protection"
-                          aria-label="Deletion protection"
-                          isChecked={templateDeletionProtection}
-                          isDisabled
-                        />
-                      </FormGroup>
-                      <Divider />
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        {TEMPLATE_REVIEW_STORAGE_CAPTION}
-                      </Content>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        {templateReviewNetworkCaption(selectedTemplateId)}
-                      </Content>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        {TEMPLATE_REVIEW_SSH_CAPTION}
-                      </Content>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        {TEMPLATE_REVIEW_SCHEDULING_CAPTION}
-                      </Content>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        {TEMPLATE_REVIEW_INITIAL_RUN_CAPTION}
-                      </Content>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        {TEMPLATE_REVIEW_METADATA_CAPTION}
-                      </Content>
-                    </div>
+                    <DescriptionList isCompact>
+                      <DescriptionListGroup>
+                        <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
+                        <DescriptionListDescription>
+                          {templateVmName.trim() || '—'}
+                        </DescriptionListDescription>
+                      </DescriptionListGroup>
+                    </DescriptionList>
                   </ExpandableSection>
                 </div>
               )}
