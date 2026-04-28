@@ -1337,8 +1337,8 @@ function App() {
                 <TenantAdminPlaceholderPage
                   demoTenantId={demoTenantId}
                   title="Platform settings"
-                  lede="Feature flags, integrations, maintenance windows, and API endpoints."
                   omitFeatureCard
+                  omitIntro
                 />
               ) : (
                 <ProviderAdminDashboardPage onNavigate={navigateProviderAdminFromDashboard} />
