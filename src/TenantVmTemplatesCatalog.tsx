@@ -44,7 +44,7 @@ type CatalogCardIconProps = Pick<
 
 type CatalogCardIcon = React.ComponentType<CatalogCardIconProps>
 
-type TenantOs = 'rhel' | 'windows' | 'linux'
+export type TenantOs = 'rhel' | 'windows' | 'linux'
 export type TenantWorkloadKey = 'machine-learning' | 'data-processing' | 'high-performance'
 
 /** Sidebar workload checkboxes; templates list every tag they match. */
@@ -140,7 +140,7 @@ export const CARD_CATALOG_WORKLOAD_DISPLAY_LABELS = [
   'Machine learning',
 ] as const
 
-const CATALOG_OS_LABEL: Record<TenantOs, string> = {
+export const CATALOG_OS_LABEL: Record<TenantOs, string> = {
   rhel: 'Red Hat Enterprise Linux',
   windows: 'Microsoft Windows',
   linux: 'Linux',

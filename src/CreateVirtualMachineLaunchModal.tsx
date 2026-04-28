@@ -21,6 +21,8 @@ import {
   CatalogTemplateCardBodyContent,
   CatalogTemplateCardHeaderContent,
   CATALOG_ICON_TILE_BG,
+  CATALOG_OS_LABEL,
+  CATALOG_TEMPLATE_CARD_NETWORK_DEFAULT,
   CATALOG_TEMPLATE_DETAIL_DEFAULTS,
   CATALOG_WORKLOAD_LABEL,
   catalogIconColor,
@@ -106,6 +108,7 @@ const TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME = 'rhel-ai-infer-01'
 
 const TEMPLATE_REVIEW_SECTIONS_INITIAL: Record<
   | 'details'
+  | 'parameters'
   | 'storage'
   | 'network'
   | 'ssh'
@@ -115,6 +118,7 @@ const TEMPLATE_REVIEW_SECTIONS_INITIAL: Record<
   boolean
 > = {
   details: true,
+  parameters: true,
   storage: true,
   network: true,
   ssh: true,
@@ -182,6 +186,13 @@ function cloneWizardStatusLabelColor(
     default:
       return 'grey'
   }
+}
+
+function templateReviewNetworkCaption(templateId: string): string {
+  if (templateId === 'vllm-serve') {
+    return 'Primary NIC is placed on the pre-provisioned frontend public subnet with the tenant HTTP/HTTPS security group — the rails platform engineering prepared for inference workloads.'
+  }
+  return TEMPLATE_REVIEW_NETWORK_CAPTION
 }
 
 function cloneWizardVmResourceCell(label: string, value: string) {
@@ -1745,7 +1756,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                       color: 'var(--pf-t--global--text--color--subtle)',
                     }}
                   >
-                    Customize your virtual machine by exploring the tabs below.
+                    Review template details and optional parameters before you finish.
                   </Content>
                 </div>
                 <Form
@@ -1767,217 +1778,203 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                     id="create-vm-template-customization-tabs"
                     activeKey={templateCustomizationActiveTab}
                     onSelect={(_e, key) => setTemplateCustomizationActiveTab(key)}
-                    aria-label="Virtual machine customization"
+                    aria-label="Template details and parameters"
                     mountOnEnter
-                    isOverflowHorizontal
+                    className="tenant-vm-template-drawer-tabs"
                   >
-                    <Tab eventKey="details" title={<TabTitleText>Overview</TabTitleText>}>
+                    <Tab eventKey="details" title={<TabTitleText>Details</TabTitleText>}>
+                      <TabContentBody>
+                        {selectedCatalogTemplate ? (
+                          <>
+                            <Content
+                              component="p"
+                              style={{
+                                margin: '0 0 var(--pf-t--global--spacer--md)',
+                                color: 'var(--pf-t--global--text--color--subtle)',
+                                fontSize: 'var(--pf-t--global--font--size--body--default)',
+                              }}
+                            >
+                              {selectedCatalogTemplate.subtitle}
+                            </Content>
+                            <div className="tenant-vm-template-detail-stack">
+                              <DescriptionList isCompact aria-label="Template details">
+                                <DescriptionListGroup>
+                                  <DescriptionListTerm>Guest operating system</DescriptionListTerm>
+                                  <DescriptionListDescription>
+                                    {selectedCatalogTemplate.os
+                                      .map((o) => CATALOG_OS_LABEL[o])
+                                      .join(', ')}
+                                  </DescriptionListDescription>
+                                </DescriptionListGroup>
+                                <DescriptionListGroup>
+                                  <DescriptionListTerm>CPU</DescriptionListTerm>
+                                  <DescriptionListDescription>
+                                    {selectedCatalogTemplate.cpu}
+                                  </DescriptionListDescription>
+                                </DescriptionListGroup>
+                                <DescriptionListGroup>
+                                  <DescriptionListTerm>Memory</DescriptionListTerm>
+                                  <DescriptionListDescription>
+                                    {selectedCatalogTemplate.memory}
+                                  </DescriptionListDescription>
+                                </DescriptionListGroup>
+                                <DescriptionListGroup>
+                                  <DescriptionListTerm>Storage</DescriptionListTerm>
+                                  <DescriptionListDescription>
+                                    {selectedCatalogTemplate.diskSize ??
+                                      CATALOG_TEMPLATE_DETAIL_DEFAULTS.diskSize}
+                                  </DescriptionListDescription>
+                                </DescriptionListGroup>
+                                <DescriptionListGroup>
+                                  <DescriptionListTerm>Network</DescriptionListTerm>
+                                  <DescriptionListDescription>
+                                    {selectedCatalogTemplate.cardNetworkDisplay ??
+                                      CATALOG_TEMPLATE_CARD_NETWORK_DEFAULT}
+                                  </DescriptionListDescription>
+                                </DescriptionListGroup>
+                                <DescriptionListGroup>
+                                  <DescriptionListTerm>Workload</DescriptionListTerm>
+                                  <DescriptionListDescription>
+                                    {selectedCatalogTemplate.cardWorkloadDisplay ??
+                                      CATALOG_WORKLOAD_LABEL[selectedCatalogTemplate.workload]}
+                                  </DescriptionListDescription>
+                                </DescriptionListGroup>
+                              </DescriptionList>
+                            </div>
+                          </>
+                        ) : (
+                          <Content
+                            component="p"
+                            style={{
+                              margin: 0,
+                              color: 'var(--pf-t--global--text--color--subtle)',
+                            }}
+                          >
+                            Select a template in the previous step.
+                          </Content>
+                        )}
+                      </TabContentBody>
+                    </Tab>
+                    <Tab eventKey="parameters" title={<TabTitleText>Parameters</TabTitleText>}>
                       <TabContentBody>
                         <div
                           style={{
                             display: 'flex',
-                            flexWrap: 'wrap',
-                            alignItems: 'flex-start',
-                            gap: 'var(--pf-t--global--spacer--lg)',
+                            flexDirection: 'column',
+                            gap: 'var(--pf-t--global--spacer--md)',
                           }}
                         >
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: 'var(--pf-t--global--spacer--md)',
-                              flex: '1 1 14rem',
-                              minWidth: 0,
-                            }}
+                          <FormGroup
+                            label="Hostname"
+                            fieldId="create-vm-template-detail-hostname-display"
                           >
-                            <FormGroup
-                              label="Template"
-                              fieldId="create-vm-template-detail-template-display"
+                            <div
+                              id="create-vm-template-detail-hostname-display"
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 'var(--pf-t--global--spacer--sm)',
+                              }}
                             >
-                              <div id="create-vm-template-detail-template-display">
-                                <span>{selectedCatalogTemplate?.title ?? '—'}</span>
-                              </div>
-                            </FormGroup>
-                            <FormGroup label="CPU" fieldId="create-vm-template-overview-cpu">
-                              <div id="create-vm-template-overview-cpu">
-                                <span>{selectedCatalogTemplate?.cpu ?? '—'}</span>
-                              </div>
-                            </FormGroup>
-                            <FormGroup label="Memory" fieldId="create-vm-template-overview-memory">
-                              <div id="create-vm-template-overview-memory">
-                                <span>{selectedCatalogTemplate?.memory ?? '—'}</span>
-                              </div>
-                            </FormGroup>
-                            <FormGroup
-                              label="Storage"
-                              fieldId="create-vm-template-overview-storage"
-                            >
-                              <div id="create-vm-template-overview-storage">
-                                <span>
-                                  {selectedCatalogTemplate?.diskSize ??
-                                    CATALOG_TEMPLATE_DETAIL_DEFAULTS.diskSize}
-                                </span>
-                              </div>
-                            </FormGroup>
-                            <FormGroup
-                              label="Network"
-                              fieldId="create-vm-template-overview-network"
-                            >
-                              <div id="create-vm-template-overview-network">
-                                <span>
-                                  {selectedCatalogTemplate?.networkType ??
-                                    CATALOG_TEMPLATE_DETAIL_DEFAULTS.networkType}
-                                </span>
-                              </div>
-                            </FormGroup>
-                          </div>
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: 'var(--pf-t--global--spacer--md)',
-                              flex: '1 1 14rem',
-                              minWidth: 0,
-                            }}
-                          >
-                            <FormGroup
-                              label="Hostname"
-                              fieldId="create-vm-template-detail-hostname-display"
-                            >
-                              <div
-                                id="create-vm-template-detail-hostname-display"
+                              <span>{TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME}</span>
+                              <PencilAltIcon
                                 style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 'var(--pf-t--global--spacer--sm)',
+                                  color: 'var(--pf-t--global--text--color--subtle)',
                                 }}
-                              >
-                                <span>{TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME}</span>
-                                <PencilAltIcon
-                                  style={{
-                                    color: 'var(--pf-t--global--text--color--subtle)',
-                                  }}
-                                  aria-hidden
-                                />
-                              </div>
-                            </FormGroup>
-                            <FormGroup label="Headless mode" fieldId="create-vm-template-headless">
-                              <Switch
-                                id="create-vm-template-headless"
-                                aria-label="Headless mode"
-                                isChecked={templateHeadlessMode}
-                                onChange={(_e, checked) => setTemplateHeadlessMode(checked)}
+                                aria-hidden
                               />
-                            </FormGroup>
-                            <FormGroup
-                              label="Guest system log access"
-                              fieldId="create-vm-template-guest-log"
-                            >
-                              <Switch
-                                id="create-vm-template-guest-log"
-                                aria-label="Guest system log access"
-                                isChecked={templateGuestLogAccess}
-                                onChange={(_e, checked) => setTemplateGuestLogAccess(checked)}
-                              />
-                            </FormGroup>
-                            <FormGroup
-                              label="Deletion protection"
-                              fieldId="create-vm-template-deletion-protection"
-                            >
-                              <Switch
-                                id="create-vm-template-deletion-protection"
-                                aria-label="Deletion protection"
-                                isChecked={templateDeletionProtection}
-                                onChange={(_e, checked) =>
-                                  setTemplateDeletionProtection(checked)
-                                }
-                              />
-                            </FormGroup>
-                          </div>
+                            </div>
+                          </FormGroup>
+                          <FormGroup label="Headless mode" fieldId="create-vm-template-headless">
+                            <Switch
+                              id="create-vm-template-headless"
+                              aria-label="Headless mode"
+                              isChecked={templateHeadlessMode}
+                              onChange={(_e, checked) => setTemplateHeadlessMode(checked)}
+                            />
+                          </FormGroup>
+                          <FormGroup
+                            label="Guest system log access"
+                            fieldId="create-vm-template-guest-log"
+                          >
+                            <Switch
+                              id="create-vm-template-guest-log"
+                              aria-label="Guest system log access"
+                              isChecked={templateGuestLogAccess}
+                              onChange={(_e, checked) => setTemplateGuestLogAccess(checked)}
+                            />
+                          </FormGroup>
+                          <FormGroup
+                            label="Deletion protection"
+                            fieldId="create-vm-template-deletion-protection"
+                          >
+                            <Switch
+                              id="create-vm-template-deletion-protection"
+                              aria-label="Deletion protection"
+                              isChecked={templateDeletionProtection}
+                              onChange={(_e, checked) =>
+                                setTemplateDeletionProtection(checked)
+                              }
+                            />
+                          </FormGroup>
+                          <Divider />
+                          <Content
+                            component="p"
+                            style={{
+                              margin: 0,
+                              color: 'var(--pf-t--global--text--color--subtle)',
+                            }}
+                          >
+                            Storage volumes and disks can be configured here.
+                          </Content>
+                          <Content
+                            component="p"
+                            style={{
+                              margin: 0,
+                              color: 'var(--pf-t--global--text--color--subtle)',
+                            }}
+                          >
+                            Network interfaces and policies can be configured here.
+                          </Content>
+                          <Content
+                            component="p"
+                            style={{
+                              margin: 0,
+                              color: 'var(--pf-t--global--text--color--subtle)',
+                            }}
+                          >
+                            SSH keys and access can be configured here.
+                          </Content>
+                          <Content
+                            component="p"
+                            style={{
+                              margin: 0,
+                              color: 'var(--pf-t--global--text--color--subtle)',
+                            }}
+                          >
+                            Node selectors and scheduling rules can be configured here.
+                          </Content>
+                          <Content
+                            component="p"
+                            style={{
+                              margin: 0,
+                              color: 'var(--pf-t--global--text--color--subtle)',
+                            }}
+                          >
+                            First-boot scripts and cloud-init can be configured here.
+                          </Content>
+                          <Content
+                            component="p"
+                            style={{
+                              margin: 0,
+                              color: 'var(--pf-t--global--text--color--subtle)',
+                            }}
+                          >
+                            Labels and annotations can be configured here.
+                          </Content>
                         </div>
                       </TabContentBody>
                     </Tab>
-                  <Tab eventKey="storage" title={<TabTitleText>Storage</TabTitleText>}>
-                    <TabContentBody>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        Storage volumes and disks can be configured here.
-                      </Content>
-                    </TabContentBody>
-                  </Tab>
-                  <Tab eventKey="network" title={<TabTitleText>Network</TabTitleText>}>
-                    <TabContentBody>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        Network interfaces and policies can be configured here.
-                      </Content>
-                    </TabContentBody>
-                  </Tab>
-                  <Tab eventKey="ssh" title={<TabTitleText>SSH</TabTitleText>}>
-                    <TabContentBody>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        SSH keys and access can be configured here.
-                      </Content>
-                    </TabContentBody>
-                  </Tab>
-                  <Tab eventKey="scheduling" title={<TabTitleText>Scheduling</TabTitleText>}>
-                    <TabContentBody>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        Node selectors and scheduling rules can be configured here.
-                      </Content>
-                    </TabContentBody>
-                  </Tab>
-                  <Tab
-                    eventKey="initial-run"
-                    title={<TabTitleText>Initial run</TabTitleText>}
-                  >
-                    <TabContentBody>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        First-boot scripts and cloud-init can be configured here.
-                      </Content>
-                    </TabContentBody>
-                  </Tab>
-                  <Tab eventKey="metadata" title={<TabTitleText>Metadata</TabTitleText>}>
-                    <TabContentBody>
-                      <Content
-                        component="p"
-                        style={{
-                          margin: 0,
-                          color: 'var(--pf-t--global--text--color--subtle)',
-                        }}
-                      >
-                        Labels and annotations can be configured here.
-                      </Content>
-                    </TabContentBody>
-                  </Tab>
                   </Tabs>
                 </Form>
               </div>
@@ -2054,226 +2051,198 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                   }}
                 >
                   <ExpandableSection
-                    toggleText="Overview"
+                    toggleText="Details"
                     isExpanded={templateReviewSectionsExpanded.details}
                     isIndented
                     onToggle={(_e, expanded) =>
                       setTemplateReviewSectionsExpanded((s) => ({ ...s, details: expanded }))
                     }
                   >
+                    {selectedCatalogTemplate ? (
+                      <>
+                        <Content
+                          component="p"
+                          style={{
+                            margin: '0 0 var(--pf-t--global--spacer--md)',
+                            color: 'var(--pf-t--global--text--color--subtle)',
+                            fontSize: 'var(--pf-t--global--font--size--body--default)',
+                          }}
+                        >
+                          {selectedCatalogTemplate.subtitle}
+                        </Content>
+                        <div className="tenant-vm-template-detail-stack">
+                          <DescriptionList isCompact aria-label="Template details">
+                            <DescriptionListGroup>
+                              <DescriptionListTerm>Guest operating system</DescriptionListTerm>
+                              <DescriptionListDescription>
+                                {selectedCatalogTemplate.os
+                                  .map((o) => CATALOG_OS_LABEL[o])
+                                  .join(', ')}
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                            <DescriptionListGroup>
+                              <DescriptionListTerm>CPU</DescriptionListTerm>
+                              <DescriptionListDescription>
+                                {selectedCatalogTemplate.cpu}
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                            <DescriptionListGroup>
+                              <DescriptionListTerm>Memory</DescriptionListTerm>
+                              <DescriptionListDescription>
+                                {selectedCatalogTemplate.memory}
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                            <DescriptionListGroup>
+                              <DescriptionListTerm>Storage</DescriptionListTerm>
+                              <DescriptionListDescription>
+                                {selectedCatalogTemplate.diskSize ??
+                                  CATALOG_TEMPLATE_DETAIL_DEFAULTS.diskSize}
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                            <DescriptionListGroup>
+                              <DescriptionListTerm>Network</DescriptionListTerm>
+                              <DescriptionListDescription>
+                                {selectedCatalogTemplate.cardNetworkDisplay ??
+                                  CATALOG_TEMPLATE_CARD_NETWORK_DEFAULT}
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                            <DescriptionListGroup>
+                              <DescriptionListTerm>Workload</DescriptionListTerm>
+                              <DescriptionListDescription>
+                                {selectedCatalogTemplate.cardWorkloadDisplay ??
+                                  CATALOG_WORKLOAD_LABEL[selectedCatalogTemplate.workload]}
+                              </DescriptionListDescription>
+                            </DescriptionListGroup>
+                          </DescriptionList>
+                        </div>
+                      </>
+                    ) : (
+                      <DescriptionList isCompact>
+                        <DescriptionListGroup>
+                          <DescriptionListTerm>Template</DescriptionListTerm>
+                          <DescriptionListDescription>{selectedTemplateId}</DescriptionListDescription>
+                        </DescriptionListGroup>
+                      </DescriptionList>
+                    )}
+                  </ExpandableSection>
+                  <ExpandableSection
+                    toggleText="Parameters"
+                    isExpanded={templateReviewSectionsExpanded.parameters}
+                    isIndented
+                    onToggle={(_e, expanded) =>
+                      setTemplateReviewSectionsExpanded((s) => ({
+                        ...s,
+                        parameters: expanded,
+                      }))
+                    }
+                  >
                     <div
                       style={{
                         display: 'flex',
-                        flexWrap: 'wrap',
-                        alignItems: 'flex-start',
-                        gap: 'var(--pf-t--global--spacer--lg)',
+                        flexDirection: 'column',
+                        gap: 'var(--pf-t--global--spacer--md)',
                       }}
                     >
-                      <div style={{ flex: '1 1 14rem', minWidth: 0 }}>
-                        <DescriptionList isCompact>
-                          <DescriptionListGroup>
-                            <DescriptionListTerm>Template</DescriptionListTerm>
-                            <DescriptionListDescription>
-                              {selectedCatalogTemplate?.title ?? selectedTemplateId}
-                            </DescriptionListDescription>
-                          </DescriptionListGroup>
-                          <DescriptionListGroup>
-                            <DescriptionListTerm>CPU</DescriptionListTerm>
-                            <DescriptionListDescription>
-                              {selectedCatalogTemplate?.cpu ?? '—'}
-                            </DescriptionListDescription>
-                          </DescriptionListGroup>
-                          <DescriptionListGroup>
-                            <DescriptionListTerm>Memory</DescriptionListTerm>
-                            <DescriptionListDescription>
-                              {selectedCatalogTemplate?.memory ?? '—'}
-                            </DescriptionListDescription>
-                          </DescriptionListGroup>
-                          <DescriptionListGroup>
-                            <DescriptionListTerm>Storage</DescriptionListTerm>
-                            <DescriptionListDescription>
-                              {selectedCatalogTemplate?.diskSize ??
-                                CATALOG_TEMPLATE_DETAIL_DEFAULTS.diskSize}
-                            </DescriptionListDescription>
-                          </DescriptionListGroup>
-                          <DescriptionListGroup>
-                            <DescriptionListTerm>Network</DescriptionListTerm>
-                            <DescriptionListDescription>
-                              {selectedCatalogTemplate?.networkType ??
-                                CATALOG_TEMPLATE_DETAIL_DEFAULTS.networkType}
-                            </DescriptionListDescription>
-                          </DescriptionListGroup>
-                        </DescriptionList>
-                      </div>
-                      <div
+                      <DescriptionList isCompact>
+                        <DescriptionListGroup>
+                          <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
+                          <DescriptionListDescription>
+                            {templateVmName.trim() || '—'}
+                          </DescriptionListDescription>
+                        </DescriptionListGroup>
+                        <DescriptionListGroup>
+                          <DescriptionListTerm>Hostname</DescriptionListTerm>
+                          <DescriptionListDescription>
+                            {TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME}
+                          </DescriptionListDescription>
+                        </DescriptionListGroup>
+                      </DescriptionList>
+                      <FormGroup label="Headless mode" fieldId="create-vm-review-headless">
+                        <Switch
+                          id="create-vm-review-headless"
+                          aria-label="Headless mode"
+                          isChecked={templateHeadlessMode}
+                          isDisabled
+                        />
+                      </FormGroup>
+                      <FormGroup
+                        label="Guest system log access"
+                        fieldId="create-vm-review-guest-log"
+                      >
+                        <Switch
+                          id="create-vm-review-guest-log"
+                          aria-label="Guest system log access"
+                          isChecked={templateGuestLogAccess}
+                          isDisabled
+                        />
+                      </FormGroup>
+                      <FormGroup
+                        label="Deletion protection"
+                        fieldId="create-vm-review-deletion-protection"
+                      >
+                        <Switch
+                          id="create-vm-review-deletion-protection"
+                          aria-label="Deletion protection"
+                          isChecked={templateDeletionProtection}
+                          isDisabled
+                        />
+                      </FormGroup>
+                      <Divider />
+                      <Content
+                        component="p"
                         style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 'var(--pf-t--global--spacer--md)',
-                          flex: '1 1 14rem',
-                          minWidth: 0,
+                          margin: 0,
+                          color: 'var(--pf-t--global--text--color--subtle)',
                         }}
                       >
-                        <DescriptionList isCompact>
-                          <DescriptionListGroup>
-                            <DescriptionListTerm>Virtual machine name</DescriptionListTerm>
-                            <DescriptionListDescription>
-                              {templateVmName.trim() || '—'}
-                            </DescriptionListDescription>
-                          </DescriptionListGroup>
-                          <DescriptionListGroup>
-                            <DescriptionListTerm>Hostname</DescriptionListTerm>
-                            <DescriptionListDescription>
-                              {TEMPLATE_CUSTOMIZATION_DEFAULT_HOSTNAME}
-                            </DescriptionListDescription>
-                          </DescriptionListGroup>
-                        </DescriptionList>
-                        <FormGroup label="Headless mode" fieldId="create-vm-review-headless">
-                          <Switch
-                            id="create-vm-review-headless"
-                            aria-label="Headless mode"
-                            isChecked={templateHeadlessMode}
-                            isDisabled
-                          />
-                        </FormGroup>
-                        <FormGroup
-                          label="Guest system log access"
-                          fieldId="create-vm-review-guest-log"
-                        >
-                          <Switch
-                            id="create-vm-review-guest-log"
-                            aria-label="Guest system log access"
-                            isChecked={templateGuestLogAccess}
-                            isDisabled
-                          />
-                        </FormGroup>
-                        <FormGroup
-                          label="Deletion protection"
-                          fieldId="create-vm-review-deletion-protection"
-                        >
-                          <Switch
-                            id="create-vm-review-deletion-protection"
-                            aria-label="Deletion protection"
-                            isChecked={templateDeletionProtection}
-                            isDisabled
-                          />
-                        </FormGroup>
-                      </div>
+                        {TEMPLATE_REVIEW_STORAGE_CAPTION}
+                      </Content>
+                      <Content
+                        component="p"
+                        style={{
+                          margin: 0,
+                          color: 'var(--pf-t--global--text--color--subtle)',
+                        }}
+                      >
+                        {templateReviewNetworkCaption(selectedTemplateId)}
+                      </Content>
+                      <Content
+                        component="p"
+                        style={{
+                          margin: 0,
+                          color: 'var(--pf-t--global--text--color--subtle)',
+                        }}
+                      >
+                        {TEMPLATE_REVIEW_SSH_CAPTION}
+                      </Content>
+                      <Content
+                        component="p"
+                        style={{
+                          margin: 0,
+                          color: 'var(--pf-t--global--text--color--subtle)',
+                        }}
+                      >
+                        {TEMPLATE_REVIEW_SCHEDULING_CAPTION}
+                      </Content>
+                      <Content
+                        component="p"
+                        style={{
+                          margin: 0,
+                          color: 'var(--pf-t--global--text--color--subtle)',
+                        }}
+                      >
+                        {TEMPLATE_REVIEW_INITIAL_RUN_CAPTION}
+                      </Content>
+                      <Content
+                        component="p"
+                        style={{
+                          margin: 0,
+                          color: 'var(--pf-t--global--text--color--subtle)',
+                        }}
+                      >
+                        {TEMPLATE_REVIEW_METADATA_CAPTION}
+                      </Content>
                     </div>
-                  </ExpandableSection>
-                  <ExpandableSection
-                    toggleText="Storage"
-                    isExpanded={templateReviewSectionsExpanded.storage}
-                    isIndented
-                    onToggle={(_e, expanded) =>
-                      setTemplateReviewSectionsExpanded((s) => ({ ...s, storage: expanded }))
-                    }
-                  >
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_STORAGE_CAPTION}
-                    </Content>
-                  </ExpandableSection>
-                  <ExpandableSection
-                    toggleText="Network"
-                    isExpanded={templateReviewSectionsExpanded.network}
-                    isIndented
-                    onToggle={(_e, expanded) =>
-                      setTemplateReviewSectionsExpanded((s) => ({ ...s, network: expanded }))
-                    }
-                  >
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_NETWORK_CAPTION}
-                    </Content>
-                  </ExpandableSection>
-                  <ExpandableSection
-                    toggleText="SSH"
-                    isExpanded={templateReviewSectionsExpanded.ssh}
-                    isIndented
-                    onToggle={(_e, expanded) =>
-                      setTemplateReviewSectionsExpanded((s) => ({ ...s, ssh: expanded }))
-                    }
-                  >
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_SSH_CAPTION}
-                    </Content>
-                  </ExpandableSection>
-                  <ExpandableSection
-                    toggleText="Scheduling"
-                    isExpanded={templateReviewSectionsExpanded.scheduling}
-                    isIndented
-                    onToggle={(_e, expanded) =>
-                      setTemplateReviewSectionsExpanded((s) => ({
-                        ...s,
-                        scheduling: expanded,
-                      }))
-                    }
-                  >
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_SCHEDULING_CAPTION}
-                    </Content>
-                  </ExpandableSection>
-                  <ExpandableSection
-                    toggleText="Initial run"
-                    isExpanded={templateReviewSectionsExpanded.initialRun}
-                    isIndented
-                    onToggle={(_e, expanded) =>
-                      setTemplateReviewSectionsExpanded((s) => ({
-                        ...s,
-                        initialRun: expanded,
-                      }))
-                    }
-                  >
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_INITIAL_RUN_CAPTION}
-                    </Content>
-                  </ExpandableSection>
-                  <ExpandableSection
-                    toggleText="Metadata"
-                    isExpanded={templateReviewSectionsExpanded.metadata}
-                    isIndented
-                    onToggle={(_e, expanded) =>
-                      setTemplateReviewSectionsExpanded((s) => ({ ...s, metadata: expanded }))
-                    }
-                  >
-                    <Content
-                      component="p"
-                      style={{
-                        margin: 0,
-                        color: 'var(--pf-t--global--text--color--subtle)',
-                      }}
-                    >
-                      {TEMPLATE_REVIEW_METADATA_CAPTION}
-                    </Content>
                   </ExpandableSection>
                 </div>
               )}
@@ -2286,7 +2255,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                   }}
                 >
                   <ExpandableSection
-                    toggleText="Overview"
+                    toggleText="Details"
                     isExpanded={templateReviewSectionsExpanded.details}
                     isIndented
                     onToggle={(_e, expanded) =>
@@ -2428,7 +2397,7 @@ export const CreateVirtualMachineLaunchButton = forwardRef<
                         color: 'var(--pf-t--global--text--color--subtle)',
                       }}
                     >
-                      {TEMPLATE_REVIEW_NETWORK_CAPTION}
+                      {templateReviewNetworkCaption(selectedTemplateId)}
                     </Content>
                   </ExpandableSection>
                   <ExpandableSection
