@@ -1,5 +1,5 @@
 import type { ComponentType, CSSProperties } from 'react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon'
 import { InfrastructureIcon } from '@patternfly/react-icons/dist/esm/icons/infrastructure-icon'
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
@@ -9,6 +9,8 @@ import {
   CardHeader,
   CardTitle,
   Content,
+  FormSelect,
+  FormSelectOption,
   Label,
   Title,
 } from '@patternfly/react-core'
@@ -16,7 +18,9 @@ import { demoVmPowerTotal } from './demoTenant'
 import { buildProviderAdminRecentActivities } from './providerAdminRecentActivitiesDemo'
 import {
   ProviderTenantOrganizationsCards,
+  PROVIDER_TENANT_ORG_STATUS_FILTER_OPTIONS,
   PROVIDER_TENANT_ORG_ROWS,
+  type ProviderTenantOrgStatusFilter,
 } from './ProviderTenantOrganizationsTable'
 
 export type ProviderAdminDashboardNavTarget =
@@ -80,8 +84,11 @@ type ProviderKpiCard = {
   aria?: string
 }
 
+type ProviderDashboardTenantOrgView = 'recent' | ProviderTenantOrgStatusFilter
+
 /** Provider admin — platform overview (demo). */
 export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboardPageProps) {
+  const [tenantOrgView, setTenantOrgView] = useState<ProviderDashboardTenantOrgView>('recent')
   const recentActivities = useMemo(() => buildProviderAdminRecentActivities().slice(0, 5), [])
   const activeOrganizations = useMemo(
     () => PROVIDER_TENANT_ORG_ROWS.filter((row) => row.status === 'Active').length,
@@ -120,6 +127,18 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
       aria: 'Open Global templates',
     },
   ] as const
+
+  const dashboardStatusFilter: ProviderTenantOrgStatusFilter =
+    tenantOrgView === 'recent' ? 'all' : tenantOrgView
+  const recentChangesTenantIds = ['northstar', 'bluestone', 'summit-peak', 'lighthouse-capital']
+
+  const tenantOrgViewOptions: { value: ProviderDashboardTenantOrgView; label: string }[] = [
+    { value: 'recent', label: 'Most recent changes' },
+    ...PROVIDER_TENANT_ORG_STATUS_FILTER_OPTIONS.filter((opt) => opt.value !== 'all').map((opt) => ({
+      value: opt.value,
+      label: `Status: ${opt.label}`,
+    })),
+  ]
 
   return (
     <div className="osac-tenant-admin-page">
@@ -180,12 +199,28 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
                   <Title headingLevel="h2" size="xl" id="provider-admin-dashboard-tenant-orgs-title" style={{ margin: 0 }}>
                     Tenant organizations
                   </Title>
+                  <div className="provider-admin-tenant-orgs-card__filter">
+                    <FormSelect
+                      className="provider-admin-tenant-orgs-card__status-select"
+                      id="provider-admin-tenant-orgs-view-filter"
+                      value={tenantOrgView}
+                      onChange={(_, value) =>
+                        setTenantOrgView(value as ProviderDashboardTenantOrgView)
+                      }
+                      aria-label="Filter tenant organizations"
+                    >
+                      {tenantOrgViewOptions.map((opt) => (
+                        <FormSelectOption key={opt.value} value={opt.value} label={opt.label} />
+                      ))}
+                    </FormSelect>
+                  </div>
                 </div>
               </CardHeader>
               <CardBody className="provider-admin-tenant-orgs-card__body">
                 <ProviderTenantOrganizationsCards
                   wrapClassName="provider-admin-tenant-orgs-card__cards-wrap"
-                  statusFilter="Active"
+                  statusFilter={dashboardStatusFilter}
+                  includedOrgIds={tenantOrgView === 'recent' ? recentChangesTenantIds : undefined}
                   hiddenOrgIds={['union-harbor']}
                 />
               </CardBody>

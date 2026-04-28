@@ -214,6 +214,8 @@ export type ProviderTenantOrganizationsCardsProps = {
   wrapClassName?: string
   /** When set (e.g. dashboard filter), filter card list by tenant status. */
   statusFilter?: ProviderTenantOrgStatusFilter
+  /** Optional tenant ids to include in the dashboard card list. */
+  includedOrgIds?: string[]
   /** Optional tenant ids to hide from the dashboard card list. */
   hiddenOrgIds?: string[]
 }
@@ -233,16 +235,20 @@ export const PROVIDER_TENANT_ORG_STATUS_FILTER_OPTIONS: {
 export function ProviderTenantOrganizationsCards({
   wrapClassName,
   statusFilter,
+  includedOrgIds = [],
   hiddenOrgIds = [],
 }: ProviderTenantOrganizationsCardsProps) {
   const rowsToShow = useMemo(() => {
-    const rows =
+    let rows =
       statusFilter === undefined || statusFilter === 'all'
         ? PROVIDER_TENANT_ORG_ROWS
         : PROVIDER_TENANT_ORG_ROWS.filter((r) => r.status === statusFilter)
+    if (includedOrgIds.length > 0) {
+      rows = rows.filter((r) => includedOrgIds.includes(r.id))
+    }
     if (hiddenOrgIds.length === 0) return rows
     return rows.filter((r) => !hiddenOrgIds.includes(r.id))
-  }, [statusFilter, hiddenOrgIds])
+  }, [statusFilter, includedOrgIds, hiddenOrgIds])
 
   const wrapClass = ['provider-tenant-org-cards-wrap', wrapClassName].filter(Boolean).join(' ')
 

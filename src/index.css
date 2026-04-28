@@ -2807,7 +2807,7 @@ body {
 .provider-admin-tenant-orgs-card__status-select.pf-v6-c-form-control {
   flex: 0 0 auto;
   width: auto;
-  min-width: 11rem;
+  min-width: 14rem;
   max-width: 100%;
 }
 
