@@ -1451,12 +1451,14 @@ function App() {
                   demoTenantId={demoTenantId}
                   title="Organization settings"
                   lede="Branding, identity providers, and tenant-wide defaults."
+                  omitFeatureCard
                 />
               ) : showAdminOrgSecurityPage ? (
                 <TenantAdminPlaceholderPage
                   demoTenantId={demoTenantId}
                   title="Security & Compliance"
                   lede="Audit logs, policy packs, and compliance reporting."
+                  omitFeatureCard
                 />
               ) : (
                 <TenantAdminDashboardPage
