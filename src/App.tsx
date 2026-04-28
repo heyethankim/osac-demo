@@ -1450,15 +1450,15 @@ function App() {
                 <TenantAdminPlaceholderPage
                   demoTenantId={demoTenantId}
                   title="Organization settings"
-                  lede="Branding, identity providers, and tenant-wide defaults."
                   omitFeatureCard
+                  omitIntro
                 />
               ) : showAdminOrgSecurityPage ? (
                 <TenantAdminPlaceholderPage
                   demoTenantId={demoTenantId}
                   title="Security & Compliance"
-                  lede="Audit logs, policy packs, and compliance reporting."
                   omitFeatureCard
+                  omitIntro
                 />
               ) : (
                 <TenantAdminDashboardPage
