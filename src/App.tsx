@@ -1331,12 +1331,14 @@ function App() {
                   demoTenantId={demoTenantId}
                   title="Security & Compliance"
                   lede="Platform-wide policies, encryption standards, and audit exports."
+                  omitFeatureCard
                 />
               ) : showProviderSystemSettingsPage ? (
                 <TenantAdminPlaceholderPage
                   demoTenantId={demoTenantId}
                   title="Platform settings"
                   lede="Feature flags, integrations, maintenance windows, and API endpoints."
+                  omitFeatureCard
                 />
               ) : (
                 <ProviderAdminDashboardPage onNavigate={navigateProviderAdminFromDashboard} />

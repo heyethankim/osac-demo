@@ -1,10 +1,5 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import {
-  Button,
-  Content,
-  Label,
-  Title,
-} from '@patternfly/react-core'
+import { Button, Content, Label } from '@patternfly/react-core'
 import EllipsisVIcon from '@patternfly/react-icons/dist/esm/icons/ellipsis-v-icon'
 import NetworkIcon from '@patternfly/react-icons/dist/esm/icons/network-icon'
 import ShieldAltIcon from '@patternfly/react-icons/dist/esm/icons/shield-alt-icon'
@@ -287,24 +282,6 @@ export function NetworkTopologyPage({
 
   return (
     <div className="osac-network-topology">
-      <div className="osac-network-topology__intro">
-        <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
-          Topology
-        </Title>
-        <Content
-          component="p"
-          className="osac-network-topology__intro-line"
-          style={{
-            margin: 'var(--pf-t--global--spacer--xs) 0 0',
-            color: 'var(--pf-t--global--text--color--subtle)',
-            fontSize: 'var(--pf-t--global--font--size--body--default)',
-          }}
-        >
-          Live view of inventory VMs grouped by workspace virtual networks, primary IPs from NIC
-          summaries, and a shared internal firewall policy hub (demo).
-        </Content>
-      </div>
-
       <div className="osac-network-topology__canvas">
         {vms.length === 0 ? (
           <Content
