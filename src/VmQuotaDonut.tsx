@@ -12,9 +12,11 @@ const QUOTA_UNUSED_FILL_LIGHT = '#c7c7c7'
 export function VmQuotaDonut({
   metric,
   isDarkTheme,
+  variant = 'default',
 }: {
   metric: VmQuotaMetric
   isDarkTheme: boolean
+  variant?: 'default' | 'resource-block'
 }) {
   const { used, limit, stroke } = metric
   const over = used > limit
@@ -30,9 +32,17 @@ export function VmQuotaDonut({
   const usedStr = metric.formatUsed(used)
   const limitStr = metric.formatLimit(limit)
 
+  /* Ring width: between the prior “too thin” (92/96) and original (88/96 default, 76/100 resource). */
+  const innerR = variant === 'resource-block' ? '82%' : '89%'
+  const outerR = variant === 'resource-block' ? '98%' : '96%'
+
   return (
     <div
-      className="osac-dashboard-quota-donut"
+      className={
+        variant === 'resource-block'
+          ? 'osac-dashboard-quota-donut osac-dashboard-quota-donut--resource-block'
+          : 'osac-dashboard-quota-donut'
+      }
       role="img"
       aria-label={`${metric.title}: ${usedStr} out of ${limitStr} ${metric.unit} allocated`}
     >
@@ -48,8 +58,8 @@ export function VmQuotaDonut({
               dataKey="value"
               cx="50%"
               cy="50%"
-              innerRadius="88%"
-              outerRadius="96%"
+              innerRadius={innerR}
+              outerRadius={outerR}
               startAngle={90}
               endAngle={-270}
               stroke="none"

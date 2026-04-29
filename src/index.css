@@ -4179,8 +4179,159 @@ html[data-osac-theme='light']
   }
 }
 
+/* Tenant admin: five resource-style quota cards — row 1: three equal; row 2: two equal (6-col grid). */
+.osac-dashboard-quota-grid.osac-dashboard-quota-grid--resource-blocks {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.osac-dashboard-quota-grid.osac-dashboard-quota-grid--resource-blocks > *:nth-child(-n + 3) {
+  grid-column: span 2;
+}
+
+.osac-dashboard-quota-grid.osac-dashboard-quota-grid--resource-blocks > *:nth-child(n + 4) {
+  grid-column: span 3;
+}
+
+@media (max-width: 48rem) {
+  .osac-dashboard-quota-grid.osac-dashboard-quota-grid--resource-blocks {
+    grid-template-columns: 1fr;
+  }
+
+  .osac-dashboard-quota-grid.osac-dashboard-quota-grid--resource-blocks > * {
+    grid-column: auto;
+  }
+}
+
 .osac-dashboard-quota-card.pf-v6-c-card {
   min-width: 0;
+}
+
+.osac-dashboard-quota-card--resource-block.pf-v6-c-card {
+  border-radius: var(--pf-t--global--border--radius--large);
+  height: 100%;
+}
+
+.osac-dashboard-quota-resource-block.pf-v6-c-card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--pf-t--global--spacer--sm);
+  padding: var(--pf-t--global--spacer--md);
+}
+
+.osac-dashboard-quota-resource-block__header {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+}
+
+.osac-dashboard-quota-resource-block__icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  border-radius: var(--pf-t--global--border--radius--medium);
+}
+
+.osac-dashboard-quota-resource-block__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.osac-dashboard-quota-resource-block__resource-title {
+  margin: 0;
+  font-size: var(--pf-t--global--font--size--body--default);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  line-height: var(--pf-t--global--font--line-height--body);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.osac-dashboard-quota-resource-block__pct {
+  margin-top: var(--pf-t--global--spacer--xs);
+  font-size: var(--pf-t--global--font--size--heading--lg);
+  font-weight: var(--pf-t--global--font--weight--heading--bold);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--pf-t--global--font--line-height--heading);
+  color: var(--pf-t--global--text--color--regular);
+  letter-spacing: -0.02em;
+}
+
+.osac-dashboard-quota-resource-block__subtitle {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+  line-height: var(--pf-t--global--font--line-height--body);
+}
+
+.osac-dashboard-quota-donut--resource-block {
+  max-width: 11rem;
+  margin-inline: auto;
+  margin-top: var(--pf-t--global--spacer--xs);
+}
+
+.osac-dashboard-quota-resource-block__available-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--pf-t--global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--xs);
+  font-size: var(--pf-t--global--font--size--body--default);
+}
+
+.osac-dashboard-quota-resource-block__available-label {
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.osac-dashboard-quota-resource-block__available-value {
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--pf-t--global--color--status--success--default);
+}
+
+.osac-dashboard-quota-resource-block__divider {
+  margin: var(--pf-t--global--spacer--sm) 0;
+  border: 0;
+  border-top: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.osac-dashboard-quota-resource-block__stats {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--xs);
+}
+
+.osac-dashboard-quota-resource-block__stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--pf-t--global--spacer--md);
+  font-size: var(--pf-t--global--font--size--body--sm);
+}
+
+.osac-dashboard-quota-resource-block__stat dt {
+  margin: 0;
+  color: var(--pf-t--global--text--color--subtle);
+  font-weight: var(--pf-t--global--font--weight--body--default);
+}
+
+.osac-dashboard-quota-resource-block__stat dd {
+  margin: 0;
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.osac-dashboard-quota-resource-block__stat-value--success {
+  color: var(--pf-t--global--color--status--success--default) !important;
+}
+
+.osac-dashboard-quota-resource-block__stat-value--danger {
+  color: var(--pf-t--global--color--status--danger--default) !important;
 }
 
 .osac-dashboard-quota-card__body {

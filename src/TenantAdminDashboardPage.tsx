@@ -148,8 +148,7 @@ export function TenantAdminDashboardPage({
                 isDarkTheme={isDarkTheme}
                 fleetVirtualMachines={fleetVirtualMachines}
                 title="Resource quota usage"
-                showUsageBreakdown
-                quotaGridLayout="two-by-two"
+                resourceBlockLayout
                 compactTopSpacing
               />
             </div>
