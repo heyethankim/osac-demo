@@ -5,10 +5,12 @@ import { LockIcon } from '@patternfly/react-icons/dist/esm/icons/lock-icon'
 import { UserIcon } from '@patternfly/react-icons/dist/esm/icons/user-icon'
 import {
   Button,
+  Content,
   Form,
   FormGroup,
   InputGroup,
   InputGroupItem,
+  Spinner,
   TextInput,
   Title,
 } from '@patternfly/react-core'
@@ -165,6 +167,10 @@ export function VertexaCloudLoginPage({
     }
   }, [])
 
+  useEffect(() => {
+    setUsername(defaultUsername)
+  }, [defaultUsername])
+
   useLayoutEffect(() => {
     setPassword(DEMO_LOGIN_PREFILLED_PASSWORD)
   }, [])
@@ -183,9 +189,14 @@ export function VertexaCloudLoginPage({
 
         <p className="vertexa-login__subhead">Provider platform console</p>
 
-        <Title headingLevel="h1" size="2xl" className="vertexa-login__headline">
-          Login
+        <Title headingLevel="h1" size="3xl" className="vertexa-login__headline">
+          Sign in
         </Title>
+
+        <Content component="p" className="vertexa-login__lede">
+          Use your platform administrator email. The demo pre-fills a password — choose <strong>Sign in</strong> to
+          continue.
+        </Content>
 
         <div className="vertexa-login__surface">
           <Form
@@ -197,7 +208,7 @@ export function VertexaCloudLoginPage({
               onLoginSuccess()
             }}
           >
-            <FormGroup fieldId="vx-username" className="vertexa-login__field">
+            <FormGroup label="Email" fieldId="vx-username" className="vertexa-login__field">
               <InputGroup className="vertexa-login__glass-group">
                 <InputGroupItem className="vertexa-login__glass-addon">
                   <UserIcon />
@@ -207,12 +218,12 @@ export function VertexaCloudLoginPage({
                     id="vx-username"
                     name="username"
                     type="email"
-                    placeholder="Email address"
+                    placeholder="you@vertexacloud.com"
                     value={username}
                     onChange={(_e, v) => setUsername(v)}
                     autoComplete="email"
                     validated="default"
-                    aria-label="Email address"
+                    aria-label="Email"
                     isDisabled={isLandingPageLoading}
                     className="vertexa-login__field-input"
                   />
@@ -220,7 +231,7 @@ export function VertexaCloudLoginPage({
               </InputGroup>
             </FormGroup>
 
-            <FormGroup fieldId="vx-password" className="vertexa-login__field">
+            <FormGroup label="Password" fieldId="vx-password" className="vertexa-login__field">
               <InputGroup className="vertexa-login__glass-group">
                 <InputGroupItem className="vertexa-login__glass-addon">
                   <LockIcon />
@@ -247,7 +258,7 @@ export function VertexaCloudLoginPage({
               className="vertexa-login__submit"
               isDisabled={isLandingPageLoading}
             >
-              Login
+              Sign in
             </Button>
 
             {onChooseAnotherInstitution ? (
@@ -275,8 +286,8 @@ export function VertexaCloudLoginPage({
           aria-live="polite"
           aria-busy="true"
         >
-          <div className="vertexa-login__standard-spinner" aria-hidden />
-          <p className="vertexa-login__loading-veil__text">Signing in…</p>
+          <Spinner size="lg" aria-label="Signing in" />
+          <p className="vertexa-login__loading-veil__text">Opening the provider console…</p>
         </div>
       ) : null}
     </div>
