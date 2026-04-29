@@ -181,7 +181,8 @@ function orgLogoText(organization: string) {
   return (parts[0]?.[0] ?? 'T') + (parts[1]?.[0] ?? parts[0]?.[1] ?? 'O')
 }
 
-function orgBrandLogo(row: ProviderTenantOrgRow): ReactNode {
+/** Same marks as the provider admin dashboard tenant org cards (logos + initials fallback). */
+export function providerTenantOrgBrandMark(row: ProviderTenantOrgRow): ReactNode {
   if (row.id === 'northstar') return <NorthstarBankMastheadLogo brandPresentation="providerOrg" />
   if (row.id === 'bluestone') return <EvergreenFinancialGroupMastheadLogo brandPresentation="providerOrg" />
   if (row.id === 'summit-peak')
@@ -278,8 +279,11 @@ export function ProviderTenantOrganizationsCards({
               <CardBody className="provider-tenant-org-preview-card__body">
                 <div className="provider-tenant-org-preview-card__top">
                   <div className="provider-tenant-org-preview-card__brand">
-                    <span className="provider-tenant-org-preview-card__logo" aria-hidden>
-                      {orgBrandLogo(row)}
+                    <span
+                      className="provider-tenant-org-preview-card__logo provider-tenant-org-brand-mark"
+                      aria-hidden
+                    >
+                      {providerTenantOrgBrandMark(row)}
                     </span>
                     <div className="provider-tenant-org-preview-card__title-wrap">
                       <strong className="provider-tenant-org-preview-card__title">{row.organization}</strong>
@@ -420,8 +424,13 @@ export function ProviderTenantOrganizationsTable({
           ) : (
             rowsToShow.map((row) => (
               <tr key={row.id} className={tableStyles.tableTr}>
-                <td className={tableStyles.tableTd} data-label="Organization">
-                  <strong>{row.organization}</strong>
+                <td className={`${tableStyles.tableTd} provider-tenant-orgs-table__td--org`} data-label="Organization">
+                  <span className="provider-tenant-orgs-table__org">
+                    <span className="provider-tenant-org-brand-mark" aria-hidden>
+                      {providerTenantOrgBrandMark(row)}
+                    </span>
+                    <strong>{row.organization}</strong>
+                  </span>
                 </td>
                 {showUsersAndVmsColumns ? (
                   <td
