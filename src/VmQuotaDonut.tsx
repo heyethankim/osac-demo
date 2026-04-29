@@ -32,9 +32,9 @@ export function VmQuotaDonut({
   const usedStr = metric.formatUsed(used)
   const limitStr = metric.formatLimit(limit)
 
-  /* Ring width: between the prior “too thin” (92/96) and original (88/96 default, 76/100 resource). */
-  const innerR = variant === 'resource-block' ? '82%' : '89%'
-  const outerR = variant === 'resource-block' ? '98%' : '96%'
+  /* Same ring geometry as tenant user dashboard quota (default); only card chrome differs for resource-block. */
+  const innerR = '89%'
+  const outerR = '96%'
 
   return (
     <div
