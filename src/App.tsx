@@ -1225,6 +1225,18 @@ function App() {
           showProviderMgmtTemplatesPage ? (
             <TenantVmTemplatesCatalog
               navReselectSeq={catalogNavReselectSeq}
+              pageTitle="Global templates"
+              pageDescription="Publish and manage VM templates available across tenant organizations."
+              toolbarActions={
+                <Button
+                  variant="primary"
+                  type="button"
+                  ouiaId="provider-add-vm-template"
+                  onClick={() => {}}
+                >
+                  Add template
+                </Button>
+              }
               onOpenCreateVirtualMachineWizardFromTemplate={
                 openCreateVirtualMachineWizardFromCatalogTemplate
               }

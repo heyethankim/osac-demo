@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { RedhatIcon } from '@patternfly/react-icons/dist/esm/icons/redhat-icon'
 import { WindowsIcon } from '@patternfly/react-icons/dist/esm/icons/windows-icon'
 import { LinuxTuxIcon } from './LinuxTuxIcon'
@@ -592,11 +592,20 @@ export type TenantVmTemplatesCatalogProps = {
    * section is already active (e.g. close the detail drawer and show the catalog grid).
    */
   navReselectSeq?: number
+  /** Page title in the sticky toolbar (default: tenant “VM templates”). */
+  pageTitle?: string
+  /** Subtitle under the title. */
+  pageDescription?: string
+  /** Primary actions on the right of the title row (e.g. provider “Add template”). */
+  toolbarActions?: ReactNode
 }
 
 export function TenantVmTemplatesCatalog({
   onOpenCreateVirtualMachineWizardFromTemplate,
   navReselectSeq = 0,
+  pageTitle = 'VM templates',
+  pageDescription = 'Browse templates by operating system and workload.',
+  toolbarActions,
 }: TenantVmTemplatesCatalogProps) {
   const [os, setOs] = useState<OsFilters>(initialOs)
   const [wl, setWl] = useState<WorkloadFilters>(initialWl)
@@ -836,10 +845,23 @@ export function TenantVmTemplatesCatalog({
         minWidth: 0,
       }}
     >
-      <div className="osac-page-toolbar-sticky">
+      <div
+        className="osac-page-toolbar-sticky"
+        style={
+          toolbarActions
+            ? {
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                gap: 'var(--pf-t--global--spacer--md)',
+              }
+            : undefined
+        }
+      >
         <div className="osac-page-toolbar-sticky__lead">
           <Title headingLevel="h1" size="2xl" style={{ margin: 0, minWidth: 0 }}>
-            VM templates
+            {pageTitle}
           </Title>
           <Content
             component="p"
@@ -850,9 +872,12 @@ export function TenantVmTemplatesCatalog({
               fontSize: 'var(--pf-t--global--font--size--body--default)',
             }}
           >
-            Browse templates by operating system and workload.
+            {pageDescription}
           </Content>
         </div>
+        {toolbarActions ? (
+          <div className="osac-page-toolbar-sticky__actions">{toolbarActions}</div>
+        ) : null}
       </div>
 
       <div className="tenant-vm-templates-drawer-host">
