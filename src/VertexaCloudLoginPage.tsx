@@ -188,10 +188,11 @@ export function VertexaCloudLoginPage({
 
         <p className="vertexa-login__subhead">Provider platform console</p>
 
+        <Title headingLevel="h1" size="2xl" className="vertexa-login__headline">
+          Login
+        </Title>
+
         <div className="vertexa-login__surface">
-          <Title headingLevel="h1" size="2xl" className="vertexa-login__surface-headline">
-            Login
-          </Title>
           <Form
             autoComplete="off"
             className="vertexa-login__form"

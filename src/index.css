@@ -517,8 +517,8 @@ body {
   }
 }
 
-.vertexa-login__surface-headline.pf-v6-c-title {
-  margin: 0 auto 1.25rem !important;
+.vertexa-login__headline.pf-v6-c-title {
+  margin: 0 auto 1rem !important;
   width: 100%;
   text-align: center;
   color: rgb(255 255 255 / 94%) !important;
