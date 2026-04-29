@@ -8,12 +8,19 @@ import {
 } from './ProviderTenantOrganizationsTable'
 
 type AllocationMetric = {
-  key: 'vcpu' | 'memory' | 'storage'
+  key: 'vcpu' | 'memory' | 'storage' | 'gpu' | 'ai'
   title: string
   used: number
   allocated: number
   unit: string
 }
+
+const GPU_INSTANCE_TYPE_CAPACITY_ITEMS = [
+  'NVIDIA A100 80GB',
+  'NVIDIA H100 SXM5',
+  'NVLink 72-GPU Cluster',
+  'NVIDIA L40S',
+] as const
 
 function usagePercent(metric: UsageMetric): number {
   if (metric.allocated <= 0) return 0
@@ -63,6 +70,20 @@ export function ProviderAdminResourceAllocationPage() {
 
     return [
       {
+        key: 'gpu',
+        title: 'GPU allocation',
+        used: 118,
+        allocated: 160,
+        unit: 'GPUs',
+      },
+      {
+        key: 'ai',
+        title: 'AI instances',
+        used: 86,
+        allocated: 120,
+        unit: 'instances',
+      },
+      {
         key: 'vcpu',
         title: 'vCPU allocation',
         used: vcpuUsed,
@@ -94,10 +115,51 @@ export function ProviderAdminResourceAllocationPage() {
     [],
   )
 
+  const gpuAiMetrics = metrics.filter((m) => m.key === 'gpu' || m.key === 'ai')
+  const coreMetrics = metrics.filter((m) => m.key === 'vcpu' || m.key === 'memory' || m.key === 'storage')
+
   return (
     <div className="osac-tenant-admin-page provider-resource-allocation-page">
+      <div className="provider-resource-allocation-page__row--two">
+        {gpuAiMetrics.map((metric) => {
+          const percent = metricOverallPercent(metric)
+          return (
+            <Card key={metric.key} component="section" className="provider-resource-allocation-card">
+              <CardHeader>
+                <CardTitle component="h2">{metric.title}</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <div className="provider-resource-allocation-card__values">
+                  <strong className="provider-resource-allocation-card__used">
+                    {formatWithUnit(metric.used, metric.unit)}
+                  </strong>
+                  <span className="provider-resource-allocation-card__of">
+                    / {formatWithUnit(metric.allocated, metric.unit)}
+                  </span>
+                  <span className="provider-resource-allocation-card__pct">{percent}%</span>
+                </div>
+                <AllocationUsageBar percent={percent} ariaLabel={`${metric.title} ${percent}% allocated`} />
+              </CardBody>
+            </Card>
+          )
+        })}
+      </div>
+
+      <Card component="section" className="provider-resource-allocation-gpu-types-card">
+        <CardHeader>
+          <CardTitle component="h2">GPU Instance Type Capacity</CardTitle>
+        </CardHeader>
+        <CardBody>
+          <ul className="provider-resource-allocation-gpu-types-list">
+            {GPU_INSTANCE_TYPE_CAPACITY_ITEMS.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </CardBody>
+      </Card>
+
       <div className="provider-resource-allocation-page__cards">
-        {metrics.map((metric) => {
+        {coreMetrics.map((metric) => {
           const percent = metricOverallPercent(metric)
           return (
             <Card key={metric.key} component="section" className="provider-resource-allocation-card">
@@ -183,6 +245,29 @@ export function ProviderAdminResourceAllocationPage() {
           </div>
         </CardBody>
       </Card>
+
+      <div className="provider-resource-allocation-page__footer-cards">
+        <Card component="section" className="provider-resource-allocation-card">
+          <CardHeader>
+            <CardTitle component="h2">Tensor Core Availability</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <Content component="p" style={{ margin: 0 }}>
+              94% of tensor-core pools report healthy scheduling across all regions (demo).
+            </Content>
+          </CardBody>
+        </Card>
+        <Card component="section" className="provider-resource-allocation-card">
+          <CardHeader>
+            <CardTitle component="h2">High-Speed NVMe Storage</CardTitle>
+          </CardHeader>
+          <CardBody>
+            <Content component="p" style={{ margin: 0 }}>
+              3.8 PB provisioned · 2.1 PB in active use · burst tier headroom 18% (demo).
+            </Content>
+          </CardBody>
+        </Card>
+      </div>
     </div>
   )
 }
