@@ -2825,12 +2825,39 @@ body {
 .provider-admin-tenant-orgs-card__body.pf-v6-c-card__body {
   min-width: 0;
   padding-inline: 0;
-  padding-bottom: 0;
-  padding-top: var(--pf-t--global--spacer--sm);
+  padding-bottom: var(--pf-t--global--spacer--xs);
+  padding-top: var(--pf-t--global--spacer--md);
 }
 
 .provider-admin-tenant-orgs-card__cards-wrap {
   margin-top: 0;
+}
+
+/* Provider admin dashboard: more vertical rhythm inside tenant organization previews */
+.provider-admin-tenant-orgs-card .provider-tenant-org-cards-grid {
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.provider-admin-tenant-orgs-card .provider-tenant-org-preview-card.pf-v6-c-card {
+  min-height: 15.5rem;
+}
+
+.provider-admin-tenant-orgs-card .provider-tenant-org-preview-card__body.pf-v6-c-card__body {
+  gap: var(--pf-t--global--spacer--lg);
+  padding-block: var(--pf-t--global--spacer--lg);
+  padding-inline: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-tenant-orgs-card .provider-tenant-org-preview-card__stats {
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-tenant-orgs-card .provider-tenant-org-preview-card__bars {
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-tenant-orgs-card .provider-tenant-org-preview-card__bar-row {
+  gap: var(--pf-t--global--spacer--md);
 }
 
 .provider-tenant-org-cards-wrap {

@@ -188,7 +188,7 @@ type ProviderDashboardTenantOrgView = 'recent' | ProviderTenantOrgStatusFilter
 /** Provider admin — platform overview (demo). */
 export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboardPageProps) {
   const [tenantOrgView, setTenantOrgView] = useState<ProviderDashboardTenantOrgView>('recent')
-  const recentActivities = useMemo(() => buildProviderAdminRecentActivities().slice(0, 4), [])
+  const recentActivities = useMemo(() => buildProviderAdminRecentActivities().slice(0, 5), [])
   const activeOrganizations = useMemo(
     () => PROVIDER_TENANT_ORG_ROWS.filter((row) => row.status === 'Active').length,
     [],

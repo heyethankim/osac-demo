@@ -385,10 +385,15 @@ function App() {
   const [demoShellRole, setDemoShellRole] = useState<DemoShellRole>(
     () => initialAppRouteBootstrap.session.demoShellRole,
   )
-  const demoShellRoleRef = useRef<DemoShellRole>('tenantUser')
+  const demoShellRoleRef = useRef<DemoShellRole>(initialAppRouteBootstrap.session.demoShellRole)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLandingPageLoading, setIsLandingPageLoading] = useState(false)
-  const [activeItem, setActiveItem] = useState<string | number>('dashboard')
+  const [activeItem, setActiveItem] = useState<string | number>(() => {
+    const role = initialAppRouteBootstrap.session.demoShellRole
+    if (role === 'tenantAdmin') return adminDashboardNavId
+    if (role === 'providerAdmin') return providerDashboardNavId
+    return dashboardNavItemId
+  })
   const [isDarkTheme, setIsDarkTheme] = useState(false)
   const [adminManagementNavExpanded, setAdminManagementNavExpanded] = useState(true)
   const [adminInfraNavExpanded, setAdminInfraNavExpanded] = useState(true)
@@ -871,7 +876,9 @@ function App() {
             setActiveItem(
               demoShellRole === 'providerAdmin'
                 ? providerDashboardNavId
-                : dashboardNavItemId,
+                : demoShellRole === 'tenantAdmin'
+                  ? adminDashboardNavId
+                  : dashboardNavItemId,
             )
           }}
         >
@@ -1018,9 +1025,7 @@ function App() {
                         )}
                       </DropdownItem>
                     ) : null}
-                    {showTenantPersonaSwitcher &&
-                    demoShellRole === 'tenantUser' &&
-                    bankTenantUserEntry === 'adminPortal' ? (
+                    {showTenantPersonaSwitcher && demoShellRole === 'tenantUser' ? (
                       <DropdownItem
                         value="switch-tenant-admin"
                         onClick={switchSignedInShellToTenantAdmin}
