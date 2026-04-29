@@ -3020,7 +3020,6 @@ body {
   gap: var(--pf-t--global--spacer--md);
 }
 
-.provider-resource-allocation-page__row--two,
 .provider-resource-allocation-page__footer-cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3029,7 +3028,7 @@ body {
 
 .provider-resource-allocation-page__cards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--pf-t--global--spacer--md);
 }
 
@@ -3119,7 +3118,6 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-pill.pf-v6-c-button {
 @media (max-width: 64rem) {
   .provider-tenant-org-cards-grid,
   .provider-resource-allocation-page__cards,
-  .provider-resource-allocation-page__row--two,
   .provider-resource-allocation-page__footer-cards,
   .provider-admin-dashboard-action-cards {
     grid-template-columns: 1fr;

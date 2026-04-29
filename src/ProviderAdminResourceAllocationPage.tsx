@@ -8,7 +8,7 @@ import {
 } from './ProviderTenantOrganizationsTable'
 
 type AllocationMetric = {
-  key: 'vcpu' | 'memory' | 'storage' | 'gpu' | 'ai'
+  key: 'vcpu' | 'memory' | 'gpu' | 'ai'
   title: string
   used: number
   allocated: number
@@ -65,9 +65,6 @@ export function ProviderAdminResourceAllocationPage() {
     const memoryUsed = PROVIDER_TENANT_ORG_ROWS.reduce((sum, row) => sum + row.ram.used, 0)
     const memoryAlloc = PROVIDER_TENANT_ORG_ROWS.reduce((sum, row) => sum + row.ram.allocated, 0)
 
-    const storageUsed = PROVIDER_TENANT_ORG_ROWS.reduce((sum, row) => sum + row.storage.used, 0)
-    const storageAlloc = PROVIDER_TENANT_ORG_ROWS.reduce((sum, row) => sum + row.storage.allocated, 0)
-
     return [
       {
         key: 'gpu',
@@ -97,13 +94,6 @@ export function ProviderAdminResourceAllocationPage() {
         allocated: memoryAlloc,
         unit: 'GiB',
       },
-      {
-        key: 'storage',
-        title: 'Storage allocation',
-        used: storageUsed,
-        allocated: storageAlloc,
-        unit: 'TB',
-      },
     ]
   }, [])
 
@@ -115,13 +105,10 @@ export function ProviderAdminResourceAllocationPage() {
     [],
   )
 
-  const gpuAiMetrics = metrics.filter((m) => m.key === 'gpu' || m.key === 'ai')
-  const coreMetrics = metrics.filter((m) => m.key === 'vcpu' || m.key === 'memory' || m.key === 'storage')
-
   return (
     <div className="osac-tenant-admin-page provider-resource-allocation-page">
-      <div className="provider-resource-allocation-page__row--two">
-        {gpuAiMetrics.map((metric) => {
+      <div className="provider-resource-allocation-page__cards">
+        {metrics.map((metric) => {
           const percent = metricOverallPercent(metric)
           return (
             <Card key={metric.key} component="section" className="provider-resource-allocation-card">
@@ -157,31 +144,6 @@ export function ProviderAdminResourceAllocationPage() {
           </ul>
         </CardBody>
       </Card>
-
-      <div className="provider-resource-allocation-page__cards">
-        {coreMetrics.map((metric) => {
-          const percent = metricOverallPercent(metric)
-          return (
-            <Card key={metric.key} component="section" className="provider-resource-allocation-card">
-              <CardHeader>
-                <CardTitle component="h2">{metric.title}</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <div className="provider-resource-allocation-card__values">
-                  <strong className="provider-resource-allocation-card__used">
-                    {formatWithUnit(metric.used, metric.unit)}
-                  </strong>
-                  <span className="provider-resource-allocation-card__of">
-                    / {formatWithUnit(metric.allocated, metric.unit)}
-                  </span>
-                  <span className="provider-resource-allocation-card__pct">{percent}%</span>
-                </div>
-                <AllocationUsageBar percent={percent} ariaLabel={`${metric.title} ${percent}% allocated`} />
-              </CardBody>
-            </Card>
-          )
-        })}
-      </div>
 
       <Card component="section" className="provider-resource-allocation-consumers-card">
         <CardHeader>
