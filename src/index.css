@@ -2571,6 +2571,11 @@ body {
 }
 
 .osac-tenant-admin-page {
+  /* Shared with Resource allocation metric cards & provider dashboard KPI icons (see DashboardVmUtilizationSection). */
+  --osac-vm-util-cpu: #4394e5;
+  --osac-vm-util-memory: #73bcf7;
+  --osac-vm-util-gpu: #179d7f;
+  --osac-vm-util-storage: #3e8635;
   display: flex;
   flex-direction: column;
   gap: var(--pf-t--global--spacer--md);
@@ -3036,12 +3041,8 @@ body {
   font-size: var(--pf-t--global--font--size--body--default);
 }
 
-/* Aligns with DashboardVmUtilizationSection / VM_UTILIZATION_CHART_STROKES */
+/* Utilization colors: inherited from .osac-tenant-admin-page (same as dashboard KPI icons). */
 .provider-resource-allocation-page {
-  --osac-vm-util-cpu: #4394e5;
-  --osac-vm-util-memory: #73bcf7;
-  --osac-vm-util-gpu: #179d7f;
-  --osac-vm-util-storage: #3e8635;
   display: flex;
   flex-direction: column;
   gap: var(--pf-t--global--spacer--md);
@@ -3735,6 +3736,73 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-pill.pf-v6-c-button {
 
 .tenant-admin-dashboard-kpi-card {
   min-width: 0;
+}
+
+/* Provider admin — GPU / AI / NVLink platform metric row (reference dashboard cards) */
+.provider-admin-platform-kpi-card__head {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+}
+
+.provider-admin-platform-kpi-card__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Match Resource allocation metric cards: gpu → Bolt, ai → Module, ClusterIcon → vCPU accent */
+.provider-admin-platform-kpi-card__icon--gpu {
+  color: var(--osac-vm-util-gpu);
+}
+
+.provider-admin-platform-kpi-card__icon--ai {
+  color: var(--osac-vm-util-memory);
+}
+
+.provider-admin-platform-kpi-card__icon--nvlink {
+  color: var(--osac-vm-util-cpu);
+}
+
+.provider-admin-platform-kpi-card__title.pf-v6-c-card__title {
+  font-size: var(--pf-t--global--font--size--body--default);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+}
+
+.provider-admin-platform-kpi-card__body.pf-v6-c-card__body {
+  padding-top: var(--pf-t--global--spacer--sm);
+}
+
+.provider-admin-platform-kpi-card__primary {
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.provider-admin-platform-kpi-card:is(:hover, :focus-within) .provider-admin-platform-kpi-card__primary {
+  color: var(--pf-t--global--color--brand--default);
+}
+
+.provider-admin-platform-kpi-card__bar-track {
+  margin-top: var(--pf-t--global--spacer--md);
+  height: 0.375rem;
+  border-radius: var(--pf-t--global--border--radius--pill);
+  background: color-mix(in srgb, var(--pf-t--global--palette--black--900) 12%, transparent);
+  overflow: hidden;
+}
+
+.pf-v6-theme-dark .provider-admin-platform-kpi-card__bar-track {
+  background: color-mix(in srgb, var(--pf-t--global--palette--white) 14%, transparent);
+}
+
+.provider-admin-platform-kpi-card__bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--pf-t--global--palette--black--900);
+}
+
+.pf-v6-theme-dark .provider-admin-platform-kpi-card__bar-fill {
+  background: var(--pf-t--global--palette--white);
 }
 
 /* Clickable dashboard metrics: brand blue (tenant user VM counts, tenant/provider KPI values & quick-action titles). */

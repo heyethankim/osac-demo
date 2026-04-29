@@ -1,7 +1,10 @@
 import type { ComponentType, CSSProperties } from 'react'
 import { useMemo, useState } from 'react'
+import { BoltIcon } from '@patternfly/react-icons/dist/esm/icons/bolt-icon'
 import { CatalogIcon } from '@patternfly/react-icons/dist/esm/icons/catalog-icon'
+import { ClusterIcon } from '@patternfly/react-icons/dist/esm/icons/cluster-icon'
 import { InfrastructureIcon } from '@patternfly/react-icons/dist/esm/icons/infrastructure-icon'
+import { ModuleIcon } from '@patternfly/react-icons/dist/esm/icons/module-icon'
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
 import {
   Button,
@@ -15,7 +18,6 @@ import {
   Label,
   Title,
 } from '@patternfly/react-core'
-import { demoVmPowerTotal } from './demoTenant'
 import { buildProviderAdminRecentActivities } from './providerAdminRecentActivitiesDemo'
 import {
   ProviderTenantOrganizationsCards,
@@ -85,6 +87,102 @@ type ProviderKpiCard = {
   aria?: string
 }
 
+type ProviderPlatformMetricCardConfig = {
+  title: string
+  Icon: QuickActionIcon
+  iconClass: string
+  primary: string
+  hint: string
+  percent: number
+  aria: string
+}
+
+const PROVIDER_PLATFORM_METRIC_CARDS: ProviderPlatformMetricCardConfig[] = [
+  {
+    title: 'GPU Utilization',
+    Icon: BoltIcon,
+    iconClass: 'provider-admin-platform-kpi-card__icon--gpu',
+    primary: '46.2%',
+    hint: '24 / 52 GPUs',
+    percent: 46.2,
+    aria: 'Open Resource allocation, GPU utilization 46.2 percent, 24 of 52 GPUs in use',
+  },
+  {
+    title: 'AI Instances',
+    Icon: ModuleIcon,
+    iconClass: 'provider-admin-platform-kpi-card__icon--ai',
+    primary: '11 / 26',
+    hint: '42% allocated',
+    percent: 42,
+    aria: 'Open Resource allocation, 11 of 26 AI instances, 42 percent allocated',
+  },
+  {
+    title: 'NVLink Clusters',
+    Icon: ClusterIcon,
+    iconClass: 'provider-admin-platform-kpi-card__icon--nvlink',
+    primary: '1 / 2',
+    hint: '72 GPUs per cluster',
+    percent: 50,
+    aria: 'Open Resource allocation, 1 of 2 NVLink clusters, 72 GPUs per cluster',
+  },
+]
+
+function ProviderPlatformMetricCard({
+  title,
+  Icon,
+  iconClass,
+  primary,
+  hint,
+  percent,
+  aria,
+  onOpen,
+}: ProviderPlatformMetricCardConfig & { onOpen: () => void }) {
+  const clamped = Math.min(100, Math.max(0, percent))
+  return (
+    <Card
+      component="article"
+      isFullHeight
+      isClickable
+      className="tenant-admin-dashboard-kpi-card provider-admin-platform-kpi-card"
+    >
+      <CardHeader
+        selectableActions={{
+          onClickAction: onOpen,
+          selectableActionAriaLabel: aria,
+        }}
+      >
+        <div className="provider-admin-platform-kpi-card__head">
+          <span className={`provider-admin-platform-kpi-card__icon ${iconClass}`} aria-hidden>
+            <Icon style={{ width: '1.25rem', height: '1.25rem' }} />
+          </span>
+          <CardTitle component="h2" className="provider-admin-platform-kpi-card__title">
+            {title}
+          </CardTitle>
+        </div>
+      </CardHeader>
+      <CardBody className="provider-admin-platform-kpi-card__body">
+        <Title
+          headingLevel="h3"
+          size="4xl"
+          className="provider-admin-platform-kpi-card__primary"
+          style={{
+            margin: 0,
+            fontVariantNumeric: 'tabular-nums',
+          }}
+        >
+          {primary}
+        </Title>
+        <Content component="p" style={KPI_CARD_HINT_STYLE}>
+          {hint}
+        </Content>
+        <div className="provider-admin-platform-kpi-card__bar-track" aria-hidden>
+          <div className="provider-admin-platform-kpi-card__bar-fill" style={{ width: `${clamped}%` }} />
+        </div>
+      </CardBody>
+    </Card>
+  )
+}
+
 type ProviderDashboardTenantOrgView = 'recent' | ProviderTenantOrgStatusFilter
 
 /** Provider admin — platform overview (demo). */
@@ -95,9 +193,6 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
     () => PROVIDER_TENANT_ORG_ROWS.filter((row) => row.status === 'Active').length,
     [],
   )
-  const totalVms = demoVmPowerTotal('northstar') + demoVmPowerTotal('evergreen')
-  const totalUsers = 84
-  const globalTemplates = 22
 
   const kpiCards: ProviderKpiCard[] = [
     {
@@ -106,26 +201,6 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
       hint: 'Tenants currently consuming capacity on this control plane.',
       nav: 'tenant-organizations' as const,
       aria: 'Open Tenant organizations',
-    },
-    {
-      title: 'Total VMs',
-      value: totalVms,
-      hint: 'Aggregate powered fleet across registered tenant workspaces.',
-      nav: null,
-    },
-    {
-      title: 'Total users',
-      value: totalUsers,
-      hint: 'Unique identities with access across all tenants (demo aggregate).',
-      nav: 'users' as const,
-      aria: 'Open Users',
-    },
-    {
-      title: 'Global templates',
-      value: globalTemplates,
-      hint: 'Published platform-wide images and service definitions.',
-      nav: 'global-templates' as const,
-      aria: 'Open Global templates',
     },
   ] as const
 
@@ -156,7 +231,7 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
               selectableActions={
                 nav
                   ? {
-                      onClickAction: () => onNavigate(nav),
+                      onClickAction: () => onNavigate(nav!),
                       selectableActionAriaLabel: `${title}, ${value}. ${aria}`,
                     }
                   : undefined
@@ -181,6 +256,13 @@ export function ProviderAdminDashboardPage({ onNavigate }: ProviderAdminDashboar
               </Content>
             </CardBody>
           </Card>
+        ))}
+        {PROVIDER_PLATFORM_METRIC_CARDS.map((cfg) => (
+          <ProviderPlatformMetricCard
+            key={cfg.title}
+            {...cfg}
+            onOpen={() => onNavigate('resource-allocation')}
+          />
         ))}
       </div>
 
