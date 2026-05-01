@@ -1258,7 +1258,7 @@ function App() {
             />
           ) : showProviderSystemInfraPage ? (
             <div className="osac-non-catalog-main">
-              <ProviderAdminInfrastructurePage />
+              <ProviderAdminInfrastructurePage isDarkTheme={isDarkTheme} />
             </div>
           ) : showProviderSystemSecurityPage ? (
             <div className="osac-non-catalog-main">

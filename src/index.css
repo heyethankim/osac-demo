@@ -3171,11 +3171,32 @@ body {
   --pf-v6-l-gallery--GridTemplateColumns: repeat(1, minmax(0, 1fr));
 }
 
+/* Footer compliance cards: content-height rows, not stretched to match sibling. */
+.provider-admin-infrastructure-page__footer-cards.pf-v6-l-gallery {
+  align-items: start;
+}
+
 @media (min-width: 36rem) {
   .provider-admin-infrastructure-page__detail-cards.pf-v6-l-gallery,
   .provider-admin-infrastructure-page__footer-cards.pf-v6-l-gallery {
     --pf-v6-l-gallery--GridTemplateColumns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* Detail cards in one row share height; bodies flex so charts can grow to the bottom. */
+.provider-admin-infrastructure-page__detail-cards.pf-v6-l-gallery {
+  align-items: stretch;
+}
+
+.provider-admin-infrastructure-page__detail-cards.pf-v6-l-gallery > * {
+  display: flex;
+  min-height: 0;
+}
+
+.provider-admin-infrastructure-page__detail-cards.pf-v6-l-gallery > * > * {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
 }
 
 .provider-admin-infra-stat-card.pf-v6-c-card {
@@ -3225,6 +3246,19 @@ body {
   min-width: 0;
 }
 
+.provider-admin-infra-detail-card--compute.pf-v6-c-card,
+.provider-admin-infra-detail-card--aiml.pf-v6-c-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.provider-admin-infra-detail-card__body--fill.pf-v6-c-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .provider-admin-infra-detail-card__subtitle {
   margin: var(--pf-t--global--spacer--xs) 0 0 !important;
   font-size: var(--pf-t--global--font--size--body--sm) !important;
@@ -3236,6 +3270,74 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-infra-chart {
+  width: 100%;
+  min-width: 0;
+  margin-top: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-infra-chart--compute {
+  flex: 1 1 auto;
+  min-height: 10rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.provider-admin-infra-chart--compute > .recharts-responsive-container {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100% !important;
+}
+
+/* AI/ML: donut SVG in a fixed-width column + HTML legend beside it (Recharts Legend spans full width). */
+.provider-admin-infra-aiml-donut-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pf-t--global--spacer--lg);
+  width: 100%;
+  min-width: 0;
+}
+
+.provider-admin-infra-aiml-donut-chart-wrap {
+  flex: 0 0 auto;
+  width: min(16.5rem, 42vw);
+  max-width: 17rem;
+  height: 16.25rem;
+  min-height: 14rem;
+}
+
+.provider-admin-infra-aiml-donut-chart-wrap .recharts-responsive-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.provider-admin-infra-aiml-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+}
+
+.provider-admin-infra-aiml-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+  font-size: var(--pf-t--global--font--size--body--default);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.provider-admin-infra-aiml-legend__swatch {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .provider-admin-infra-detail-card--aiml.pf-v6-c-card {
@@ -3508,9 +3610,64 @@ body {
 
 .provider-admin-infra-compliance-list__check {
   flex-shrink: 0;
-  width: 1.125rem;
-  height: 1.125rem;
-  color: var(--pf-t--global--palette--green--400);
+  width: 1.375rem;
+  height: 1.375rem;
+  color: var(--pf-t--global--color--status--success--default);
+}
+
+.provider-admin-infra-compliance-list__check svg {
+  fill: currentColor;
+}
+
+/* Infrastructure footer: Data sovereignty + High availability — larger copy, compact height */
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-card.pf-v6-c-card {
+  height: auto;
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-card > .pf-v6-c-card__body {
+  padding-block: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-card__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-card__icon svg {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-card__head {
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-card__lede {
+  margin: var(--pf-t--global--spacer--xs) 0 0 !important;
+  font-size: var(--pf-t--global--font--size--body--default) !important;
+  line-height: 1.35;
+  color: var(--pf-t--global--text--color--subtle) !important;
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-list__label {
+  font-size: var(--pf-t--global--font--size--body--default);
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-list__value {
+  font-size: var(--pf-t--global--font--size--body--default);
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-list__text {
+  gap: 0;
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-list__item {
+  padding: var(--pf-t--global--spacer--sm) 0;
+}
+
+.provider-admin-infrastructure-page__footer-cards .provider-admin-infra-compliance-list__check {
+  width: 1.375rem;
+  height: 1.375rem;
 }
 
 /* Provider admin — Security & compliance */

@@ -6,42 +6,7 @@ import { GlobeIcon } from '@patternfly/react-icons/dist/esm/icons/globe-icon'
 import { MicrochipIcon } from '@patternfly/react-icons/dist/esm/icons/microchip-icon'
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
 import { ShieldAltIcon } from '@patternfly/react-icons/dist/esm/icons/shield-alt-icon'
-
-function clampPct(n: number): number {
-  return Math.min(100, Math.max(0, n))
-}
-
-function InfraProgressRow({
-  label,
-  used,
-  total,
-  valueLabel,
-}: {
-  label: string
-  used: number
-  total: number
-  valueLabel: string
-}) {
-  const pct = total > 0 ? clampPct((used / total) * 100) : 0
-  return (
-    <div className="provider-admin-infra-progress-row">
-      <div className="provider-admin-infra-progress-row__head">
-        <span className="provider-admin-infra-progress-row__label">{label}</span>
-        <span className="provider-admin-infra-progress-row__value">{valueLabel}</span>
-      </div>
-      <div
-        className="provider-admin-infra-progress-bar"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(pct)}
-        aria-label={`${label}, ${Math.round(pct)} percent`}
-      >
-        <div className="provider-admin-infra-progress-bar__fill" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  )
-}
+import { InfraAiGpuAllocationDonut, InfraComputeUtilizationBarChart } from './ProviderAdminInfrastructureCharts'
 
 const LONDON_AZS = [
   {
@@ -58,7 +23,7 @@ const LONDON_AZS = [
     title: 'London AZ-2 (Slough)',
     facility: 'Equinix LD8',
     servers: 1588,
-    utilizationPct: 71,
+    utilizationPct: 65,
     gpuNodes: 88,
     latencyMs: '1.1',
   },
@@ -73,8 +38,12 @@ const LONDON_AZS = [
   },
 ] as const
 
+export type ProviderAdminInfrastructurePageProps = {
+  isDarkTheme: boolean
+}
+
 /** Provider admin — London region infrastructure overview (demo). */
-export function ProviderAdminInfrastructurePage() {
+export function ProviderAdminInfrastructurePage({ isDarkTheme }: ProviderAdminInfrastructurePageProps) {
   return (
     <div className="provider-admin-infrastructure-page">
       <div
@@ -175,30 +144,21 @@ export function ProviderAdminInfrastructurePage() {
 
       <Gallery hasGutter className="provider-admin-infrastructure-page__detail-cards">
         <GalleryItem>
-          <Card component="section" className="provider-admin-infra-detail-card">
-            <CardBody>
+          <Card component="section" className="provider-admin-infra-detail-card provider-admin-infra-detail-card--compute">
+            <CardBody className="provider-admin-infra-detail-card__body--fill">
               <Title headingLevel="h2" size="lg" style={{ margin: 0 }}>
                 Compute resources
               </Title>
               <Content component="p" className="provider-admin-infra-detail-card__subtitle">
-                Total London region capacity utilization
+                Utilization as a percent of allocated London region capacity (hover bars for raw totals).
               </Content>
-              <div className="provider-admin-infra-detail-card__progress-stack">
-                <InfraProgressRow
-                  label="Total vCPU cores"
-                  used={28560}
-                  total={40000}
-                  valueLabel="28,560 / 40,000"
-                />
-                <InfraProgressRow label="Total RAM" used={142} total={200} valueLabel="142 TB / 200 TB" />
-                <InfraProgressRow label="Total storage" used={3.2} total={4.5} valueLabel="3.2 PB / 4.5 PB" />
-              </div>
+              <InfraComputeUtilizationBarChart isDarkTheme={isDarkTheme} />
             </CardBody>
           </Card>
         </GalleryItem>
         <GalleryItem>
           <Card component="section" className="provider-admin-infra-detail-card provider-admin-infra-detail-card--aiml">
-            <CardBody>
+            <CardBody className="provider-admin-infra-detail-card__body--fill">
               <div className="provider-admin-infra-detail-card__aiml-head">
                 <span className="provider-admin-infra-detail-card__aiml-icon" aria-hidden>
                   <MicrochipIcon />
@@ -208,15 +168,11 @@ export function ProviderAdminInfrastructurePage() {
                     AI/ML infrastructure
                   </Title>
                   <Content component="p" className="provider-admin-infra-detail-card__subtitle">
-                    Specialized GPU infrastructure status
+                    Fleet mix by accelerator category (donut proportional to in-use units; hover for limits).
                   </Content>
                 </div>
               </div>
-              <div className="provider-admin-infra-detail-card__progress-stack">
-                <InfraProgressRow label="NVIDIA A100 GPUs" used={132} total={180} valueLabel="132 / 180" />
-                <InfraProgressRow label="NVIDIA H100 GPUs" used={68} total={100} valueLabel="68 / 100" />
-                <InfraProgressRow label="NVLink clusters" used={12} total={16} valueLabel="12 / 16" />
-              </div>
+              <InfraAiGpuAllocationDonut isDarkTheme={isDarkTheme} />
             </CardBody>
           </Card>
         </GalleryItem>
@@ -288,10 +244,10 @@ export function ProviderAdminInfrastructurePage() {
                   <GlobeIcon />
                 </span>
                 <div>
-                  <Title headingLevel="h2" size="lg" style={{ margin: 0 }}>
+                  <Title headingLevel="h2" size="xl" style={{ margin: 0 }}>
                     Data sovereignty
                   </Title>
-                  <Content component="p" className="provider-admin-infra-detail-card__subtitle">
+                  <Content component="p" className="provider-admin-infra-compliance-card__lede">
                     All infrastructure located in the United Kingdom
                   </Content>
                 </div>
@@ -303,9 +259,7 @@ export function ProviderAdminInfrastructurePage() {
                       <span className="provider-admin-infra-compliance-list__label">Geographic region</span>
                       <span className="provider-admin-infra-compliance-list__value">London, United Kingdom</span>
                     </div>
-                    <Label color="blue" isCompact>
-                      UK GDPR compliant
-                    </Label>
+                    <Label color="blue">UK GDPR compliant</Label>
                   </div>
                 </li>
                 <li className="provider-admin-infra-compliance-list__item">
@@ -338,10 +292,10 @@ export function ProviderAdminInfrastructurePage() {
                   <ShieldAltIcon />
                 </span>
                 <div>
-                  <Title headingLevel="h2" size="lg" style={{ margin: 0 }}>
+                  <Title headingLevel="h2" size="xl" style={{ margin: 0 }}>
                     High availability
                   </Title>
-                  <Content component="p" className="provider-admin-infra-detail-card__subtitle">
+                  <Content component="p" className="provider-admin-infra-compliance-card__lede">
                     Multi-AZ redundancy configuration
                   </Content>
                 </div>
@@ -353,9 +307,7 @@ export function ProviderAdminInfrastructurePage() {
                       <span className="provider-admin-infra-compliance-list__label">Cross-AZ replication</span>
                       <span className="provider-admin-infra-compliance-list__value">3 availability zones active</span>
                     </div>
-                    <Label color="green" isCompact>
-                      Active
-                    </Label>
+                    <Label color="green">Active</Label>
                   </div>
                 </li>
                 <li className="provider-admin-infra-compliance-list__item">
@@ -373,9 +325,7 @@ export function ProviderAdminInfrastructurePage() {
                       <span className="provider-admin-infra-compliance-list__label">Uptime SLA</span>
                       <span className="provider-admin-infra-compliance-list__value">99.99% availability guarantee</span>
                     </div>
-                    <Label color="purple" isCompact>
-                      Four nines
-                    </Label>
+                    <Label color="purple">Four nines</Label>
                   </div>
                 </li>
               </ul>
