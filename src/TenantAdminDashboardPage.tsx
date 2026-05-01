@@ -12,6 +12,7 @@ import {
 import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
 import { UserIcon } from '@patternfly/react-icons/dist/esm/icons/user-icon'
 import { DashboardVmQuotaSection } from './DashboardVmQuotaSection'
+import { VM_UTILIZATION_CHART_STROKES } from './dashboardVmUtilizationDemo'
 import type { DemoTenantId } from './demoTenant'
 import type { TenantVirtualMachine } from './TenantVirtualMachinesPage'
 import { buildTenantAdminRecentActivities } from './tenantAdminRecentActivitiesDemo'
@@ -157,6 +158,7 @@ export function TenantAdminDashboardPage({
                 title="Resource quota usage"
                 resourceBlockLayout
                 compactTopSpacing
+                quotaDonutUsedFill={VM_UTILIZATION_CHART_STROKES.cpu}
               />
             </div>
           </div>

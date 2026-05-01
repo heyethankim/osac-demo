@@ -13,10 +13,13 @@ export function VmQuotaDonut({
   metric,
   isDarkTheme,
   variant = 'default',
+  usedFillOverride,
 }: {
   metric: VmQuotaMetric
   isDarkTheme: boolean
   variant?: 'default' | 'resource-block'
+  /** When set, color for the “used” sector (default: metric.stroke). Over-quota stays danger red. */
+  usedFillOverride?: string
 }) {
   const { used, limit, stroke } = metric
   const over = used > limit
@@ -26,7 +29,7 @@ export function VmQuotaDonut({
     { name: 'used', value: filled },
     { name: 'available', value: remainder },
   ]
-  const fillUsed = over ? OVER_QUOTA_FILL : stroke
+  const fillUsed = over ? OVER_QUOTA_FILL : usedFillOverride ?? stroke
   const fillAvail = isDarkTheme ? VM_UTILIZATION_CHART_GRID_STROKE : QUOTA_UNUSED_FILL_LIGHT
 
   const usedStr = metric.formatUsed(used)

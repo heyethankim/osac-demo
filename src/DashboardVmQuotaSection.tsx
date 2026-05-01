@@ -37,6 +37,8 @@ export type DashboardVmQuotaSectionProps = {
    * Uses the same VM utilization stroke palette; adds an AI instances card (accent = memory stroke).
    */
   resourceBlockLayout?: boolean
+  /** Used-sector fill for every quota donut (e.g. tenant admin: single chart blue). Ignored when over quota. */
+  quotaDonutUsedFill?: string
 }
 
 type QuotaIcon = ComponentType<{ className?: string; style?: CSSProperties }>
@@ -71,9 +73,11 @@ function quotaUtilizationPctOneDecimal(used: number, limit: number): string {
 function ResourceQuotaBlockCard({
   m,
   isDarkTheme,
+  quotaDonutUsedFill,
 }: {
   m: VmQuotaMetric
   isDarkTheme: boolean
+  quotaDonutUsedFill?: string
 }) {
   const copy = RESOURCE_BLOCK_COPY[m.key]
   const Icon = RESOURCE_BLOCK_ICONS[m.key]
@@ -83,6 +87,7 @@ function ResourceQuotaBlockCard({
   const usedStr = m.formatUsed(m.used)
   const limitStr = m.formatLimit(m.limit)
   const over = m.used > m.limit
+  const accentColor = quotaDonutUsedFill ?? m.stroke
 
   return (
     <Card className="osac-dashboard-quota-card osac-dashboard-quota-card--resource-block" component="article">
@@ -91,8 +96,8 @@ function ResourceQuotaBlockCard({
           <span
             className="osac-dashboard-quota-resource-block__icon-wrap"
             style={{
-              color: m.stroke,
-              background: `color-mix(in srgb, ${m.stroke} 14%, transparent)`,
+              color: accentColor,
+              background: `color-mix(in srgb, ${accentColor} 14%, transparent)`,
             }}
             aria-hidden
           >
@@ -104,7 +109,12 @@ function ResourceQuotaBlockCard({
           {pctStr}%
         </div>
         <div className="osac-dashboard-quota-resource-block__subtitle">{copy.subtitle}</div>
-        <VmQuotaDonut metric={m} isDarkTheme={isDarkTheme} variant="resource-block" />
+        <VmQuotaDonut
+          metric={m}
+          isDarkTheme={isDarkTheme}
+          variant="resource-block"
+          usedFillOverride={quotaDonutUsedFill}
+        />
         <div className="osac-dashboard-quota-resource-block__available-row">
           <span className="osac-dashboard-quota-resource-block__available-label">Available</span>
           <span className="osac-dashboard-quota-resource-block__available-value">
@@ -127,28 +137,9 @@ function ResourceQuotaBlockCard({
                   ? 'osac-dashboard-quota-resource-block__stat-value osac-dashboard-quota-resource-block__stat-value--danger'
                   : 'osac-dashboard-quota-resource-block__stat-value osac-dashboard-quota-resource-block__stat-value--accent'
               }
-              style={!over ? { color: m.stroke } : undefined}
+              style={!over ? { color: accentColor } : undefined}
             >
               {usedStr} {m.unit}
-            </dd>
-          </div>
-          <div className="osac-dashboard-quota-resource-block__stat">
-            <dt>Available</dt>
-            <dd className="osac-dashboard-quota-resource-block__stat-value osac-dashboard-quota-resource-block__stat-value--success">
-              {availStr} {m.unit}
-            </dd>
-          </div>
-          <div className="osac-dashboard-quota-resource-block__stat">
-            <dt>Utilization</dt>
-            <dd
-              className={
-                over
-                  ? 'osac-dashboard-quota-resource-block__stat-value osac-dashboard-quota-resource-block__stat-value--danger'
-                  : 'osac-dashboard-quota-resource-block__stat-value'
-              }
-              style={!over ? { color: m.stroke } : undefined}
-            >
-              {pctStr}%
             </dd>
           </div>
         </dl>
@@ -167,6 +158,7 @@ export function DashboardVmQuotaSection({
   compactTopSpacing = false,
   tenantUserPersona,
   resourceBlockLayout = false,
+  quotaDonutUsedFill,
 }: DashboardVmQuotaSectionProps) {
   const headingId = useId()
   const metrics = useMemo(
@@ -208,7 +200,12 @@ export function DashboardVmQuotaSection({
       <div className={gridClass}>
         {resourceBlockLayout
           ? metrics.map((m) => (
-              <ResourceQuotaBlockCard key={m.key} m={m} isDarkTheme={isDarkTheme} />
+              <ResourceQuotaBlockCard
+                key={m.key}
+                m={m}
+                isDarkTheme={isDarkTheme}
+                quotaDonutUsedFill={quotaDonutUsedFill}
+              />
             ))
           : metrics.map((m) => {
               const pctRounded = m.limit > 0 ? Math.round((m.used / m.limit) * 100) : 0
@@ -234,7 +231,7 @@ export function DashboardVmQuotaSection({
                         <span className="osac-dashboard-quota-card__allocation-pct-value">{pctRounded}%</span>
                       </div>
                     ) : null}
-                    <VmQuotaDonut metric={m} isDarkTheme={isDarkTheme} />
+                    <VmQuotaDonut metric={m} isDarkTheme={isDarkTheme} usedFillOverride={quotaDonutUsedFill} />
                     {showUsageBreakdown ? (
                       <div className="osac-dashboard-quota-card__availability">
                         {availStr} {m.unit} available
