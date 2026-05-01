@@ -2569,6 +2569,61 @@ body {
   min-height: 0;
 }
 
+/* Tenant admin Organization settings / Security: nested PageSection uses PatternFly main-section spacing; form spans content width */
+.osac-tenant-admin-page .tenant-admin-settings-page-section.pf-v6-c-page__main-section {
+  padding-block-start: 0;
+  padding-inline: 0;
+}
+
+.osac-tenant-admin-page .tenant-admin-settings-form.pf-v6-c-form {
+  width: 100%;
+  max-width: none;
+}
+
+.tenant-admin-security-form.pf-v6-c-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.tenant-admin-security-toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--md);
+  padding-bottom: var(--pf-t--global--spacer--lg);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.tenant-admin-security-toggle-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.tenant-admin-security-toggle-row__text {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.tenant-admin-security-toggle-row__title {
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  font-size: var(--pf-t--global--font--size--body--default);
+  line-height: var(--pf-t--global--font--line-height--body);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.tenant-admin-security-toggle-row__description {
+  margin: var(--pf-t--global--spacer--sm) 0 0 !important;
+  font-size: var(--pf-t--global--font--size--body--default) !important;
+  color: var(--pf-t--global--text--color--subtle) !important;
+  line-height: var(--pf-t--global--font--line-height--body) !important;
+}
+
+.tenant-admin-security-toggle-row .pf-v6-c-switch {
+  flex-shrink: 0;
+}
+
 .osac-tenant-admin-page {
   /* Shared with Resource allocation metric cards & provider dashboard KPI icons (see DashboardVmUtilizationSection). */
   --osac-vm-util-cpu: #4394e5;
@@ -3065,6 +3120,651 @@ body {
   margin: var(--pf-t--global--spacer--sm) 0 0;
   color: var(--pf-t--global--text--color--subtle);
   font-size: var(--pf-t--global--font--size--body--default);
+}
+
+/* Provider admin — Infrastructure (London region overview) */
+.provider-admin-infrastructure-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+  width: 100%;
+  min-width: 0;
+}
+
+/* Sentence case for headings and labels on this page. */
+.provider-admin-infrastructure-page .pf-v6-c-title,
+.provider-admin-infrastructure-page .pf-v6-c-label {
+  text-transform: none;
+}
+
+.provider-admin-infrastructure-page__toolbar {
+  width: 100%;
+}
+
+.provider-admin-infrastructure-page__summary,
+.provider-admin-infrastructure-page__detail-cards,
+.provider-admin-infrastructure-page__footer-cards {
+  width: 100%;
+}
+
+/* Four KPI cards share the full row (PF Gallery defaults to auto-fill, which leaves empty tracks). */
+.provider-admin-infrastructure-page__summary.pf-v6-l-gallery {
+  --pf-v6-l-gallery--GridTemplateColumns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 36rem) {
+  .provider-admin-infrastructure-page__summary.pf-v6-l-gallery {
+    --pf-v6-l-gallery--GridTemplateColumns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 62rem) {
+  .provider-admin-infrastructure-page__summary.pf-v6-l-gallery {
+    --pf-v6-l-gallery--GridTemplateColumns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.provider-admin-infra-stat-card.pf-v6-c-card {
+  height: 100%;
+  min-width: 0;
+}
+
+.provider-admin-infra-stat-card .pf-v6-c-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--xs);
+}
+
+.provider-admin-infra-stat-card__value {
+  margin-top: var(--pf-t--global--spacer--sm) !important;
+  font-variant-numeric: tabular-nums;
+  color: var(--pf-t--global--color--brand--default);
+}
+
+.provider-admin-infra-stat-card__hint {
+  margin: 0 !important;
+  font-size: var(--pf-t--global--font--size--body--sm) !important;
+  color: var(--pf-t--global--text--color--subtle) !important;
+}
+
+.provider-admin-infra-stat-card__hint--positive {
+  color: var(--pf-t--global--palette--green--400) !important;
+  font-weight: var(--pf-t--global--font--weight--body--bold) !important;
+}
+
+.provider-admin-infra-stat-card__hint--accent {
+  color: var(--pf-t--global--palette--purple--400) !important;
+  font-weight: var(--pf-t--global--font--weight--body--bold) !important;
+}
+
+.provider-admin-infra-stat-card--gpu.pf-v6-c-card {
+  border-color: color-mix(in srgb, var(--pf-t--global--palette--purple--400) 45%, var(--pf-t--global--border--color--default));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pf-t--global--palette--purple--400) 18%, transparent);
+}
+
+.pf-v6-theme-dark .provider-admin-infra-stat-card--gpu.pf-v6-c-card {
+  border-color: color-mix(in srgb, var(--pf-t--global--palette--purple--300) 55%, var(--pf-t--global--border--color--default));
+}
+
+.provider-admin-infra-detail-card.pf-v6-c-card {
+  height: 100%;
+  min-width: 0;
+}
+
+.provider-admin-infra-detail-card__subtitle {
+  margin: var(--pf-t--global--spacer--xs) 0 0 !important;
+  font-size: var(--pf-t--global--font--size--body--sm) !important;
+  color: var(--pf-t--global--text--color--subtle) !important;
+}
+
+.provider-admin-infra-detail-card__progress-stack {
+  margin-top: var(--pf-t--global--spacer--md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-infra-detail-card--aiml.pf-v6-c-card {
+  border-color: color-mix(in srgb, var(--pf-t--global--palette--purple--400) 40%, var(--pf-t--global--border--color--default));
+}
+
+.provider-admin-infra-detail-card__aiml-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-infra-detail-card__aiml-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  color: var(--pf-t--global--palette--purple--400);
+  background: color-mix(in srgb, var(--pf-t--global--palette--purple--400) 14%, transparent);
+}
+
+.provider-admin-infra-detail-card__aiml-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.provider-admin-infra-progress-row__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--md);
+  margin-bottom: var(--pf-t--global--spacer--xs);
+}
+
+.provider-admin-infra-progress-row__label {
+  font-size: var(--pf-t--global--font--size--body--default);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.provider-admin-infra-progress-row__value {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--pf-t--global--text--color--subtle);
+  white-space: nowrap;
+}
+
+.provider-admin-infra-progress-bar {
+  height: 0.5rem;
+  border-radius: var(--pf-t--global--border--radius--pill);
+  background: color-mix(in srgb, var(--pf-t--global--palette--black--900) 10%, transparent);
+  overflow: hidden;
+}
+
+.pf-v6-theme-dark .provider-admin-infra-progress-bar {
+  background: color-mix(in srgb, var(--pf-t--global--palette--white) 12%, transparent);
+}
+
+.provider-admin-infra-progress-bar__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--pf-t--global--color--brand--default);
+  transition: width var(--pf-t--global--motion--duration--slide-in--default)
+    var(--pf-t--global--motion--timing-function--default);
+}
+
+.provider-admin-infra-progress-bar--az {
+  margin-top: var(--pf-t--global--spacer--sm);
+}
+
+.provider-admin-infra-az-card.pf-v6-c-card {
+  width: 100%;
+}
+
+.provider-admin-infra-az-card__lede {
+  margin: var(--pf-t--global--spacer--xs) 0 var(--pf-t--global--spacer--lg) !important;
+  max-width: 48rem;
+  color: var(--pf-t--global--text--color--subtle) !important;
+  font-size: var(--pf-t--global--font--size--body--default) !important;
+}
+
+.provider-admin-infra-az-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+}
+
+.provider-admin-infra-az-row {
+  padding-bottom: var(--pf-t--global--spacer--lg);
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.provider-admin-infra-az-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.provider-admin-infra-az-row__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-infra-az-row__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+  flex: 1 1 12rem;
+}
+
+.provider-admin-infra-az-row__name {
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  font-size: var(--pf-t--global--font--size--body--default);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.provider-admin-infra-az-row__facility {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.provider-admin-infra-az-row__metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pf-t--global--spacer--md);
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.provider-admin-infra-az-row__metrics strong {
+  color: var(--pf-t--global--text--color--regular);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+}
+
+.provider-admin-infra-az-row__gpu {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--pf-t--global--palette--purple--400);
+}
+
+.provider-admin-infra-az-row__gpu svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.provider-admin-infra-az-row__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pf-t--global--spacer--sm);
+}
+
+.provider-admin-infra-az-row__latency {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.provider-admin-infra-az-row__latency svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.provider-admin-infra-compliance-card.pf-v6-c-card {
+  height: 100%;
+  min-width: 0;
+}
+
+.provider-admin-infra-compliance-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--md);
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-infra-compliance-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: var(--pf-t--global--border--radius--medium);
+}
+
+.provider-admin-infra-compliance-card__icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.provider-admin-infra-compliance-card__icon--globe {
+  color: var(--pf-t--global--palette--blue--400);
+  background: color-mix(in srgb, var(--pf-t--global--palette--blue--400) 14%, transparent);
+}
+
+.provider-admin-infra-compliance-card__icon--shield {
+  color: var(--pf-t--global--palette--green--400);
+  background: color-mix(in srgb, var(--pf-t--global--palette--green--400) 14%, transparent);
+}
+
+.provider-admin-infra-compliance-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.provider-admin-infra-compliance-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--sm);
+  padding: var(--pf-t--global--spacer--md) 0;
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+.provider-admin-infra-compliance-list__item:first-child {
+  padding-top: 0;
+}
+
+.provider-admin-infra-compliance-list__item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.provider-admin-infra-compliance-list__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--pf-t--global--spacer--sm);
+  width: 100%;
+}
+
+.provider-admin-infra-compliance-list__row--check {
+  align-items: center;
+}
+
+.provider-admin-infra-compliance-list__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.provider-admin-infra-compliance-list__label {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  font-weight: var(--pf-t--global--font--weight--body--bold);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.provider-admin-infra-compliance-list__value {
+  font-size: var(--pf-t--global--font--size--body--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+.provider-admin-infra-compliance-list__check {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--pf-t--global--palette--green--400);
+}
+
+/* Provider admin — Security & compliance */
+.provider-admin-security-compliance-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--lg);
+  width: 100%;
+  min-width: 0;
+}
+
+.provider-admin-security-compliance-page .pf-v6-c-title,
+.provider-admin-security-compliance-page .pf-v6-c-label {
+  text-transform: none;
+}
+
+.provider-admin-security-compliance-page__toolbar {
+  width: 100%;
+}
+
+.provider-admin-security-compliance-page__summary.pf-v6-l-gallery {
+  --pf-v6-l-gallery--GridTemplateColumns: repeat(1, minmax(0, 1fr));
+  width: 100%;
+}
+
+@media (min-width: 36rem) {
+  .provider-admin-security-compliance-page__summary.pf-v6-l-gallery {
+    --pf-v6-l-gallery--GridTemplateColumns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 62rem) {
+  .provider-admin-security-compliance-page__summary.pf-v6-l-gallery {
+    --pf-v6-l-gallery--GridTemplateColumns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.provider-admin-security-stat-card.pf-v6-c-card {
+  height: 100%;
+  min-width: 0;
+}
+
+.provider-admin-security-stat-card .pf-v6-c-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--xs);
+}
+
+.provider-admin-security-stat-card__value {
+  margin-top: var(--pf-t--global--spacer--sm) !important;
+  font-variant-numeric: tabular-nums;
+  color: var(--pf-t--global--text--color--regular);
+}
+
+.provider-admin-security-stat-card__value--success {
+  color: var(--pf-t--global--color--status--success--default) !important;
+}
+
+.provider-admin-security-stat-card__value--warning {
+  color: var(--pf-t--global--color--status--warning--default) !important;
+}
+
+.provider-admin-security-stat-card__hint {
+  margin: 0 !important;
+  font-size: var(--pf-t--global--font--size--body--sm) !important;
+  color: var(--pf-t--global--text--color--subtle) !important;
+}
+
+.provider-admin-security-stat-card__hint--warning {
+  color: var(--pf-t--global--color--status--warning--default) !important;
+  font-weight: var(--pf-t--global--font--weight--body--bold) !important;
+}
+
+.provider-admin-security-stat-card--warning.pf-v6-c-card {
+  border-color: color-mix(in srgb, var(--pf-t--global--color--status--warning--default) 55%, var(--pf-t--global--border--color--default));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pf-t--global--color--status--warning--default) 22%, transparent);
+}
+
+.pf-v6-theme-dark .provider-admin-security-stat-card--warning.pf-v6-c-card {
+  border-color: color-mix(in srgb, var(--pf-t--global--color--status--warning--default) 45%, var(--pf-t--global--border--color--default));
+}
+
+.provider-admin-security-compliance-page__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+}
+
+.provider-admin-security-compliance-page__section-lede {
+  margin: 0 !important;
+  max-width: 48rem;
+  font-size: var(--pf-t--global--font--size--body--sm) !important;
+  color: var(--pf-t--global--text--color--subtle) !important;
+}
+
+.provider-admin-security-compliance-page__frameworks-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+  margin-top: var(--pf-t--global--spacer--sm);
+}
+
+@media (min-width: 48rem) {
+  .provider-admin-security-compliance-page__frameworks-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.provider-admin-security-framework-card.pf-v6-c-card {
+  height: 100%;
+  min-width: 0;
+}
+
+.provider-admin-security-framework-card--warning.pf-v6-c-card {
+  border-color: color-mix(in srgb, var(--pf-t--global--color--status--warning--default) 55%, var(--pf-t--global--border--color--default));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--pf-t--global--color--status--warning--default) 22%, transparent);
+}
+
+.pf-v6-theme-dark .provider-admin-security-framework-card--warning.pf-v6-c-card {
+  border-color: color-mix(in srgb, var(--pf-t--global--color--status--warning--default) 45%, var(--pf-t--global--border--color--default));
+}
+
+/* Reuses `.provider-admin-infra-compliance-list__row` from infrastructure; only add spacing below title row. */
+.provider-admin-security-framework-card__head.provider-admin-infra-compliance-list__row {
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-security-framework-card__audit {
+  margin: var(--pf-t--global--spacer--md) 0 0 !important;
+  font-size: var(--pf-t--global--font--size--body--sm) !important;
+  color: var(--pf-t--global--text--color--subtle) !important;
+}
+
+.provider-admin-security-events-list {
+  list-style: none;
+  margin: var(--pf-t--global--spacer--sm) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-security-event-card.pf-v6-c-card {
+  box-shadow: none;
+}
+
+.provider-admin-security-event-card__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-security-event-card__icon {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  line-height: 0;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+}
+
+.provider-admin-security-event-card__icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.provider-admin-security-event-card__icon--warning {
+  color: var(--pf-t--global--color--status--warning--default);
+}
+
+.provider-admin-security-event-card__icon--info {
+  color: var(--pf-t--global--color--status--info--default);
+}
+
+.provider-admin-security-event-card__body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--xs);
+}
+
+.provider-admin-security-event-card__title {
+  margin: 0 !important;
+  font-weight: var(--pf-t--global--font--weight--heading--bold) !important;
+  font-size: var(--pf-t--global--font--size--body--default) !important;
+  color: var(--pf-t--global--text--color--regular) !important;
+}
+
+.provider-admin-security-event-card__desc {
+  margin: 0 !important;
+  font-size: var(--pf-t--global--font--size--body--default) !important;
+  color: var(--pf-t--global--text--color--regular) !important;
+}
+
+.provider-admin-security-event-card__time {
+  margin: 0 !important;
+  font-size: var(--pf-t--global--font--size--body--sm) !important;
+  color: var(--pf-t--global--text--color--subtle) !important;
+}
+
+/* Provider admin — Platform settings */
+.provider-admin-platform-settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.provider-admin-platform-settings-page .pf-v6-c-title {
+  text-transform: none;
+}
+
+.provider-admin-platform-settings-page__toolbar {
+  width: 100%;
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+.provider-admin-platform-settings__divider {
+  border: 0;
+  border-top: 1px solid var(--pf-t--global--border--color--default);
+  margin: 0;
+  width: 100%;
+}
+
+.provider-admin-platform-settings-page__block {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  padding: var(--pf-t--global--spacer--lg) 0;
+}
+
+.provider-admin-platform-settings-block__intro {
+  margin-bottom: var(--pf-t--global--spacer--lg);
+}
+
+.provider-admin-platform-settings-block__subtitle {
+  margin: var(--pf-t--global--spacer--xs) 0 0 !important;
+  font-size: var(--pf-t--global--font--size--body--sm) !important;
+  color: var(--pf-t--global--text--color--subtle) !important;
+}
+
+.provider-admin-platform-settings__form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+@media (min-width: 48rem) {
+  .provider-admin-platform-settings__form-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.provider-admin-platform-settings__form-grid--2 .provider-admin-platform-settings__span-2 {
+  grid-column: 1 / -1;
+}
+
+.provider-admin-platform-settings__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--pf-t--global--spacer--lg);
 }
 
 /* Utilization colors: inherited from .osac-tenant-admin-page (same as dashboard KPI icons). */

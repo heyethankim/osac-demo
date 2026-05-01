@@ -49,7 +49,9 @@ import {
   type TenantVirtualMachine,
   type VmPowerState,
 } from './TenantVirtualMachinesPage'
-import { NetworkTopologyPage } from './NetworkTopologyPage'
+import { ProviderAdminInfrastructurePage } from './ProviderAdminInfrastructurePage'
+import { ProviderAdminSecurityCompliancePage } from './ProviderAdminSecurityCompliancePage'
+import { ProviderAdminPlatformSettingsPage } from './ProviderAdminPlatformSettingsPage'
 import { NorthstarBankLoginPage } from './NorthstarBankLoginPage'
 import { VmConsoleDemoPage } from './VmConsoleDemoPage'
 import { DashboardVmUtilizationSection } from './DashboardVmUtilizationSection'
@@ -64,7 +66,8 @@ import {
   TenantAdminDashboardPage,
   type TenantAdminDashboardNavTarget,
 } from './TenantAdminDashboardPage'
-import { TenantAdminPlaceholderPage } from './TenantAdminPlaceholderPage'
+import { TenantAdminOrganizationSettingsPage } from './TenantAdminOrganizationSettingsPage'
+import { TenantAdminSecurityCompliancePage } from './TenantAdminSecurityCompliancePage'
 import {
   ProviderAdminDashboardPage,
   type ProviderAdminDashboardNavTarget,
@@ -204,7 +207,7 @@ const providerAdminNavRows: ShellNavRow[] = [
     groupId: providerSystemGroupId,
     children: [
       { id: providerSystemInfraNavId, label: 'Infrastructure' },
-      { id: providerSystemSecurityNavId, label: 'Security & Compliance' },
+      { id: providerSystemSecurityNavId, label: 'Security & compliance' },
       { id: providerSystemSettingsNavId, label: 'Platform settings' },
     ],
   },
@@ -1206,9 +1209,7 @@ function App() {
       <PageSection
         isFilled={!isSparseShellPage}
         className={`osac-page-main-section${
-          showAdminInfraNetworksPage || showProviderSystemInfraPage
-            ? ' osac-page-main-section--topology'
-            : ''
+          showAdminInfraNetworksPage ? ' osac-page-main-section--topology' : ''
         }`}
       >
         <CreateVirtualMachineLaunchButton
@@ -1247,38 +1248,16 @@ function App() {
               }
             />
           ) : showProviderSystemInfraPage ? (
-            <div className="osac-non-catalog-main osac-non-catalog-main--topology">
-              <div
-                className="osac-page-toolbar-sticky"
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  alignItems: 'flex-start',
-                  justifyContent: 'space-between',
-                  gap: 'var(--pf-t--global--spacer--md)',
-                }}
-              >
-                <div className="osac-page-toolbar-sticky__lead">
-                  <Title headingLevel="h1" size="2xl" style={{ margin: 0 }}>
-                    {navLabelForItemId(effectiveShellNavRows, activeItem)}
-                  </Title>
-                  <Content
-                    component="p"
-                    style={{
-                      margin: 0,
-                      maxWidth: '48rem',
-                      color: 'var(--pf-t--global--text--color--subtle)',
-                      fontSize: 'var(--pf-t--global--font--size--body--default)',
-                    }}
-                  >
-                    Platform view for {DEMO_TENANT_LABEL[demoTenantId]}.
-                  </Content>
-                </div>
-              </div>
-              <NetworkTopologyPage
-                vms={allTenantVirtualMachines}
-                onOpenVirtualMachineDetail={() => {}}
-              />
+            <div className="osac-non-catalog-main">
+              <ProviderAdminInfrastructurePage />
+            </div>
+          ) : showProviderSystemSecurityPage ? (
+            <div className="osac-non-catalog-main">
+              <ProviderAdminSecurityCompliancePage />
+            </div>
+          ) : showProviderSystemSettingsPage ? (
+            <div className="osac-non-catalog-main">
+              <ProviderAdminPlatformSettingsPage />
             </div>
           ) : (
             <div className="osac-non-catalog-main">
@@ -1343,20 +1322,6 @@ function App() {
                 <ProviderAdminUserManagementPage />
               ) : showProviderMgmtAllocPage ? (
                 <ProviderAdminResourceAllocationPage />
-              ) : showProviderSystemSecurityPage ? (
-                <TenantAdminPlaceholderPage
-                  demoTenantId={demoTenantId}
-                  title="Security & Compliance"
-                  omitFeatureCard
-                  omitIntro
-                />
-              ) : showProviderSystemSettingsPage ? (
-                <TenantAdminPlaceholderPage
-                  demoTenantId={demoTenantId}
-                  title="Platform settings"
-                  omitFeatureCard
-                  omitIntro
-                />
               ) : (
                 <ProviderAdminDashboardPage onNavigate={navigateProviderAdminFromDashboard} />
               )}
@@ -1464,19 +1429,9 @@ function App() {
                   expansionRequestNotice={tenantAdminStorageExpansionDemoNotice}
                 />
               ) : showAdminOrgSettingsPage ? (
-                <TenantAdminPlaceholderPage
-                  demoTenantId={demoTenantId}
-                  title="Organization settings"
-                  omitFeatureCard
-                  omitIntro
-                />
+                <TenantAdminOrganizationSettingsPage demoTenantId={demoTenantId} />
               ) : showAdminOrgSecurityPage ? (
-                <TenantAdminPlaceholderPage
-                  demoTenantId={demoTenantId}
-                  title="Security & Compliance"
-                  omitFeatureCard
-                  omitIntro
-                />
+                <TenantAdminSecurityCompliancePage demoTenantId={demoTenantId} />
               ) : (
                 <TenantAdminDashboardPage
                   demoTenantId={demoTenantId}
