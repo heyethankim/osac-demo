@@ -3164,6 +3164,20 @@ body {
   }
 }
 
+/* Detail row (Compute + AI/ML) and footer row (Data sovereignty + HA): two equal columns,
+   full row width — avoids PF Gallery auto-fill leaving empty tracks. */
+.provider-admin-infrastructure-page__detail-cards.pf-v6-l-gallery,
+.provider-admin-infrastructure-page__footer-cards.pf-v6-l-gallery {
+  --pf-v6-l-gallery--GridTemplateColumns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 36rem) {
+  .provider-admin-infrastructure-page__detail-cards.pf-v6-l-gallery,
+  .provider-admin-infrastructure-page__footer-cards.pf-v6-l-gallery {
+    --pf-v6-l-gallery--GridTemplateColumns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .provider-admin-infra-stat-card.pf-v6-c-card {
   height: 100%;
   min-width: 0;

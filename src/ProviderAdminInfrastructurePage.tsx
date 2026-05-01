@@ -173,7 +173,7 @@ export function ProviderAdminInfrastructurePage() {
         </GalleryItem>
       </Gallery>
 
-      <Gallery hasGutter className="provider-admin-infrastructure-page__detail-cards" minWidths={{ default: '280px', lg: '400px' }}>
+      <Gallery hasGutter className="provider-admin-infrastructure-page__detail-cards">
         <GalleryItem>
           <Card component="section" className="provider-admin-infra-detail-card">
             <CardBody>
@@ -279,7 +279,7 @@ export function ProviderAdminInfrastructurePage() {
         </CardBody>
       </Card>
 
-      <Gallery hasGutter className="provider-admin-infrastructure-page__footer-cards" minWidths={{ default: '280px', lg: '400px' }}>
+      <Gallery hasGutter className="provider-admin-infrastructure-page__footer-cards">
         <GalleryItem>
           <Card component="section" className="provider-admin-infra-compliance-card">
             <CardBody>
