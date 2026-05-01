@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import {
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -8,6 +9,8 @@ import {
   Label,
   Title,
 } from '@patternfly/react-core'
+import { PlusCircleIcon } from '@patternfly/react-icons/dist/esm/icons/plus-circle-icon'
+import { UserIcon } from '@patternfly/react-icons/dist/esm/icons/user-icon'
 import { DashboardVmQuotaSection } from './DashboardVmQuotaSection'
 import type { DemoTenantId } from './demoTenant'
 import type { TenantVirtualMachine } from './TenantVirtualMachinesPage'
@@ -21,6 +24,8 @@ export type TenantAdminDashboardPageProps = {
   fleetVirtualMachines: readonly TenantVirtualMachine[]
   isDarkTheme: boolean
   onNavigateToTenantAdmin: (target: TenantAdminDashboardNavTarget) => void
+  onShortcutOnboardUser: () => void
+  onShortcutCreateProject: () => void
 }
 
 /** Illustrative KPIs for tenant admin overview (demo only). */
@@ -49,6 +54,8 @@ export function TenantAdminDashboardPage({
   fleetVirtualMachines,
   isDarkTheme,
   onNavigateToTenantAdmin,
+  onShortcutOnboardUser,
+  onShortcutCreateProject,
 }: TenantAdminDashboardPageProps) {
   const m = TENANT_DASHBOARD_METRICS[demoTenantId]
   const activeProjectsCount = useMemo(
@@ -155,14 +162,39 @@ export function TenantAdminDashboardPage({
           </div>
 
           <aside
-            className="osac-dashboard-utilization-sidebar"
-            aria-labelledby="tenant-admin-recent-activities-heading"
+            className="osac-dashboard-utilization-sidebar tenant-admin-dashboard-utilization-sidebar"
+            aria-label="Quick actions and recent activities"
           >
+            <div
+              className="tenant-admin-dashboard-recent-shortcuts"
+              role="group"
+              aria-label="Quick actions"
+            >
+              <Button
+                variant="secondary"
+                className="provider-admin-dashboard-action-pill"
+                onClick={onShortcutOnboardUser}
+                aria-label="Onboard new user — open user management"
+                icon={<UserIcon style={{ width: '1rem', height: '1rem' }} />}
+                iconPosition="start"
+              >
+                Onboard new user
+              </Button>
+              <Button
+                variant="secondary"
+                className="provider-admin-dashboard-action-pill"
+                onClick={onShortcutCreateProject}
+                aria-label="Create project — open projects with create dialog"
+                icon={<PlusCircleIcon style={{ width: '1rem', height: '1rem' }} />}
+                iconPosition="start"
+              >
+                Create project
+              </Button>
+            </div>
             <Card
               className="tenant-admin-recent-activities osac-dashboard-recent-activity-card"
               component="section"
               aria-labelledby="tenant-admin-recent-activities-heading"
-              isFullHeight
             >
               <CardHeader>
                 <CardTitle component="h2" id="tenant-admin-recent-activities-heading">

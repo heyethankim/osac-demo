@@ -549,6 +549,15 @@ function App() {
     }
   }, [])
 
+  const tenantAdminShortcutOnboardUser = useCallback(() => {
+    setActiveItem(adminMgmtUsersNavId)
+  }, [])
+
+  const tenantAdminShortcutCreateProject = useCallback(() => {
+    setActiveItem(adminMgmtProjectsNavId)
+    setTenantAdminCreateProjectModalOpen(true)
+  }, [])
+
   /** Bank tenants only: switch shell between tenant admin and tenant user without re-signing in. */
   const switchSignedInShellToTenantUser = useCallback(() => {
     setIsUserMenuOpen(false)
@@ -1407,6 +1416,8 @@ function App() {
                   fleetVirtualMachines={allTenantVirtualMachines}
                   isDarkTheme={isDarkTheme}
                   onNavigateToTenantAdmin={navigateTenantAdminFromDashboard}
+                  onShortcutOnboardUser={tenantAdminShortcutOnboardUser}
+                  onShortcutCreateProject={tenantAdminShortcutCreateProject}
                 />
               ) : showAdminMgmtProjectsPage ? (
                 <TenantAdminProjectsPage
@@ -1438,6 +1449,8 @@ function App() {
                   fleetVirtualMachines={allTenantVirtualMachines}
                   isDarkTheme={isDarkTheme}
                   onNavigateToTenantAdmin={navigateTenantAdminFromDashboard}
+                  onShortcutOnboardUser={tenantAdminShortcutOnboardUser}
+                  onShortcutCreateProject={tenantAdminShortcutCreateProject}
                 />
               )}
             </div>

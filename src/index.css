@@ -4675,6 +4675,20 @@ html.pf-v6-theme-dark .provider-admin-dashboard-action-pill.pf-v6-c-button {
   min-width: 0;
 }
 
+/* Tenant admin dashboard: sidebar stacks quick-action shortcuts then Recent activities card. */
+.tenant-admin-dashboard-utilization-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.tenant-admin-dashboard-recent-shortcuts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+}
+
 .osac-dashboard-recent-activity-body {
   padding-top: 0;
 }
