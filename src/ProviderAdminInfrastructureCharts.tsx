@@ -60,8 +60,6 @@ export function InfraComputeUtilizationBarChart({
   const tickFill = isDarkTheme ? VM_UTILIZATION_CHART_AXIS_TICK : VM_UTILIZATION_CHART_AXIS_TICK_ON_LIGHT
   const gridStroke = isDarkTheme ? VM_UTILIZATION_CHART_GRID_STROKE : VM_UTILIZATION_CHART_GRID_STROKE_ON_LIGHT
   const axisTick = { fill: tickFill, fontSize: 11 }
-  /** Recharts hover band behind the active category — neutral tint (SVG fill; avoid PF vars here). */
-  const barHoverCursorFill = isDarkTheme ? 'rgba(255, 255, 255, 0.08)' : 'rgba(3, 3, 3, 0.06)'
 
   return (
     <div
@@ -89,7 +87,7 @@ export function InfraComputeUtilizationBarChart({
             axisLine={{ stroke: gridStroke }}
           />
           <Tooltip
-            cursor={{ fill: barHoverCursorFill }}
+            cursor={false}
             content={({ active, payload }) => {
               if (!active || !payload?.length) return null
               const row = payload[0].payload as (typeof data)[0]

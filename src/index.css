@@ -3589,6 +3589,11 @@ body {
   align-items: center;
 }
 
+/* Vertically center status pills (Labels) with two-line label/value text */
+.provider-admin-infra-compliance-list__row:has(.pf-v6-c-label) {
+  align-items: center;
+}
+
 .provider-admin-infra-compliance-list__text {
   display: flex;
   flex-direction: column;
