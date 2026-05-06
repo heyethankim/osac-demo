@@ -1037,7 +1037,9 @@ function App() {
                         )}
                       </DropdownItem>
                     ) : null}
-                    {showTenantPersonaSwitcher && demoShellRole === 'tenantUser' ? (
+                    {showTenantPersonaSwitcher &&
+                    demoShellRole === 'tenantUser' &&
+                    bankTenantUserEntry === 'adminPortal' ? (
                       <DropdownItem
                         value="switch-tenant-admin"
                         onClick={switchSignedInShellToTenantAdmin}
