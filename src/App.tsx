@@ -10,7 +10,9 @@ import {
 import { BarsIcon } from '@patternfly/react-icons/dist/esm/icons/bars-icon'
 import { BellIcon } from '@patternfly/react-icons/dist/esm/icons/bell-icon'
 import { CogIcon } from '@patternfly/react-icons/dist/esm/icons/cog-icon'
+import { MoonIcon } from '@patternfly/react-icons/dist/esm/icons/moon-icon'
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons/dist/esm/icons/outlined-question-circle-icon'
+import { SunIcon } from '@patternfly/react-icons/dist/esm/icons/sun-icon'
 import { UserIcon } from '@patternfly/react-icons/dist/esm/icons/user-icon'
 import { NorthstarBankMastheadLogo } from './NorthstarBankMastheadLogo'
 import { EvergreenFinancialGroupMastheadLogo } from './EvergreenFinancialGroupMastheadLogo'
@@ -32,7 +34,6 @@ import {
   readInitialSessionFromLandingEntry,
   stripOsacLandingEntryParamsFromUrl,
 } from './osacLandingEntry'
-import { OsacLightDarkToggle } from './OsacLightDarkToggle'
 import { EvergreenFinancialGroupLoginPage } from './EvergreenFinancialGroupLoginPage'
 import {
   CreateVirtualMachineLaunchButton,
@@ -601,21 +602,6 @@ function App() {
     }
   }, [])
 
-  const goToLandingHome = useCallback(() => {
-    setIsUserMenuOpen(false)
-    setRecentActivitiesPageOpen(false)
-    setGlobalSearchQuery('')
-    setVmListPowerFilterIntent(null)
-    setVmsCreatedFromTemplate([])
-    setBankTenantUserEntry(null)
-    setSelectedDemoTenant(null)
-    setDemoShellRole('tenantUser')
-    setActiveItem(dashboardNavItemId)
-    setIsLandingPageLoading(false)
-    /** Full session reset so every persona path shows sign-in again after “Back to welcome”. */
-    setIsLoggedIn(false)
-  }, [])
-
   useLayoutEffect(() => {
     const root = document.documentElement
     root.classList.toggle('pf-v6-theme-dark', isDarkTheme)
@@ -823,7 +809,7 @@ function App() {
     )
   }
 
-  /** Invariant when logged in: tenant is set (see `goToLandingHome` + log out). Kept for type narrowing. */
+  /** Invariant when logged in: tenant is set (see log out). Kept for type narrowing. */
   if (!selectedDemoTenant) {
     return <DemoTenantLandingPage />
   }
@@ -977,6 +963,15 @@ function App() {
               variant="action-group-plain"
               gap={{ default: 'gapSm' }}
             >
+              <ToolbarItem>
+                <Button
+                  variant="plain"
+                  aria-label={isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'}
+                  onClick={() => setIsDarkTheme((prev) => !prev)}
+                >
+                  {isDarkTheme ? <SunIcon /> : <MoonIcon />}
+                </Button>
+              </ToolbarItem>
               <ToolbarItem>
                 <Button
                   variant="plain"
@@ -1186,13 +1181,9 @@ function App() {
             </NavList>
           </Nav>
           <div className="osac-shell-sidebar-footer">
-            <OsacLightDarkToggle
-              isDark={isDarkTheme}
-              onChange={setIsDarkTheme}
-              landingOnSelect={goToLandingHome}
-              landingAriaLabel="Back to welcome — choose institution and role"
-              aria-label="Theme"
-            />
+            <div className="osac-shell-sidebar-sticker">
+              <span className="osac-shell-sidebar-sticker__label">Conceptual design</span>
+            </div>
           </div>
         </div>
       </PageSidebarBody>
